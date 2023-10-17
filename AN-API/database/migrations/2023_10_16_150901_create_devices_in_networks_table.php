@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('devices_in_networks', function (Blueprint $table) {
             $table->id('device_id');
             $table->string('name');
-            $table->unsignedInteger('router_id');
+            $table->unsignedBigInteger('router_id');
             $table->timestamps();
         });
 

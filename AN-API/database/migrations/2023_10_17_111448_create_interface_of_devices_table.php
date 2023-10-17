@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('IP_address');
             $table->enum('category', ['LAN', 'WAN']);
             $table->enum('type', ['FE', 'GE', 'Optical', 'Wireless']);
-            $table->unsignedInteger('interface_id2');
-            $table->unsignedInteger('device_id');
+            $table->unsignedBigInteger('interface_id2');
+            $table->unsignedBigInteger('device_id');
             $table->timestamps();
         });
 
