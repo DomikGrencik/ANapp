@@ -12,8 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('devices_in_networks', function (Blueprint $table) {
-            $table->id();
+            $table->id('device_id');
+            $table->string('name');
+            $table->unsignedInteger('router_id');
             $table->timestamps();
+        });
+
+        Schema::table('devices_in_networks', function (Blueprint $table) {
+            $table->foreign('router_id')
+                ->references('router_id')
+                ->on('routers')
+                ->onDelete('cascade');
         });
     }
 

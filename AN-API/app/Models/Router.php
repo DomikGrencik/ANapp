@@ -5,16 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DevicesInNetwork extends Model
+class Router extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'router_id'
+        'manufacturer',
+        'type',
+        'LAN_ports',
+        'WAN_ports'
     ];
-    protected $table = 'devices_in_networks';
-    protected $primaryKey = 'device_id';
+    protected $table = 'routers';
+    protected $primaryKey = 'router_id';
 
     public function getCreatedAtAttribute($value)
     {
@@ -26,8 +28,8 @@ class DevicesInNetwork extends Model
         return date('j.n.y', strtotime($value));
     }
 
-    public function interface_of_devices()
+    public function devices_in_networks()
     {
-        return $this->hasMany(InterfaceOfDevice::class, 'interface_id', 'device_id');
+        return $this->hasMany(DevicesInNetwork::class, 'device_id', 'router_id');
     }
 }
