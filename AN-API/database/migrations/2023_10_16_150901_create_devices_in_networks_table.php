@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('devices_in_networks', function (Blueprint $table) {
             $table->id('device_id');
             $table->string('name');
+            $table->enum('type', ['router', 'switch', 'ED']);
             $table->unsignedBigInteger('router_id');
+            $table->unsignedBigInteger('switch_id');
+            $table->unsignedBigInteger('ED_id');
             $table->timestamps();
         });
 
@@ -22,6 +25,14 @@ return new class extends Migration
             $table->foreign('router_id')
                 ->references('router_id')
                 ->on('routers')
+                ->onDelete('cascade');
+            $table->foreign('switch_id')
+                ->references('switch_id')
+                ->on('sws')
+                ->onDelete('cascade');
+            $table->foreign('ED_id')
+                ->references('ED_id')
+                ->on('e_d_s')
                 ->onDelete('cascade');
         });
     }
