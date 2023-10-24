@@ -38,6 +38,45 @@ class DevicesInNetworkController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     */
+    public function storeDevice(Request $request, string $type)
+    {
+        $request->validate([
+            'name' => 'required',
+            'id' => 'nullable'
+        ]);
+
+        $router_id = null;
+        $switch_id = null;
+        $ED_id = null;
+
+        switch ($type) {
+            case 'router':
+                $router_id = $request->id;
+                break;
+            case 'switch':
+                $switch_id = $request->id;
+                break;
+            case 'ED':
+                $ED_id = $request->id;
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
+        DevicesInNetwork::create([
+            'name' => $request->name,
+            'type' => $type,
+            'router_id' => $router_id,
+            'switch_id' => $switch_id,
+            'ED_id' => $ED_id
+        ]);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(string $id)

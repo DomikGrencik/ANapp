@@ -25,6 +25,7 @@ Route::controller(RouterController::class)->group(function () {
 });
 Route::controller(DevicesInNetworkController::class)->group(function () {
     Route::post('devices_in_networks', 'store');
+    Route::post('devices_in_networks/storeDevice/{type}', 'storeDevice');
     Route::get('devices_in_networks/{device}', 'show');
     Route::get('devices_in_networks/findDeviceType/{type}', 'findDeviceType');
 });
