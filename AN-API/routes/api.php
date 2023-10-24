@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DevicesInNetworkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\RouterController;
@@ -21,4 +22,9 @@ use \App\Http\Controllers\RouterController;
 
 Route::controller(RouterController::class)->group(function () {
     Route::get('routers/{router}', 'show');
+});
+Route::controller(DevicesInNetworkController::class)->group(function () {
+    Route::post('devices_in_networks', 'store');
+    Route::get('devices_in_networks/{device}', 'show');
+    Route::get('devices_in_networks/findDeviceType/{type}', 'findDeviceType');
 });

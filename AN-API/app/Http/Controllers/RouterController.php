@@ -29,6 +29,7 @@ class RouterController extends Controller
     public function show(string $id)
     {
         return Router::findOrFail($id);
+        //return Router::find()->where('router_id')->isNotEmpty();
     }
 
     /**

@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id('device_id');
             $table->string('name');
             $table->enum('type', ['router', 'switch', 'ED']);
-            $table->unsignedBigInteger('router_id');
-            $table->unsignedBigInteger('switch_id');
-            $table->unsignedBigInteger('ED_id');
+            $table->unsignedBigInteger('router_id')->nullable();
+            $table->unsignedBigInteger('switch_id')->nullable();
+            $table->unsignedBigInteger('ED_id')->nullable();
             $table->timestamps();
         });
 
