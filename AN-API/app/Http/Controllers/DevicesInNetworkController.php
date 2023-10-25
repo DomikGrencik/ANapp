@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DevicesInNetwork;
 use Illuminate\Http\Request;
+use App\Http\Controllers\InterfaceOfDeviceController;
 
 class DevicesInNetworkController extends Controller
 {
@@ -21,31 +22,29 @@ class DevicesInNetworkController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'type' => 'required',
-            'router_id' => 'nullable',
-            'switch_id' => 'nullable',
-            'ED_id' => 'nullable'
+            'users' => 'required',
+            'vlans' => 'required',
         ]);
 
-        DevicesInNetwork::create([
-            'name' => $request->name,
-            'type' => $request->type,
-            'router_id' => $request->router_id,
-            'switch_id' => $request->switch_id,
-            'ED_id' => $request->ED_id
-        ]);
+        $name = 'R1';
+        $id = '1';
+        $type = 'router';
+
+        $this->storeDevice($name, $id, $type);
+
+        return DevicesInNetwork::all()->max('device_id');
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function storeDevice(Request $request, string $type)
+    public function storeDevice(string $name, string $id, string $type)
     {
-        $request->validate([
+        /* $request->validate([
             'name' => 'required',
             'id' => 'nullable'
-        ]);
+        ]); */
 
         $router_id = null;
         $switch_id = null;
@@ -53,13 +52,13 @@ class DevicesInNetworkController extends Controller
 
         switch ($type) {
             case 'router':
-                $router_id = $request->id;
+                $router_id = $id;
                 break;
             case 'switch':
-                $switch_id = $request->id;
+                $switch_id = $id;
                 break;
             case 'ED':
-                $ED_id = $request->id;
+                $ED_id = $id;
                 break;
 
             default:
@@ -68,12 +67,14 @@ class DevicesInNetworkController extends Controller
         }
 
         DevicesInNetwork::create([
-            'name' => $request->name,
+            'name' => $name,
             'type' => $type,
             'router_id' => $router_id,
             'switch_id' => $switch_id,
             'ED_id' => $ED_id
         ]);
+
+        //(new InterfaceOfDeviceController)->storeInterface($router_id);
     }
 
     /**

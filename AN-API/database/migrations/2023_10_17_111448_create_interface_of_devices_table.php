@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('interface_of_devices', function (Blueprint $table) {
             $table->id('interface_id');
             $table->string('name');
-            $table->string('IP_address');
+            $table->string('IP_address')->nullable();
             $table->enum('category', ['LAN', 'WAN']);
             $table->enum('type', ['FE', 'GE', 'Optical', 'Wireless']);
-            $table->unsignedBigInteger('interface_id2');
+            $table->unsignedBigInteger('interface_id2')->nullable();
             $table->unsignedBigInteger('device_id');
             $table->timestamps();
         });
