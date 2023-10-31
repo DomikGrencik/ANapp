@@ -13,7 +13,9 @@ class Router extends Model
         'manufacturer',
         'type',
         'LAN_ports',
-        'WAN_ports'
+        'WAN_ports',
+        'LAN_type',
+        'WAN_type'
     ];
     protected $table = 'routers';
     protected $primaryKey = 'router_id';

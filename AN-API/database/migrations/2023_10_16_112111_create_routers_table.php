@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('type');
             $table->integer('LAN_ports');
             $table->integer('WAN_ports');
+            $table->enum('LAN_type', ['FE', 'GE', 'Optical', 'Wireless']);
+            $table->enum('WAN_type', ['FE', 'GE', 'Optical', 'Wireless']);
             $table->timestamps();
         });
     }

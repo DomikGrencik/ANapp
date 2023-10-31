@@ -32,7 +32,9 @@ class DevicesInNetworkController extends Controller
 
         $this->storeDevice($name, $id, $type);
 
-        return DevicesInNetwork::all()->max('device_id');
+        $device_id = DevicesInNetwork::all()->max('device_id');
+
+        (new InterfaceOfDeviceController)->storeInterface($device_id, $type, $id);
     }
 
 
@@ -41,11 +43,6 @@ class DevicesInNetworkController extends Controller
      */
     public function storeDevice(string $name, string $id, string $type)
     {
-        /* $request->validate([
-            'name' => 'required',
-            'id' => 'nullable'
-        ]); */
-
         $router_id = null;
         $switch_id = null;
         $ED_id = null;
@@ -73,8 +70,6 @@ class DevicesInNetworkController extends Controller
             'switch_id' => $switch_id,
             'ED_id' => $ED_id
         ]);
-
-        //(new InterfaceOfDeviceController)->storeInterface($router_id);
     }
 
     /**

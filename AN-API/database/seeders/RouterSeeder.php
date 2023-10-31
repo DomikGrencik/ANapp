@@ -18,14 +18,18 @@ class RouterSeeder extends Seeder
             'manufacturer' => 'Cisco',
             'type' => 'abc123',
             'LAN_ports' => '2',
-            'WAN_ports' => '1'
+            'WAN_ports' => '1',
+            'LAN_type' => 'FE',
+            'WAN_type' => 'GE'
         ]);
 
         DB::table('routers')->insert([
             'manufacturer' => 'Cisco',
             'type' => 'qwe987',
             'LAN_ports' => '4',
-            'WAN_ports' => '2'
+            'WAN_ports' => '2',
+            'LAN_type' => 'GE',
+            'WAN_type' => 'Optical'
         ]);
     }
 }
