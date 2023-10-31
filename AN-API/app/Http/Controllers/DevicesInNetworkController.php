@@ -26,9 +26,9 @@ class DevicesInNetworkController extends Controller
             'vlans' => 'required',
         ]);
 
-        $name = 'R1';
-        $id = '1';
-        $type = 'router';
+        $name = 'ED1';
+        $id = '3';
+        $type = 'ED';
 
         $this->storeDevice($name, $id, $type);
 

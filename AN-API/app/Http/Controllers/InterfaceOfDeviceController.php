@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\RouterController;
+use App\Http\Controllers\SwController;
+use App\Http\Controllers\EDController;
 use App\Models\InterfaceOfDevice;
 
 class InterfaceOfDeviceController extends Controller
@@ -98,9 +100,70 @@ class InterfaceOfDeviceController extends Controller
                         'device_id' => $device_id
                     ]);
                 }
-
                 break;
+            case 'switch':
+                $device = (new SwController)->show($id);
+                $FE = $device->FE_ports;
+                $GE = $device->GE_ports;
 
+                for ($i = 0; $i < $FE; $i++) {
+                    InterfaceOfDevice::create([
+                        'name' => "FE{$i}",
+                        'IP_address' => '1',
+                        'category' => 'LAN',
+                        'type' => 'FE',
+                        'interface_id2' => null,
+                        'device_id' => $device_id
+                    ]);
+                }
+                for ($i = 0; $i < $GE; $i++) {
+                    InterfaceOfDevice::create([
+                        'name' => "GE{$i}",
+                        'IP_address' => '1',
+                        'category' => 'LAN',
+                        'type' => 'GE',
+                        'interface_id2' => null,
+                        'device_id' => $device_id
+                    ]);
+                }
+                break;
+            case 'ED':
+                $device = (new EDController)->show($id);
+                $FE = $device->FE_ports;
+                $GE = $device->GE_ports;
+                $W = $device->wireless;
+
+                for ($i = 0; $i < $FE; $i++) {
+                    InterfaceOfDevice::create([
+                        'name' => "FE{$i}",
+                        'IP_address' => '1',
+                        'category' => 'LAN',
+                        'type' => 'FE',
+                        'interface_id2' => null,
+                        'device_id' => $device_id
+                    ]);
+                }
+                for ($i = 0; $i < $GE; $i++) {
+                    InterfaceOfDevice::create([
+                        'name' => "GE{$i}",
+                        'IP_address' => '1',
+                        'category' => 'LAN',
+                        'type' => 'GE',
+                        'interface_id2' => null,
+                        'device_id' => $device_id
+                    ]);
+                }
+                for ($i = 0; $i < $W; $i++) {
+                    InterfaceOfDevice::create([
+                        'name' => "W{$i}",
+                        'IP_address' => '1',
+                        'category' => 'LAN',
+                        'type' => 'wireless',
+                        'interface_id2' => null,
+                        'device_id' => $device_id
+                    ]);
+                }
+                break;
             default:
                 # code...
                 break;
