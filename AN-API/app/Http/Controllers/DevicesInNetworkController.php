@@ -24,7 +24,13 @@ class DevicesInNetworkController extends Controller
         $request->validate([
             'users' => 'required',
             'vlans' => 'required',
+            'IPaddr' => 'required',
         ]);
+
+        $users = $request->users;
+        $vlans = $request->vlans;
+        $IPaddr = $request->IPaddr;
+
 
         $name = 'ED1';
         $id = '3';
