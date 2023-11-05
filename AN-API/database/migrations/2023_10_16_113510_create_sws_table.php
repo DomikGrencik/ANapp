@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id('switch_id');
             $table->string('manufacturer');
             $table->string('type');
-            $table->integer('FE_ports');
-            $table->integer('GE_ports');
+            $table->integer('DL_ports');
+            $table->integer('UL_ports');
+            $table->enum('DL_type',['FE', 'GE', 'Optical']);
+            $table->enum('UL_type',['FE', 'GE', 'Optical']);
             $table->timestamps();
         });
     }

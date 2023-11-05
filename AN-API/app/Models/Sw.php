@@ -12,8 +12,10 @@ class Sw extends Model
     protected $fillable = [
         'manufacturer',
         'type',
-        'FE_ports',
-        'GE_ports'
+        'DL_ports',
+        'UL_ports',
+        'DL_type',
+        'UL_type'
     ];
     protected $table = 'sws';
     protected $primaryKey = 'switch_id';

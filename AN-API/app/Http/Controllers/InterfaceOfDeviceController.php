@@ -103,25 +103,27 @@ class InterfaceOfDeviceController extends Controller
                 break;
             case 'switch':
                 $device = (new SwController)->show($id);
-                $FE = $device->FE_ports;
-                $GE = $device->GE_ports;
+                $DL_ports = $device->DL_ports;
+                $UL_ports = $device->UL_ports;
+                $DL_type = $device->DL_type;
+                $UL_type = $device->UL_type;
 
-                for ($i = 0; $i < $FE; $i++) {
+                for ($i = 0; $i < $DL_ports; $i++) {
                     InterfaceOfDevice::create([
-                        'name' => "FE{$i}",
+                        'name' => "{$DL_type}{$i}",
                         'IP_address' => '1',
                         'category' => 'LAN',
-                        'type' => 'FE',
+                        'type' => $DL_type,
                         'interface_id2' => null,
                         'device_id' => $device_id
                     ]);
                 }
-                for ($i = 0; $i < $GE; $i++) {
+                for ($i = 0; $i < $UL_ports; $i++) {
                     InterfaceOfDevice::create([
-                        'name' => "GE{$i}",
+                        'name' => "{$UL_type}{$i}",
                         'IP_address' => '1',
                         'category' => 'LAN',
-                        'type' => 'GE',
+                        'type' => $UL_type,
                         'interface_id2' => null,
                         'device_id' => $device_id
                     ]);

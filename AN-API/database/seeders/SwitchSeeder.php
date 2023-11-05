@@ -17,15 +17,19 @@ class SwitchSeeder extends Seeder
         DB::table('sws')->insert([
             'manufacturer' => 'Cisco',
             'type' => 'dfh45',
-            'FE_ports' => '24',
-            'GE_ports' => '2'
+            'DL_ports' => '24',
+            'UL_ports' => '2',
+            'DL_type' => 'FE',
+            'UL_type' => 'GE'
         ]);
 
         DB::table('sws')->insert([
             'manufacturer' => 'Cisco',
             'type' => 'tzru78',
-            'FE_ports' => '48',
-            'GE_ports' => '4'
+            'DL_ports' => '48',
+            'UL_ports' => '4',
+            'DL_type' => 'GE',
+            'UL_type' => 'Optical'
         ]);
     }
 }
