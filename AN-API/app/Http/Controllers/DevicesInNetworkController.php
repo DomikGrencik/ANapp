@@ -32,9 +32,9 @@ class DevicesInNetworkController extends Controller
         $IPaddr = $request->IPaddr;
 
 
-        $name = 'SW2';
+        $name = 'R1';
         $id = '2';
-        $type = 'switch';
+        $type = 'router';
 
         $this->storeDevice($name, $id, $type);
 

@@ -15,5 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RouterSeeder::class);
         $this->call(SwitchSeeder::class);
         $this->call(EDSeeder::class);
+        $this->call(DeviceSeeder::class);
+        $this->call(PortSeeder::class);
     }
 }
