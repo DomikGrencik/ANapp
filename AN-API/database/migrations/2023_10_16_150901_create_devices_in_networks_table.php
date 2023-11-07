@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('devices_in_networks', function (Blueprint $table) {
-            $table->id('device_id');
+            $table->id('id');
             $table->string('name');
             $table->enum('type', ['router', 'switch', 'ED']);
             $table->unsignedBigInteger('router_id')->nullable();
             $table->unsignedBigInteger('switch_id')->nullable();
             $table->unsignedBigInteger('ED_id')->nullable();
+            $table->unsignedBigInteger('device_id')->nullable();
             $table->timestamps();
         });
 
@@ -33,6 +34,10 @@ return new class extends Migration
             $table->foreign('ED_id')
                 ->references('ED_id')
                 ->on('e_d_s')
+                ->onDelete('cascade');
+            $table->foreign('device_id')
+                ->references('device_id')
+                ->on('devices')
                 ->onDelete('cascade');
         });
     }

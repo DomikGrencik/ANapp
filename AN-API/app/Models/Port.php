@@ -14,9 +14,9 @@ class Port extends Model
         'connector',
         'AN',
         'speed',
-        'uplink/downlink',
+        'uplink_downlink',
         'number_of_ports',
-        'id'
+        'device_id'
     ];
     protected $table = 'ports';
     protected $primaryKey = 'port_id';

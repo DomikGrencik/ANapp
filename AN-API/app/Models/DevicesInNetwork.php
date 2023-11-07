@@ -14,10 +14,11 @@ class DevicesInNetwork extends Model
         'type',
         'router_id',
         'switch_id',
-        'ED_id'
+        'ED_id',
+        'device_id'
     ];
     protected $table = 'devices_in_networks';
-    protected $primaryKey = 'device_id';
+    protected $primaryKey = 'id';
 
     public function getCreatedAtAttribute($value)
     {
@@ -31,6 +32,6 @@ class DevicesInNetwork extends Model
 
     public function interface_of_devices()
     {
-        return $this->hasMany(InterfaceOfDevice::class, 'interface_id', 'device_id');
+        return $this->hasMany(InterfaceOfDevice::class, 'interface_id', 'id');
     }
 }

@@ -23,155 +23,51 @@ class InterfaceOfDeviceController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'device_id' => 'required',
+        /* $request->validate([
+            'id' => 'required',
             'type' => 'required',
-            'id' => 'required'
+            'device_id' => 'required'
         ]);
 
-        switch ($request->type) {
-            case 'router':
-                $device = (new RouterController)->show($request->id);
-                $lan = $device->LAN_ports;
-                $wan = $device->WAN_ports;
-                $lan_type = $device->LAN_type;
-                $wan_type = $device->WAN_type;
+        $id = $request->id;
+        $type = $request->type;
+        $device_id = $request->device_id;
 
-                for ($i = 0; $i < $lan; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "{$lan_type}{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => $lan_type,
-                        'interface_id2' => null,
-                        'device_id' => $request->device_id
-                    ]);
-                }
+        $ports = (new PortController)->devicesPorts($device_id);
 
-                for ($i = 0; $i < $wan; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "{$wan_type}{$i}",
-                        'IP_address' => '1',
-                        'category' => 'WAN',
-                        'type' => $wan_type,
-                        'interface_id2' => null,
-                        'device_id' => $request->device_id
-                    ]);
-                }
-
-                break;
-
-            default:
-                # code...
-                break;
-        }
+        foreach ($ports as $key => $value) {
+            for ($i = 0; $i < $value->number_of_ports; $i++) {
+                InterfaceOfDevice::create([
+                    'name' => $value->connector,
+                    'connector' => $value->connector,
+                    'AN' => $value->AN,
+                    'speed' => $value->speed,
+                    'uplink_downlink' => $value->uplink_downlink,
+                    'id' => $id
+                ]);
+            }
+        } */
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function storeInterface(string $device_id, string $type, string $id)
+    public function storeInterface(string $id, string $type, string $device_id)
     {
-        switch ($type) {
-            case 'router':
-                $device = (new RouterController)->show($id);
-                $lan = $device->LAN_ports;
-                $wan = $device->WAN_ports;
-                $lan_type = $device->LAN_type;
-                $wan_type = $device->WAN_type;
+        $ports = (new PortController)->devicesPorts($device_id);
 
-                for ($i = 0; $i < $lan; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "{$lan_type}{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => $lan_type,
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                for ($i = 0; $i < $wan; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "{$wan_type}{$i}",
-                        'IP_address' => '1',
-                        'category' => 'WAN',
-                        'type' => $wan_type,
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                break;
-            case 'switch':
-                $device = (new SwController)->show($id);
-                $DL_ports = $device->DL_ports;
-                $UL_ports = $device->UL_ports;
-                $DL_type = $device->DL_type;
-                $UL_type = $device->UL_type;
-
-                for ($i = 0; $i < $DL_ports; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "{$DL_type}{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => $DL_type,
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                for ($i = 0; $i < $UL_ports; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "{$UL_type}{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => $UL_type,
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                break;
-            case 'ED':
-                $device = (new EDController)->show($id);
-                $FE = $device->FE_ports;
-                $GE = $device->GE_ports;
-                $W = $device->wireless;
-
-                for ($i = 0; $i < $FE; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "FE{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => 'FE',
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                for ($i = 0; $i < $GE; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "GE{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => 'GE',
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                for ($i = 0; $i < $W; $i++) {
-                    InterfaceOfDevice::create([
-                        'name' => "W{$i}",
-                        'IP_address' => '1',
-                        'category' => 'LAN',
-                        'type' => 'wireless',
-                        'interface_id2' => null,
-                        'device_id' => $device_id
-                    ]);
-                }
-                break;
-            default:
-                # code...
-                break;
+        foreach ($ports as $key => $value) {
+            for ($i = 0; $i < $value->number_of_ports; $i++) {
+                InterfaceOfDevice::create([
+                    'name' => $value->connector,
+                    'connector' => $value->connector,
+                    'AN' => $value->AN,
+                    'speed' => $value->speed,
+                    'uplink_downlink' => $value->uplink_downlink,
+                    'id' => $id
+                ]);
+            }
         }
-
-        //return $device;
     }
 
     /**

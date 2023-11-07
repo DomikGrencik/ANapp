@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DevicesInNetworkController;
 use App\Http\Controllers\EDController;
 use App\Http\Controllers\InterfaceOfDeviceController;
+use App\Http\Controllers\PortController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\RouterController;
@@ -31,6 +33,13 @@ Route::controller(SwController::class)->group(function () {
 });
 Route::controller(EDController::class)->group(function () {
     Route::get('e_d_s/{ed}', 'show');
+});
+Route::controller(DeviceController::class)->group(function () {
+    Route::get('devices/{device}', 'show');
+});
+Route::controller(PortController::class)->group(function () {
+    Route::get('ports', 'index');
+    Route::get('ports/devicesPorts/{device}', 'devicesPorts');
 });
 Route::controller(DevicesInNetworkController::class)->group(function () {
     Route::post('devices_in_networks', 'store');

@@ -15,7 +15,7 @@ class Device extends Model
         'type'
     ];
     protected $table = 'devices';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'device_id';
 
     public function getCreatedAtAttribute($value)
     {
@@ -29,11 +29,11 @@ class Device extends Model
 
     public function devices_in_networks()
     {
-        return $this->hasMany(DevicesInNetwork::class, 'device_id', 'id');
+        return $this->hasMany(DevicesInNetwork::class, 'id', 'device_id');
     }
 
     public function ports()
     {
-        return $this->hasMany(Port::class, 'port_id', 'id');
+        return $this->hasMany(Port::class, 'port_id', 'device_id');
     }
 }

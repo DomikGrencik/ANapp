@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('devices', function (Blueprint $table) {
-            $table->id('id');
+            $table->id('device_id');
             $table->string('manufacturer');
             $table->string('model');
-            $table->enum('type', ['R', 'SW', 'ED']);
+            $table->enum('type', ['router', 'switch', 'ED']);
             $table->timestamps();
         });
     }

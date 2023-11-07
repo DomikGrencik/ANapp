@@ -17,39 +17,39 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C931-4P',
-            'type' => 'R'
+            'type' => 'router'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C1131(X)-8PW',
-            'type' => 'R'
+            'type' => 'router'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C8300-1N1S-4T2X',
-            'type' => 'R'
+            'type' => 'router'
         ]);
 
         //---------------------------------SWITCHES
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-24T-4G',
-            'type' => 'SW'
+            'type' => 'switch'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-48T-4G',
-            'type' => 'SW'
+            'type' => 'switch'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-24PXG-4X',
-            'type' => 'SW'
+            'type' => 'switch'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-48PXG-4X',
-            'type' => 'SW'
+            'type' => 'switch'
         ]);
 
         //---------------------------------EndDevices

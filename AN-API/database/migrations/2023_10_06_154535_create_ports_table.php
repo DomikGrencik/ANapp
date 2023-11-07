@@ -17,10 +17,17 @@ return new class extends Migration
             $table->enum('connector', ['RJ45', 'SFP', 'SFP+', 'Wireless']);
             $table->enum('AN', ['LAN', 'WAN', 'LAN/WAN']);
             $table->enum('speed', ['FE', '1GE', '2,5GE', '10GE', 'Wireless']);
-            $table->enum('uplink/downlink', ['UL', 'DL'])->nullable();
+            $table->enum('uplink_downlink', ['UL', 'DL'])->nullable();
             $table->integer('number_of_ports');
-            $table->unsignedBigInteger('id');
+            $table->unsignedBigInteger('device_id');
             $table->timestamps();
+        });
+
+        Schema::table('ports', function (Blueprint $table) {
+            $table->foreign('device_id')
+                ->references('device_id')
+                ->on('devices')
+                ->onDelete('cascade');
         });
     }
 

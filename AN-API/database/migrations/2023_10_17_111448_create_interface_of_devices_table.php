@@ -15,16 +15,18 @@ return new class extends Migration
             $table->id('interface_id');
             $table->string('name');
             $table->string('IP_address')->nullable();
-            $table->enum('category', ['LAN', 'WAN']);
-            $table->enum('type', ['FE', 'GE', 'Optical', 'Wireless']);
+            $table->enum('connector', ['RJ45', 'SFP', 'SFP+', 'Wireless']);
+            $table->enum('AN', ['LAN', 'WAN', 'LAN/WAN']);
+            $table->enum('speed', ['FE', '1GE', '2,5GE', '10GE', 'Wireless']);
+            $table->enum('uplink_downlink', ['UL', 'DL'])->nullable();
             $table->unsignedBigInteger('interface_id2')->nullable();
-            $table->unsignedBigInteger('device_id');
+            $table->unsignedBigInteger('id');
             $table->timestamps();
         });
 
         Schema::table('interface_of_devices', function (Blueprint $table) {
-            $table->foreign('device_id')
-                ->references('device_id')
+            $table->foreign('id')
+                ->references('id')
                 ->on('devices_in_networks')
                 ->onDelete('cascade');
 

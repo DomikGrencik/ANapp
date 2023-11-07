@@ -12,10 +12,12 @@ class InterfaceOfDevice extends Model
     protected $fillable = [
         'name',
         'IP_address',
-        'category',
-        'type',
+        'connector',
+        'AN',
+        'speed',
+        'uplink_downlink',
         'interface_id2',
-        'device_id'
+        'id'
     ];
     protected $table = 'interface_of_devices';
     protected $primaryKey = 'interface_id';
