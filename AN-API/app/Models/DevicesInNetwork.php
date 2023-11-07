@@ -12,9 +12,6 @@ class DevicesInNetwork extends Model
     protected $fillable = [
         'name',
         'type',
-        'router_id',
-        'switch_id',
-        'ED_id',
         'device_id'
     ];
     protected $table = 'devices_in_networks';

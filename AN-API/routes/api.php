@@ -2,13 +2,10 @@
 
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DevicesInNetworkController;
-use App\Http\Controllers\EDController;
 use App\Http\Controllers\InterfaceOfDeviceController;
 use App\Http\Controllers\PortController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\RouterController;
-use App\Http\Controllers\SwController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,15 +22,6 @@ use App\Http\Controllers\SwController;
     return $request->user();
 }); */
 
-Route::controller(RouterController::class)->group(function () {
-    Route::get('routers/{router}', 'show');
-});
-Route::controller(SwController::class)->group(function () {
-    Route::get('sws/{sw}', 'show');
-});
-Route::controller(EDController::class)->group(function () {
-    Route::get('e_d_s/{ed}', 'show');
-});
 Route::controller(DeviceController::class)->group(function () {
     Route::get('devices/{device}', 'show');
 });

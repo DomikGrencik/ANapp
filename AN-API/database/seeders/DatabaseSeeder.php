@@ -12,9 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RouterSeeder::class);
-        $this->call(SwitchSeeder::class);
-        $this->call(EDSeeder::class);
         $this->call(DeviceSeeder::class);
         $this->call(PortSeeder::class);
     }
