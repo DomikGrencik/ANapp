@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id('port_id');
             $table->string('name');
             $table->enum('connector', ['RJ45', 'SFP', 'SFP+', 'Wireless']);
-            $table->enum('AN', ['LAN', 'WAN', 'LAN/WAN']);
+            $table->enum('AN', ['LAN', 'WAN', 'LAN_WAN']);
             $table->enum('speed', ['FE', '1GE', '2,5GE', '10GE', 'Wireless']);
             $table->enum('uplink_downlink', ['UL', 'DL'])->nullable();
             $table->integer('number_of_ports');
+            $table->enum('type', ['router', 'switch', 'ED']);
             $table->unsignedBigInteger('device_id');
             $table->timestamps();
         });

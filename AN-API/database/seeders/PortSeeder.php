@@ -21,6 +21,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1GE',
             'number_of_ports' => 4,
+            'type' => 'router',
             'device_id' => '1',
         ]);
         DB::table('ports')->insert([
@@ -29,6 +30,7 @@ class PortSeeder extends Seeder
             'AN' => 'WAN',
             'speed' => '1GE',
             'number_of_ports' => 2,
+            'type' => 'router',
             'device_id' => '1',
         ]);
 
@@ -39,6 +41,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1GE',
             'number_of_ports' => 8,
+            'type' => 'router',
             'device_id' => '2',
         ]);
         DB::table('ports')->insert([
@@ -47,6 +50,7 @@ class PortSeeder extends Seeder
             'AN' => 'WAN',
             'speed' => '1GE',
             'number_of_ports' => 2,
+            'type' => 'router',
             'device_id' => '2',
         ]);
 
@@ -54,17 +58,19 @@ class PortSeeder extends Seeder
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
-            'AN' => 'LAN/WAN',
+            'AN' => 'LAN_WAN',
             'speed' => '1GE',
             'number_of_ports' => 4,
+            'type' => 'router',
             'device_id' => '3',
         ]);
         DB::table('ports')->insert([
             'name' => 'SFP+',
             'connector' => 'SFP+',
-            'AN' => 'LAN/WAN',
+            'AN' => 'LAN_WAN',
             'speed' => '10GE',
             'number_of_ports' => 2,
+            'type' => 'router',
             'device_id' => '3',
         ]);
 
@@ -77,6 +83,7 @@ class PortSeeder extends Seeder
             'speed' => '1GE',
             'uplink_downlink' => 'UL',
             'number_of_ports' => 4,
+            'type' => 'switch',
             'device_id' => '4',
         ]);
         DB::table('ports')->insert([
@@ -86,6 +93,7 @@ class PortSeeder extends Seeder
             'speed' => '1GE',
             'uplink_downlink' => 'DL',
             'number_of_ports' => 24,
+            'type' => 'switch',
             'device_id' => '4',
         ]);
 
@@ -97,6 +105,7 @@ class PortSeeder extends Seeder
             'speed' => '1GE',
             'uplink_downlink' => 'UL',
             'number_of_ports' => 4,
+            'type' => 'switch',
             'device_id' => '5',
         ]);
         DB::table('ports')->insert([
@@ -106,6 +115,7 @@ class PortSeeder extends Seeder
             'speed' => '1GE',
             'uplink_downlink' => 'DL',
             'number_of_ports' => 48,
+            'type' => 'switch',
             'device_id' => '5',
         ]);
 
@@ -117,6 +127,7 @@ class PortSeeder extends Seeder
             'speed' => '10GE',
             'uplink_downlink' => 'UL',
             'number_of_ports' => 4,
+            'type' => 'switch',
             'device_id' => '6',
         ]);
         DB::table('ports')->insert([
@@ -126,6 +137,7 @@ class PortSeeder extends Seeder
             'speed' => '10GE',
             'uplink_downlink' => 'DL',
             'number_of_ports' => 8,
+            'type' => 'switch',
             'device_id' => '6',
         ]);
         DB::table('ports')->insert([
@@ -135,6 +147,7 @@ class PortSeeder extends Seeder
             'speed' => '1GE',
             'uplink_downlink' => 'DL',
             'number_of_ports' => 16,
+            'type' => 'switch',
             'device_id' => '6',
         ]);
 
@@ -146,6 +159,7 @@ class PortSeeder extends Seeder
             'speed' => '10GE',
             'uplink_downlink' => 'UL',
             'number_of_ports' => 4,
+            'type' => 'switch',
             'device_id' => '7',
         ]);
         DB::table('ports')->insert([
@@ -155,6 +169,7 @@ class PortSeeder extends Seeder
             'speed' => '10GE',
             'uplink_downlink' => 'DL',
             'number_of_ports' => 8,
+            'type' => 'switch',
             'device_id' => '7',
         ]);
         DB::table('ports')->insert([
@@ -164,6 +179,7 @@ class PortSeeder extends Seeder
             'speed' => '1GE',
             'uplink_downlink' => 'DL',
             'number_of_ports' => 40,
+            'type' => 'switch',
             'device_id' => '7',
         ]);
 
@@ -175,6 +191,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1GE',
             'number_of_ports' => 1,
+            'type' => 'ED',
             'device_id' => '8',
         ]);
 
@@ -185,6 +202,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1GE',
             'number_of_ports' => 1,
+            'type' => 'ED',
             'device_id' => '9',
         ]);
         DB::table('ports')->insert([
@@ -193,6 +211,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => 'Wireless',
             'number_of_ports' => 1,
+            'type' => 'ED',
             'device_id' => '9',
         ]);
     }

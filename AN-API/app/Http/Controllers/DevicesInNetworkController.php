@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Device;
 use App\Models\DevicesInNetwork;
+use App\Models\Port;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DevicesInNetworkController extends Controller
 {
@@ -24,16 +27,20 @@ class DevicesInNetworkController extends Controller
             'users' => 'required',
             'vlans' => 'required',
             'IPaddr' => 'required',
+            'userConnection' => 'required',
         ]);
 
-        $users = $request->users;
+        $users = $request->users; //20, 40, 60, ...
         $vlans = $request->vlans;
         $IPaddr = $request->IPaddr;
+        $userConnection = $request->userConnection; //FE, 1GE, 10GE
 
 
         $name = 'R3';
         $type = 'router';
         $device_id = '1';
+
+        //$this->chooseDevice($type, $users, $vlans, $userConnection);
 
         $this->storeDevice($name, $type, $device_id);
 
@@ -41,7 +48,6 @@ class DevicesInNetworkController extends Controller
 
         (new InterfaceOfDeviceController)->storeInterface($id, $type, $device_id);
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -54,6 +60,69 @@ class DevicesInNetworkController extends Controller
             'device_id' => $device_id
         ]);
     }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function chooseDevice(Request $request)
+    {
+        $request->validate([
+            'users' => 'required',
+            'vlans' => 'required',
+            'type' => 'required',
+            'userConnection' => 'required',
+        ]);
+
+        $users = $request->users; //20, 40, 60, ...
+        $vlans = $request->vlans;
+        $type = $request->type;
+        $userConnection = $request->userConnection; //FE, 1GE, 10GE
+
+        switch ($type) {
+            case 'router':
+                $ports = Port::all()->where('type', $type)->where('AN', '!=', 'WAN');
+                return $ports;
+                break;
+
+            case 'switch':
+                # code...
+                break;
+
+            case 'ED':
+                # code...
+                break;
+
+            default:
+                # code...
+                break;
+        }
+    }
+    /**
+     * Store a newly created resource in storage.
+     */
+    /* public function chooseDevice(string $type, string $users, string $vlans, string $userConnection)
+    {
+        switch ($type) {
+            case 'router':
+                //echo Port::all()->where('type', $type)->where('AN', 'LAN')->where('AN', 'LAN_WAN');
+                $ports = DB::table('ports')->where('AN', 'LAN')->orWhere('AN', 'LAN_WAN');
+
+                break;
+
+            case 'switch':
+                # code...
+                break;
+
+            case 'ED':
+                # code...
+                break;
+
+            default:
+                # code...
+                break;
+        }
+    } */
 
     /**
      * Display the specified resource.

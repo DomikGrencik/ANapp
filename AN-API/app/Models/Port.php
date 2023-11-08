@@ -16,6 +16,7 @@ class Port extends Model
         'speed',
         'uplink_downlink',
         'number_of_ports',
+        'type',
         'device_id'
     ];
     protected $table = 'ports';
