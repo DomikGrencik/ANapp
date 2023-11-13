@@ -87,24 +87,17 @@ class DevicesInNetworkController extends Controller
         $devices = array();
 
         $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection);
-        $router_id = null;
 
-        foreach ($router as $key => $value) {
-            $router_id = $value->device_id;
-        }
-
-        $router = $router->where('device_id', $router_id);
-        return $router;
-
-        foreach ($router as $key => $value) {
-            $router_id = $value->device_id;
-        }
+        $router_id = $router->last()->device_id;
 
         array_push($devices, $router_id);
 
-        $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection);
+        $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
-        return $switch;
+        $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray());
+
+
+        return $switchDL;
 
 
 
