@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('IP_address')->nullable();
             $table->enum('connector', ['RJ45', 'SFP', 'SFP+', 'Wireless']);
             $table->enum('AN', ['LAN', 'WAN', 'LAN/WAN']);
-            $table->enum('speed', ['FE', '1GE', '2,5GE', '10GE', 'Wireless']);
+            $table->enum('speed', ['100', '1000', '2500', '10000', 'Wireless']);
             $table->enum('uplink_downlink', ['UL', 'DL'])->nullable();
             $table->unsignedBigInteger('interface_id2')->nullable();
             $table->unsignedBigInteger('id');

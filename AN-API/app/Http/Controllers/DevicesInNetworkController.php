@@ -77,16 +77,46 @@ class DevicesInNetworkController extends Controller
         $users = $request->users; //20, 40, 60, ...
         $vlans = $request->vlans;
         $type = $request->type;
-        $userConnection = $request->userConnection; //FE, 1GE, 10GE
+        $userConnection = $request->userConnection; //100, 1000, 10000
+        //pre router potrebujem dalsi parameter throughput
 
-        switch ($type) {
+        $ports = Port::all();
+        $routerPorts = $ports->where('type', 'router');
+        $switchPorts = $ports->where('type', 'switch');
+        $EDPorts = $ports->where('type', 'ED');
+        $devices = array();
+
+        $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection);
+        $router_id = null;
+
+        foreach ($router as $key => $value) {
+            $router_id = $value->device_id;
+        }
+
+        $router = $router->where('device_id', $router_id);
+        return $router;
+
+        foreach ($router as $key => $value) {
+            $router_id = $value->device_id;
+        }
+
+        array_push($devices, $router_id);
+
+        $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection);
+
+        return $switch;
+
+
+
+        /* switch ($type) {
             case 'router':
-                $ports = Port::all()->where('type', $type)->where('AN', '!=', 'WAN');
+                $ports = Port::all()->where('type', $type)->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection);
                 return $ports;
                 break;
 
             case 'switch':
-                # code...
+                $ports = Port::all()->where('type', $type);
+                return $ports;
                 break;
 
             case 'ED':
@@ -96,7 +126,7 @@ class DevicesInNetworkController extends Controller
             default:
                 # code...
                 break;
-        }
+        } */
     }
     /**
      * Store a newly created resource in storage.
