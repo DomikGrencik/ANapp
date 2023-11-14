@@ -70,7 +70,6 @@ class DevicesInNetworkController extends Controller
         $request->validate([
             'users' => 'required',
             'vlans' => 'required',
-            'type' => 'required',
             'userConnection' => 'required',
         ]);
 
@@ -113,22 +112,19 @@ class DevicesInNetworkController extends Controller
             }
         }
 
-        $selectedCombination = [];
 
         if ($users <= min($portCounts)) {
             asort($portCounts);
-            array_push($selectedCombination, array_search(min($portCounts), $portCounts));
+            array_push($devices, array_search(min($portCounts), $portCounts));
         } else {
 
-            // Sort the array in descending order based on values
             arsort($portCounts);
 
-            // Iterate through the array and select values until the sum is greater than or equal to $users
             $sum = 0;
             foreach ($portCounts as $key => $value) {
                 do {
                     $sum += $value;
-                    array_push($selectedCombination, $key);
+                    array_push($devices, $key);
                 } while (($sum + $value) <= $users);
 
                 if ($sum >= $users) {
@@ -136,8 +132,13 @@ class DevicesInNetworkController extends Controller
                 }
             }
         }
-        return $selectedCombination;
 
+        $ED = $EDPorts->where('speed', '>=' ,$userConnection)->first()->device_id;
+
+        for ($i=0; $i < $users; $i++) {
+            array_push($devices, $ED);
+        }
+        return $devices;
     }
     /**
      * Store a newly created resource in storage.
