@@ -94,32 +94,50 @@ class DevicesInNetworkController extends Controller
 
         $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
-        $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray());
+        $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray())->where('speed', '>=', $userConnection);
 
+        // Initialize an empty array to store the counts for each device_id
+        $portCounts = [];
 
-        return $switchDL;
+        // Iterate through the array and calculate the counts
+        foreach ($switchDL as $item) {
+            $deviceId = $item['device_id'];
 
+            // Check if the device_id is already in the portCounts array
+            if (isset($portCounts[$deviceId])) {
+                // If it exists, increment the count
+                $portCounts[$deviceId] += $item['number_of_ports'];
+            } else {
+                // If it doesn't exist, initialize the count
+                $portCounts[$deviceId] = $item['number_of_ports'];
+            }
+        }
 
+        $selectedCombination = [];
 
-        /* switch ($type) {
-            case 'router':
-                $ports = Port::all()->where('type', $type)->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection);
-                return $ports;
-                break;
+        if ($users <= min($portCounts)) {
+            asort($portCounts);
+            array_push($selectedCombination, array_search(min($portCounts), $portCounts));
+        } else {
 
-            case 'switch':
-                $ports = Port::all()->where('type', $type);
-                return $ports;
-                break;
+            // Sort the array in descending order based on values
+            arsort($portCounts);
 
-            case 'ED':
-                # code...
-                break;
+            // Iterate through the array and select values until the sum is greater than or equal to $users
+            $sum = 0;
+            foreach ($portCounts as $key => $value) {
+                do {
+                    $sum += $value;
+                    array_push($selectedCombination, $key);
+                } while (($sum + $value) <= $users);
 
-            default:
-                # code...
-                break;
-        } */
+                if ($sum >= $users) {
+                    break;
+                }
+            }
+        }
+        return $selectedCombination;
+
     }
     /**
      * Store a newly created resource in storage.
