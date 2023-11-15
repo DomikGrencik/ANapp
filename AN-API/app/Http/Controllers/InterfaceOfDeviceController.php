@@ -52,7 +52,7 @@ class InterfaceOfDeviceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function storeInterface(string $id, string $type, string $device_id)
+    public function storeInterface(string $id, string $device_id)
     {
         $ports = (new PortController)->devicesPorts($device_id);
 
@@ -64,7 +64,8 @@ class InterfaceOfDeviceController extends Controller
                     'AN' => $value->AN,
                     'speed' => $value->speed,
                     'uplink_downlink' => $value->uplink_downlink,
-                    'id' => $id
+                    'id' => $id,
+                    'type' => $value->type
                 ]);
             }
         }

@@ -17,7 +17,8 @@ class InterfaceOfDevice extends Model
         'speed',
         'uplink_downlink',
         'interface_id2',
-        'id'
+        'id',
+        'type'
     ];
     protected $table = 'interface_of_devices';
     protected $primaryKey = 'interface_id';

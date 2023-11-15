@@ -34,19 +34,48 @@ class DevicesInNetworkController extends Controller
         $vlans = $request->vlans;
         $IPaddr = $request->IPaddr;
         $userConnection = $request->userConnection; //FE, 1GE, 10GE
+        //pre router potrebujem dalsi parameter throughput
 
 
         $name = 'R3';
         $type = 'router';
         $device_id = '1';
 
-        //$this->chooseDevice($type, $users, $vlans, $userConnection);
+        $r = 1;
+        $s = 1;
+        $e = 1;
 
-        $this->storeDevice($name, $type, $device_id);
+        $device = $this->chooseDevice($users, $vlans, $userConnection);
 
-        $id = DevicesInNetwork::all()->max('id');
+        for ($i = 0; $i < count($device); $i += 2) {
+            $device_id = $device[$i];
+            $type = $device[$i + 1];
 
-        (new InterfaceOfDeviceController)->storeInterface($id, $type, $device_id);
+            switch ($type) {
+                case 'router':
+                    $name = "R{$r}";
+                    $r++;
+                    break;
+                case 'switch':
+                    $name = "S{$s}";
+                    $s++;
+                    break;
+                case 'ED':
+                    $name = "ED{$e}";
+                    $e++;
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+
+            $this->storeDevice($name, $type, $device_id);
+
+            $id = DevicesInNetwork::all()->max('id');
+
+            (new InterfaceOfDeviceController)->storeInterface($id, $device_id);
+        }
     }
 
     /**
@@ -65,9 +94,9 @@ class DevicesInNetworkController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function chooseDevice(Request $request)
+    public function chooseDevice(int $users, int $vlans, int $userConnection)
     {
-        $request->validate([
+        /* $request->validate([
             'users' => 'required',
             'vlans' => 'required',
             'userConnection' => 'required',
@@ -75,8 +104,7 @@ class DevicesInNetworkController extends Controller
 
         $users = $request->users; //20, 40, 60, ...
         $vlans = $request->vlans;
-        $type = $request->type;
-        $userConnection = $request->userConnection; //100, 1000, 10000
+        $userConnection = $request->userConnection; //100, 1000, 10000 */
         //pre router potrebujem dalsi parameter throughput
 
         $ports = Port::all();
@@ -89,7 +117,7 @@ class DevicesInNetworkController extends Controller
 
         $router_id = $router->last()->device_id;
 
-        array_push($devices, $router_id);
+        array_push($devices, $router_id, 'router');
 
         $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
@@ -115,7 +143,7 @@ class DevicesInNetworkController extends Controller
 
         if ($users <= min($portCounts)) {
             asort($portCounts);
-            array_push($devices, array_search(min($portCounts), $portCounts));
+            array_push($devices, array_search(min($portCounts), $portCounts), 'switch');
         } else {
 
             arsort($portCounts);
@@ -124,7 +152,7 @@ class DevicesInNetworkController extends Controller
             foreach ($portCounts as $key => $value) {
                 do {
                     $sum += $value;
-                    array_push($devices, $key);
+                    array_push($devices, $key, 'switch');
                 } while (($sum + $value) <= $users);
 
                 if ($sum >= $users) {
@@ -133,10 +161,10 @@ class DevicesInNetworkController extends Controller
             }
         }
 
-        $ED = $EDPorts->where('speed', '>=' ,$userConnection)->first()->device_id;
+        $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
 
-        for ($i=0; $i < $users; $i++) {
-            array_push($devices, $ED);
+        for ($i = 0; $i < $users; $i++) {
+            array_push($devices, $ED, 'ED');
         }
         return $devices;
     }
