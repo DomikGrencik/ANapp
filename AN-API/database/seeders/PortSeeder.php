@@ -77,21 +77,10 @@ class PortSeeder extends Seeder
         //---------------------------------SWITCHES
         //Cisco C9200L-24T-4G
         DB::table('ports')->insert([
-            'name' => 'SFP',
-            'connector' => 'SFP',
-            'AN' => 'LAN',
-            'speed' => '1000',
-            'uplink_downlink' => 'UL',
-            'number_of_ports' => 4,
-            'type' => 'switch',
-            'device_id' => '4',
-        ]);
-        DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '1000',
-            'uplink_downlink' => 'DL',
             'number_of_ports' => 24,
             'type' => 'switch',
             'device_id' => '4',
@@ -99,21 +88,10 @@ class PortSeeder extends Seeder
 
         //Cisco C9200L-48T-4G
         DB::table('ports')->insert([
-            'name' => 'SFP',
-            'connector' => 'SFP',
-            'AN' => 'LAN',
-            'speed' => '1000',
-            'uplink_downlink' => 'UL',
-            'number_of_ports' => 4,
-            'type' => 'switch',
-            'device_id' => '5',
-        ]);
-        DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '1000',
-            'uplink_downlink' => 'DL',
             'number_of_ports' => 48,
             'type' => 'switch',
             'device_id' => '5',
@@ -121,21 +99,10 @@ class PortSeeder extends Seeder
 
         //Cisco C9200L-24PXG-4X
         DB::table('ports')->insert([
-            'name' => 'SFP+',
-            'connector' => 'SFP+',
-            'AN' => 'LAN',
-            'speed' => '10000',
-            'uplink_downlink' => 'UL',
-            'number_of_ports' => 4,
-            'type' => 'switch',
-            'device_id' => '6',
-        ]);
-        DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '10000',
-            'uplink_downlink' => 'DL',
             'number_of_ports' => 8,
             'type' => 'switch',
             'device_id' => '6',
@@ -145,7 +112,6 @@ class PortSeeder extends Seeder
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '1000',
-            'uplink_downlink' => 'DL',
             'number_of_ports' => 16,
             'type' => 'switch',
             'device_id' => '6',
@@ -153,21 +119,10 @@ class PortSeeder extends Seeder
 
         //Cisco C9200L-48PXG-4X
         DB::table('ports')->insert([
-            'name' => 'SFP+',
-            'connector' => 'SFP+',
-            'AN' => 'LAN',
-            'speed' => '10000',
-            'uplink_downlink' => 'UL',
-            'number_of_ports' => 4,
-            'type' => 'switch',
-            'device_id' => '7',
-        ]);
-        DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '10000',
-            'uplink_downlink' => 'DL',
             'number_of_ports' => 8,
             'type' => 'switch',
             'device_id' => '7',
@@ -177,7 +132,6 @@ class PortSeeder extends Seeder
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '1000',
-            'uplink_downlink' => 'DL',
             'number_of_ports' => 40,
             'type' => 'switch',
             'device_id' => '7',

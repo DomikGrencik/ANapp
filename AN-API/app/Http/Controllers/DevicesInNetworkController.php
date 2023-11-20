@@ -119,15 +119,15 @@ class DevicesInNetworkController extends Controller
 
         array_push($devices, $router_id, 'router');
 
-        $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
+        $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
-        $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray())->where('speed', '>=', $userConnection);
+        /* $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray())->where('speed', '>=', $userConnection); */
 
         // Initialize an empty array to store the counts for each device_id
         $portCounts = [];
 
         // Iterate through the array and calculate the counts
-        foreach ($switchDL as $item) {
+        foreach ($switch as $item) {
             $deviceId = $item['device_id'];
 
             // Check if the device_id is already in the portCounts array
@@ -139,6 +139,8 @@ class DevicesInNetworkController extends Controller
                 $portCounts[$deviceId] = $item['number_of_ports'];
             }
         }
+
+        $users = $users + 1;
 
 
         if ($users <= min($portCounts)) {
@@ -161,10 +163,15 @@ class DevicesInNetworkController extends Controller
             }
         }
 
+        $users = $users - 1;
+
         $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
 
         for ($i = 0; $i < $users; $i++) {
             array_push($devices, $ED, 'ED');
+        }
+        foreach ($devices as $key => $value) {
+            echo $devices[$key];
         }
         return $devices;
     }

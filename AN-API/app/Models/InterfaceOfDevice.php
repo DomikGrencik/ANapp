@@ -15,7 +15,6 @@ class InterfaceOfDevice extends Model
         'connector',
         'AN',
         'speed',
-        'uplink_downlink',
         'interface_id2',
         'id',
         'type'

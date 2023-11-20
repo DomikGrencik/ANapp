@@ -63,7 +63,6 @@ class InterfaceOfDeviceController extends Controller
                     'connector' => $value->connector,
                     'AN' => $value->AN,
                     'speed' => $value->speed,
-                    'uplink_downlink' => $value->uplink_downlink,
                     'id' => $id,
                     'type' => $value->type
                 ]);
