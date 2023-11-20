@@ -83,7 +83,6 @@ class DevicesInNetworkController extends Controller
         $r = $r - 1;
         $s = $s - 1;
         $e = $e - 1;
-        echo $s;
 
         (new InterfaceOfDeviceController)->connection($s);
     }
