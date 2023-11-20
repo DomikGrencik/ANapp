@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Device;
 use App\Models\DevicesInNetwork;
+use App\Models\InterfaceOfDevice;
 use App\Models\Port;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\NodeVisitor\FirstFindingVisitor;
 
 class DevicesInNetworkController extends Controller
 {
@@ -76,6 +78,14 @@ class DevicesInNetworkController extends Controller
 
             (new InterfaceOfDeviceController)->storeInterface($id, $device_id);
         }
+
+        //echo $r, $s, $e;
+        $r = $r - 1;
+        $s = $s - 1;
+        $e = $e - 1;
+        echo $s;
+
+        (new InterfaceOfDeviceController)->connection($s);
     }
 
     /**
@@ -123,6 +133,7 @@ class DevicesInNetworkController extends Controller
 
         /* $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray())->where('speed', '>=', $userConnection); */
 
+
         // Initialize an empty array to store the counts for each device_id
         $portCounts = [];
 
@@ -151,11 +162,16 @@ class DevicesInNetworkController extends Controller
             arsort($portCounts);
 
             $sum = 0;
+            $prev = 100;
             foreach ($portCounts as $key => $value) {
-                do {
-                    $sum += $value;
-                    array_push($devices, $key, 'switch');
-                } while (($sum + $value) <= $users);
+                if ($value < $prev) {
+                    do {
+                        $sum += $value;
+                        array_push($devices, $key, 'switch');
+                    } while (($sum + $value) <= $users);
+                }
+
+                $prev = $value;
 
                 if ($sum >= $users) {
                     break;
@@ -170,11 +186,10 @@ class DevicesInNetworkController extends Controller
         for ($i = 0; $i < $users; $i++) {
             array_push($devices, $ED, 'ED');
         }
-        foreach ($devices as $key => $value) {
-            echo $devices[$key];
-        }
+
         return $devices;
     }
+
     /**
      * Store a newly created resource in storage.
      */
