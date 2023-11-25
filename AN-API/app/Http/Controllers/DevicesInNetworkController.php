@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Device;
 use App\Models\DevicesInNetwork;
-use App\Models\InterfaceOfDevice;
 use App\Models\Port;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use PhpParser\NodeVisitor\FirstFindingVisitor;
 
 class DevicesInNetworkController extends Controller
 {
@@ -17,7 +13,7 @@ class DevicesInNetworkController extends Controller
      */
     public function index()
     {
-        //
+        return DevicesInNetwork::all();
     }
 
     /**
@@ -130,9 +126,6 @@ class DevicesInNetworkController extends Controller
 
         $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
-        /* $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray())->where('speed', '>=', $userConnection); */
-
-
         // Initialize an empty array to store the counts for each device_id
         $portCounts = [];
 
@@ -189,31 +182,6 @@ class DevicesInNetworkController extends Controller
         return $devices;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    /* public function chooseDevice(string $type, string $users, string $vlans, string $userConnection)
-    {
-        switch ($type) {
-            case 'router':
-                //echo Port::all()->where('type', $type)->where('AN', 'LAN')->where('AN', 'LAN_WAN');
-                $ports = DB::table('ports')->where('AN', 'LAN')->orWhere('AN', 'LAN_WAN');
-
-                break;
-
-            case 'switch':
-                # code...
-                break;
-
-            case 'ED':
-                # code...
-                break;
-
-            default:
-                # code...
-                break;
-        }
-    } */
 
     /**
      * Display the specified resource.
