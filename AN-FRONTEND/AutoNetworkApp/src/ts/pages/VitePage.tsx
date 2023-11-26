@@ -8,7 +8,6 @@ import viteLogo from '/vite.svg';
 
 const VitePage = () => {
   const [count, setCount] = useState(0);
-  console.log('askjdfhkjashd');
   return (
     <>
       <div>

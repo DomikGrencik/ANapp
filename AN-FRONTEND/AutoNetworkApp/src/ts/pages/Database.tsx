@@ -1,4 +1,5 @@
 const Database = () => {
+  console.log('database');
   return (
     <div>
       <h1>Data</h1>

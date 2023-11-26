@@ -1,16 +1,14 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import VitePage from './ts/pages/VitePage';
+import Database from './ts/pages/Database';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <VitePage />
-      {/* <Database /> */}
-      <ReactQueryDevtools />
+      {/* <VitePage /> */}
+      <Database />
     </QueryClientProvider>
   );
 };
