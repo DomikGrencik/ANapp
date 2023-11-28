@@ -6,6 +6,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 const Database = () => {
   //console.log('database');
+
+  interface YourFormData {
+    users: string;
+    vlans: string;
+    IPaddr: string;
+    userConnection: string;
+  }
+
   const [networkData, setNetworkData] = useState({
     users: '',
     vlans: '',
@@ -13,15 +21,48 @@ const Database = () => {
     userConnection: '',
   });
 
-  //console.log(JSON.stringify(networkData));
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    console.log('submit');
+    event.preventDefault();
+    await mutate(networkData);
+  };
 
-  const { mutateAsync } = useMutation({
+
+  const submitForm = async (networkData: YourFormData) => {
+    const response = await fetch(
+      'http://127.0.0.1:80/api/devices_in_networks',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(networkData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to submit form');
+    }
+
+    return response.json();
+  };
+
+  const { mutate } = useMutation(submitForm, {
+    onSuccess: () => {
+      console.log('Form submitted successfully!');
+    },
+    onError: (error: Error) => {
+      console.error('Form submission error:', error.message);
+    },
+  });
+
+  /* const { mutateAsync } = useMutation({
     mutationFn: () =>
       fetch('http://127.0.0.1:80/api/devices_in_networks', {
         method: 'POST',
         body: JSON.stringify(networkData),
       }),
-  });
+  }); */
 
   const { isPending, error, data } = useQuery({
     queryKey: ['devices'],
@@ -41,14 +82,7 @@ const Database = () => {
     <main className="page flex--grow container--default flex">
       <form
         className="page__form flex--grow flex--column flex"
-        onSubmit={async () => {
-          try {
-            console.log(JSON.stringify(networkData));
-            await mutateAsync();
-          } catch (error) {
-            console.error(error);
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         <h1>Form</h1>
         <div>
