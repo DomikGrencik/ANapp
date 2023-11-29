@@ -1,18 +1,24 @@
-//import { useQuery } from '@tanstack/react-query';
-
-import { useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 
-const Database = () => {
+type YourFormData = {
+  users: string;
+  vlans: string;
+  IPaddr: string;
+  userConnection: string;
+};
+
+const dataSchema = z.array(
+  z.object({
+    id: z.number().int(),
+    name: z.string(),
+  })
+);
+
+const Database: FC = () => {
   //console.log('database');
-
-  interface YourFormData {
-    users: string;
-    vlans: string;
-    IPaddr: string;
-    userConnection: string;
-  }
 
   const [networkData, setNetworkData] = useState({
     users: '',
@@ -20,13 +26,6 @@ const Database = () => {
     IPaddr: '',
     userConnection: '',
   });
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    console.log('submit');
-    event.preventDefault();
-    await mutate(networkData);
-  };
-
 
   const submitForm = async (networkData: YourFormData) => {
     const response = await fetch(
@@ -47,14 +46,21 @@ const Database = () => {
     return response.json();
   };
 
-  const { mutate } = useMutation(submitForm, {
+  const { mutateAsync } = useMutation({
+    mutationFn: submitForm,
     onSuccess: () => {
       console.log('Form submitted successfully!');
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       console.error('Form submission error:', error.message);
     },
   });
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    console.log('submit');
+    event.preventDefault();
+    return mutateAsync(networkData);
+  };
 
   /* const { mutateAsync } = useMutation({
     mutationFn: () =>
@@ -64,17 +70,27 @@ const Database = () => {
       }),
   }); */
 
-  const { isPending, error, data } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: ['devices'],
-    queryFn: () =>
-      fetch('http://127.0.0.1:80/api/devices_in_networks', {
+    queryFn: async () => {
+      const res = await fetch('http://127.0.0.1:80/api/devices_in_networks', {
         method: 'GET',
-      }).then((res) => res.json()),
+      });
+
+      const json = res.json();
+
+      return dataSchema.parse(json);
+    },
   });
 
-  if (isPending) console.log('loading');
+  if (isLoading) {
+    console.log('loading');
+  }
 
-  if (error) console.error(error.message);
+  if (error) {
+    console.error(error.message);
+    return null;
+  }
 
   //console.log(data);
 
@@ -143,7 +159,7 @@ const Database = () => {
         <h1>Data</h1>
         <div>
           <h2>Devices in network</h2>
-          {isPending ? (
+          {isLoading ? (
             <div>loading</div>
           ) : (
             <div>

@@ -20,7 +20,8 @@
     "@tanstack/react-query-devtools": "^5.8.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^6.1.1"
+    "styled-components": "^6.1.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@radoslav-grencik/eslint-config": "^1.0.4",
