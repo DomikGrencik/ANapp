@@ -1,0 +1,20 @@
+* {
+  font-family: $font-family, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  @include scrollbar;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  //overflow: hidden;
+  font-size: $font-size-default;
+  font-weight: $font-weight-default;
+  color: $c-font;
+  background-color: $c-background;
+}

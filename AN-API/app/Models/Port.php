@@ -14,7 +14,6 @@ class Port extends Model
         'connector',
         'AN',
         'speed',
-        'uplink_downlink',
         'number_of_ports',
         'type',
         'device_id'

@@ -1,0 +1,245 @@
+@use "sass:math";
+
+@mixin focus-ring($color: $c-main) {
+  box-shadow: 0 0 0 $outline-width $color;
+}
+
+@mixin a-unstyled(
+  $color: false,
+  $hover-color: $color,
+  $underline: false,
+  $hover-underline: false,
+  $display: false
+) {
+  @include transition;
+  cursor: pointer;
+
+  @if $display {
+    display: $display;
+  }
+
+  @if $underline {
+    text-decoration: underline;
+  } @else {
+    text-decoration: none;
+  }
+
+  @if $color {
+    color: $color;
+  } @else {
+    color: inherit;
+  }
+
+  &:hover {
+    @if $hover-underline {
+      text-decoration: underline;
+    } @else {
+      text-decoration: none;
+    }
+
+    @if $hover-color {
+      color: $hover-color;
+    } @else {
+      color: inherit;
+    }
+  }
+}
+
+@mixin ul-unstyled() {
+  margin: unset;
+  padding: unset;
+  list-style-type: none;
+}
+
+@mixin button-unstyled(
+  $color: false,
+  $hover-color: $color,
+  $background: false,
+  $border: false,
+  $display: false
+) {
+  @include transition;
+  cursor: pointer;
+  outline: none;
+
+  @if not $background {
+    background: none;
+  }
+
+  @if not $border {
+    border: none;
+  }
+
+  @if $display {
+    display: $display;
+  }
+
+  @if $color {
+    color: $color;
+  }
+
+  &:hover {
+    @if $hover-color {
+      color: $hover-color;
+    }
+  }
+}
+
+@mixin media($type, $bp, $bp-additional: false) {
+  @if $type == "smaller" {
+    @media (max-width: ($bp + pxToRem(0.98))) {
+      @content;
+    }
+  } @else if $type == "larger" {
+    @media (min-width: ($bp + pxToRem(1))) {
+      @content;
+    }
+  } @else if $type == "between" {
+    @media (max-width: ($bp + pxToRem(0.98))) and (min-width: ($bp-additional + pxToRem(1))) {
+      @content;
+    }
+  }
+}
+
+@mixin responsive-param($param, $max, $min: $max, $important: false) {
+  $reducer: false;
+  $count: length($responsive-breakpoints);
+
+  @if $max != $min {
+    $reducer: math.div(($max - $min), $count);
+  }
+
+  @if $important {
+    #{$param}: $max !important;
+  } @else {
+    #{$param}: $max;
+  }
+
+  @if $reducer {
+    @for $i from 1 to $count + 1 {
+      $responsive-breakpoint: nth($responsive-breakpoints, $i);
+
+      @include media("smaller", $responsive-breakpoint) {
+        @if $important {
+          #{$param}: $max - $reducer * $i !important;
+        } @else {
+          #{$param}: $max - $reducer * $i;
+        }
+      }
+    }
+  }
+}
+
+@mixin force-height($max, $min: $max) {
+  height: 100%;
+
+  @if $max == $min {
+    max-height: $max;
+    min-height: $max;
+  } @else {
+    @include responsive-param("max-height", $max, $min);
+    @include responsive-param("min-height", $max, $min);
+  }
+}
+
+@mixin force-width($max, $min: $max) {
+  width: 100%;
+
+  @if $max == $min {
+    max-width: $max;
+    min-width: $max;
+  } @else {
+    @include responsive-param("max-width", $max, $min);
+    @include responsive-param("min-width", $max, $min);
+  }
+}
+
+@mixin container(
+  $top-max: 0,
+  $bottom-max: 0,
+  $top-min: $top-max,
+  $bottom-min: $bottom-max,
+  $side-max: $max-side-margin,
+  $side-min: $min-side-margin
+) {
+  @if stripUnit($top-max) > 0 {
+    @include responsive-param("margin-top", $top-max, $top-min);
+  }
+  @if stripUnit($bottom-max) > 0 {
+    @include responsive-param("margin-bottom", $bottom-max, $bottom-min);
+  }
+
+  width: 100%;
+  max-width: calc(
+    #{$container-breakpoint} - #{$scrollbar-width} - 2 * #{$side-max}
+  );
+  margin-left: auto;
+  margin-right: auto;
+
+  @include media("smaller", $container-breakpoint) {
+    max-width: calc(100vw - #{$scrollbar-width} - 2 * #{$side-max});
+  }
+
+  $reducer: false;
+  $count: length($responsive-breakpoints);
+
+  @if $side-max != $side-min {
+    $reducer: math.div(($side-max - $side-min), $count);
+  }
+
+  @if $reducer {
+    @for $i from 1 to $count + 1 {
+      $responsive-breakpoint: nth($responsive-breakpoints, $i);
+
+      @include media("smaller", $responsive-breakpoint) {
+        max-width: calc(
+          100vw - #{$scrollbar-width} - 2 * #{$side-max - $reducer * $i}
+        );
+      }
+    }
+  }
+}
+
+@mixin transition($target: all, $dur: 150ms, $easing: ease-in-out) {
+  @if (type-of($target) == string) {
+    $target: unquote($target);
+  }
+
+  $transition: ();
+  $will-change: ();
+  @each $prop in $target {
+    $transition: append($transition, ($prop $dur $easing), $separator: comma);
+    $will-change: append($will-change, ($prop), $separator: comma);
+  }
+  transition: $transition;
+  @if $target == all {
+    will-change: auto;
+  } @else {
+    will-change: $will-change;
+  }
+}
+
+@mixin scrollbar(
+  $width: $default-scrollbar-width,
+  $track-color: $c-scroll-track,
+  $thumb-color: $c-scroll-thumb
+) {
+  @media (hover: hover) {
+    &::-webkit-scrollbar {
+      height: $width;
+      width: $width;
+
+      &-track,
+      &-corner {
+        background: $track-color;
+      }
+      &-thumb {
+        background: $thumb-color;
+        border: pxToRem(3) solid transparent;
+        background-clip: content-box;
+      }
+    }
+
+    scrollbar-color: $thumb-color $track-color;
+  }
+}

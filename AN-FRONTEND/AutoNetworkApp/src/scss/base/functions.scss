@@ -1,0 +1,31 @@
+@use "sass:math";
+
+@function stripUnit($num) {
+  @return math.div($num, ($num * 0 + 1));
+}
+
+@function pxToRem($props) {
+  $length: length($props);
+
+  @if $length == 1 {
+    @return math.div(stripUnit($props), stripUnit($font-size-default)) * 1rem;
+  } @else if $length > 1 and $length <= 4 {
+    $result: "";
+
+    @for $i from 1 through $length {
+      $prop: nth($props, $i);
+
+      @if $i != 1 {
+        $result: $result + " ";
+      }
+
+      $result: $result +
+        math.div(stripUnit($prop), stripUnit($font-size-default)) *
+        1rem;
+    }
+
+    @return unquote($result);
+  } @else {
+    @error "Bad number of parameters!";
+  }
+}

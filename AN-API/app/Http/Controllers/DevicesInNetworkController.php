@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Device;
 use App\Models\DevicesInNetwork;
 use App\Models\Port;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DevicesInNetworkController extends Controller
 {
@@ -15,7 +13,7 @@ class DevicesInNetworkController extends Controller
      */
     public function index()
     {
-        //
+        return DevicesInNetwork::all();
     }
 
     /**
@@ -76,6 +74,13 @@ class DevicesInNetworkController extends Controller
 
             (new InterfaceOfDeviceController)->storeInterface($id, $device_id);
         }
+
+        //echo $r, $s, $e;
+        $r = $r - 1;
+        $s = $s - 1;
+        $e = $e - 1;
+
+        (new InterfaceOfDeviceController)->connection($s);
     }
 
     /**
@@ -119,15 +124,13 @@ class DevicesInNetworkController extends Controller
 
         array_push($devices, $router_id, 'router');
 
-        $switch = $switchPorts->where('uplink_downlink', 'UL')->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
-
-        $switchDL = $switchPorts->where('uplink_downlink', 'DL')->whereIn('device_id', $switch->pluck('device_id')->toArray())->where('speed', '>=', $userConnection);
+        $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
         // Initialize an empty array to store the counts for each device_id
         $portCounts = [];
 
         // Iterate through the array and calculate the counts
-        foreach ($switchDL as $item) {
+        foreach ($switch as $item) {
             $deviceId = $item['device_id'];
 
             // Check if the device_id is already in the portCounts array
@@ -140,6 +143,8 @@ class DevicesInNetworkController extends Controller
             }
         }
 
+        $users = $users + 1;
+
 
         if ($users <= min($portCounts)) {
             asort($portCounts);
@@ -149,11 +154,16 @@ class DevicesInNetworkController extends Controller
             arsort($portCounts);
 
             $sum = 0;
+            $prev = 100;
             foreach ($portCounts as $key => $value) {
-                do {
-                    $sum += $value;
-                    array_push($devices, $key, 'switch');
-                } while (($sum + $value) <= $users);
+                if ($value < $prev) {
+                    do {
+                        $sum += $value;
+                        array_push($devices, $key, 'switch');
+                    } while (($sum + $value) <= $users);
+                }
+
+                $prev = $value;
 
                 if ($sum >= $users) {
                     break;
@@ -161,38 +171,17 @@ class DevicesInNetworkController extends Controller
             }
         }
 
+        $users = $users - 1;
+
         $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
 
         for ($i = 0; $i < $users; $i++) {
             array_push($devices, $ED, 'ED');
         }
+
         return $devices;
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    /* public function chooseDevice(string $type, string $users, string $vlans, string $userConnection)
-    {
-        switch ($type) {
-            case 'router':
-                //echo Port::all()->where('type', $type)->where('AN', 'LAN')->where('AN', 'LAN_WAN');
-                $ports = DB::table('ports')->where('AN', 'LAN')->orWhere('AN', 'LAN_WAN');
 
-                break;
-
-            case 'switch':
-                # code...
-                break;
-
-            case 'ED':
-                # code...
-                break;
-
-            default:
-                # code...
-                break;
-        }
-    } */
 
     /**
      * Display the specified resource.

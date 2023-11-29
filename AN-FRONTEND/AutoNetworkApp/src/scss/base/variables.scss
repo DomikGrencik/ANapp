@@ -1,0 +1,52 @@
+$font-family: "Roboto";
+$font-size-default: 16px;
+$font-weight-default: 400;
+
+$breakpoints: (
+  "palm": pxToRem(416),
+  "mobile": pxToRem(512),
+  "tablet": pxToRem(832),
+  "portable": pxToRem(1024),
+  "desktop": pxToRem(1120),
+);
+
+@function breakpoint($bp) {
+  @return map-get($breakpoints, $bp);
+}
+
+$font-sizes: (
+  "h1": pxToRem(40),
+  "h2": pxToRem(28),
+  "h3": pxToRem(20),
+  "h4": pxToRem(12),
+  "h5": pxToRem(10),
+  "h6": pxToRem(8),
+  "huge": pxToRem(28),
+  "xxxl": pxToRem(26),
+  "xxl": pxToRem(24),
+  "xl": pxToRem(22),
+  "l": pxToRem(20),
+  "m": pxToRem(18),
+  "base": pxToRem(16),
+  "s": pxToRem(14),
+  "xs": pxToRem(12),
+  "xxs": pxToRem(10),
+);
+
+@function font($size: "base") {
+  @return map-get($font-sizes, $size);
+}
+
+$default-scrollbar-width: pxToRem(17);
+$scrollbar-width: var(--scrollbar-width, $default-scrollbar-width);
+
+$container-breakpoint: breakpoint("desktop");
+$responsive-breakpoints: breakpoint("portable"), breakpoint("tablet"),
+  breakpoint("mobile"), breakpoint("palm");
+$mobile-breakpoint: breakpoint("tablet");
+
+$max-side-margin: pxToRem(60);
+$min-side-margin: pxToRem(20);
+
+$outline-width: pxToRem(2);
+$border-radius: pxToRem(3);

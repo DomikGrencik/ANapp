@@ -18,7 +18,6 @@ return new class extends Migration
             $table->enum('connector', ['RJ45', 'SFP', 'SFP+', 'Wireless']);
             $table->enum('AN', ['LAN', 'WAN', 'LAN_WAN']);
             $table->enum('speed', ['100', '1000', '2500', '10000', 'Wireless']);
-            $table->enum('uplink_downlink', ['UL', 'DL'])->nullable();
             $table->unsignedBigInteger('interface_id2')->nullable();
             $table->unsignedBigInteger('id');
             $table->enum('type', ['router', 'switch', 'ED'])->nullable();

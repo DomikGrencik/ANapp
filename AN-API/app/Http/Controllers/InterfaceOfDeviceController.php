@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\RouterController;
-use App\Http\Controllers\SwController;
-use App\Http\Controllers\EDController;
 use App\Models\InterfaceOfDevice;
+use App\Models\Port;
 
 class InterfaceOfDeviceController extends Controller
 {
@@ -15,7 +13,7 @@ class InterfaceOfDeviceController extends Controller
      */
     public function index()
     {
-        //
+        return InterfaceOfDevice::all();
     }
 
     /**
@@ -23,30 +21,7 @@ class InterfaceOfDeviceController extends Controller
      */
     public function store(Request $request)
     {
-        /* $request->validate([
-            'id' => 'required',
-            'type' => 'required',
-            'device_id' => 'required'
-        ]);
-
-        $id = $request->id;
-        $type = $request->type;
-        $device_id = $request->device_id;
-
-        $ports = (new PortController)->devicesPorts($device_id);
-
-        foreach ($ports as $key => $value) {
-            for ($i = 0; $i < $value->number_of_ports; $i++) {
-                InterfaceOfDevice::create([
-                    'name' => $value->connector,
-                    'connector' => $value->connector,
-                    'AN' => $value->AN,
-                    'speed' => $value->speed,
-                    'uplink_downlink' => $value->uplink_downlink,
-                    'id' => $id
-                ]);
-            }
-        } */
+        //
     }
 
     /**
@@ -54,7 +29,7 @@ class InterfaceOfDeviceController extends Controller
      */
     public function storeInterface(string $id, string $device_id)
     {
-        $ports = (new PortController)->devicesPorts($device_id);
+        $ports = Port::all()->where('device_id', $device_id);
 
         foreach ($ports as $key => $value) {
             for ($i = 0; $i < $value->number_of_ports; $i++) {
@@ -63,13 +38,61 @@ class InterfaceOfDeviceController extends Controller
                     'connector' => $value->connector,
                     'AN' => $value->AN,
                     'speed' => $value->speed,
-                    'uplink_downlink' => $value->uplink_downlink,
                     'id' => $id,
                     'type' => $value->type
                 ]);
             }
         }
     }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function createConnection(int $interface_id, int $interface_id2)
+    {
+        $interface = InterfaceOfDevice::findOrFail($interface_id);
+        $interface->update(['interface_id2' => $interface_id2]);
+
+        $interface2 = InterfaceOfDevice::findOrFail($interface_id2);
+        $interface2->update(['interface_id2' => $interface_id]);
+        return $interface2;
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function connection(int $s)
+    {
+        $interfaces = InterfaceOfDevice::all();
+
+        $switchInterfaces = $interfaces->where('type', 'switch');
+        $routerInterfaces = $interfaces->where('type', 'router')->where('AN', '!=', 'WAN')->where('connector', $switchInterfaces->first()->connector);
+        $EDInterfaces = $interfaces->where('type', 'ED')->where('connector', $switchInterfaces->first()->connector);
+
+        //return $EDInterfaces->keys()->first();
+
+
+        $prev_sw = 0;
+        $si =  $switchInterfaces->keys()->first();
+        $ri = $routerInterfaces->keys()->first();
+        $ei = $EDInterfaces->keys()->first();
+        //return $ei;
+        for ($i = $si; $i < (count($EDInterfaces) + $s + $si); $i++) {
+            if (($switchInterfaces[$i]->id) != $prev_sw) {
+                $this->createConnection($switchInterfaces[$i]->interface_id, $routerInterfaces[$ri]->interface_id);
+                $ri++;
+            } else {
+                $this->createConnection($switchInterfaces[$i]->interface_id, $EDInterfaces[$ei]->interface_id);
+                $ei++;
+            }
+
+            $prev_sw = $switchInterfaces[$i]->id;
+        }
+    }
+
+
 
     /**
      * Display the specified resource.

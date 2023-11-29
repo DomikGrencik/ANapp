@@ -30,12 +30,11 @@ Route::controller(PortController::class)->group(function () {
     Route::get('ports/devicesPorts/{device}', 'devicesPorts');
 });
 Route::controller(DevicesInNetworkController::class)->group(function () {
+    Route::get('devices_in_networks', 'index');
     Route::post('devices_in_networks', 'store');
-    Route::post('devices_in_networks/chooseDevice', 'chooseDevice');
-    //Route::post('devices_in_networks/storeDevice/{type}', 'storeDevice');
     Route::get('devices_in_networks/{device}', 'show');
     Route::get('devices_in_networks/findDeviceType/{type}', 'findDeviceType');
 });
 Route::controller(InterfaceOfDeviceController::class)->group(function () {
-    Route::post('interface_of_devices', 'store');
+    Route::get('interface_of_devices', 'index');
 });
