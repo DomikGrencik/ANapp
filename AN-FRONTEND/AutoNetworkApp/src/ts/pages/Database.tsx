@@ -58,6 +58,7 @@ const Database: FC = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     console.log('submit');
+    console.log(JSON.stringify(networkData));
     event.preventDefault();
     return mutateAsync(networkData);
   };
@@ -73,11 +74,11 @@ const Database: FC = () => {
   const { isLoading, error, data } = useQuery({
     queryKey: ['devices'],
     queryFn: async () => {
-      const res = await fetch('http://127.0.0.1:80/api/devices_in_networks', {
+      const response = await fetch('http://127.0.0.1:80/api/devices_in_networks', {
         method: 'GET',
       });
 
-      const json = res.json();
+      const json = await response.json();
 
       return dataSchema.parse(json);
     },
