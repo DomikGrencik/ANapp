@@ -34,6 +34,8 @@ class DevicesInNetworkController extends Controller
         $userConnection = $request->userConnection; //FE, 1GE, 10GE
         //pre router potrebujem dalsi parameter throughput
 
+        //$this->IP($users, $IPaddr);
+
 
         $name = 'R3';
         $type = 'router';
@@ -44,6 +46,8 @@ class DevicesInNetworkController extends Controller
         $e = 1;
 
         $device = $this->chooseDevice($users, $vlans, $userConnection);
+
+        $switch_id = array();
 
         for ($i = 0; $i < count($device); $i += 2) {
             $device_id = $device[$i];
@@ -56,6 +60,7 @@ class DevicesInNetworkController extends Controller
                     break;
                 case 'switch':
                     $name = "S{$s}";
+                    $switch_id[$s-1] = $device[$i];
                     $s++;
                     break;
                 case 'ED':
@@ -75,12 +80,13 @@ class DevicesInNetworkController extends Controller
             (new InterfaceOfDeviceController)->storeInterface($id, $device_id);
         }
 
-        //echo $r, $s, $e;
         $r = $r - 1;
         $s = $s - 1;
         $e = $e - 1;
 
-        (new InterfaceOfDeviceController)->connection($s);
+        (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr);
+
+        //return $switch_id;
     }
 
     /**
@@ -123,6 +129,7 @@ class DevicesInNetworkController extends Controller
         $router_id = $router->last()->device_id;
 
         array_push($devices, $router_id, 'router');
+
 
         $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
