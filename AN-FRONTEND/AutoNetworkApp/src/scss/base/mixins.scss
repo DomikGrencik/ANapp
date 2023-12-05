@@ -160,7 +160,9 @@
   $top-min: $top-max,
   $bottom-min: $bottom-max,
   $side-max: $max-side-margin,
-  $side-min: $min-side-margin
+  $side-min: $min-side-margin,
+  $container-width: $container-breakpoint
+
 ) {
   @if stripUnit($top-max) > 0 {
     @include responsive-param("margin-top", $top-max, $top-min);
@@ -171,7 +173,7 @@
 
   width: 100%;
   max-width: calc(
-    #{$container-breakpoint} - #{$scrollbar-width} - 2 * #{$side-max}
+    #{$container-width} - #{$scrollbar-width} - 2 * #{$side-max}
   );
   margin-left: auto;
   margin-right: auto;

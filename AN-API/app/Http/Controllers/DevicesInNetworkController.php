@@ -86,7 +86,7 @@ class DevicesInNetworkController extends Controller
 
         (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr);
 
-        //return $switch_id;
+        return json_encode([]);
     }
 
     /**

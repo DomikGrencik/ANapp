@@ -1,7 +1,19 @@
 import { FC, FormEvent, useState } from 'react';
-import { Button, TextField } from '@mui/material';
+import {
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
+
+import { API_ROUTE_BASE } from '../utils/variables';
 
 type YourFormData = {
   users: string;
@@ -10,10 +22,26 @@ type YourFormData = {
   userConnection: string;
 };
 
-const dataSchema = z.array(
+const dataSchemaDevices = z.array(
   z.object({
     id: z.number().int(),
     name: z.string(),
+    type: z.string(),
+    device_id: z.number().int(),
+  })
+);
+
+const dataSchemaInterface = z.array(
+  z.object({
+    interface_id: z.number().int(),
+    name: z.string(),
+    IP_address: z.string().nullable(),
+    connector: z.string(),
+    AN: z.string().nullable(),
+    speed: z.string(),
+    interface_id2: z.number().int().nullable(),
+    id: z.number().int(),
+    type: z.string(),
   })
 );
 
@@ -28,16 +56,13 @@ const Database: FC = () => {
   });
 
   const submitForm = async (networkData: YourFormData) => {
-    const response = await fetch(
-      'http://127.0.0.1:80/api/devices_in_networks',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(networkData),
-      }
-    );
+    const response = await fetch(`${API_ROUTE_BASE}devices_in_networks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(networkData),
+    });
 
     if (!response.ok) {
       throw new Error('Failed to submit form');
@@ -63,40 +88,58 @@ const Database: FC = () => {
     return mutateAsync(networkData);
   };
 
-  /* const { mutateAsync } = useMutation({
-    mutationFn: () =>
-      fetch('http://127.0.0.1:80/api/devices_in_networks', {
-        method: 'POST',
-        body: JSON.stringify(networkData),
-      }),
-  }); */
+  const fetchDevices = async () => {
+    const response = await fetch(`${API_ROUTE_BASE}devices_in_networks`, {
+      method: 'GET',
+    });
+    const json = await response.json();
 
-  const { isLoading, error, data } = useQuery({
+    return dataSchemaDevices.parse(json);
+  };
+
+  const fetchInterfaces = async () => {
+    const response = await fetch(`${API_ROUTE_BASE}interface_of_devices`, {
+      method: 'GET',
+    });
+    const json = await response.json();
+
+    return dataSchemaInterface.parse(json);
+  };
+
+  const {
+    isLoading: isLoadingDevices,
+    error: errorDevices,
+    data: dataDevices,
+  } = useQuery({
     queryKey: ['devices'],
-    queryFn: async () => {
-      const response = await fetch('http://127.0.0.1:80/api/devices_in_networks', {
-        method: 'GET',
-      });
-
-      const json = await response.json();
-
-      return dataSchema.parse(json);
-    },
+    queryFn: fetchDevices,
   });
 
-  if (isLoading) {
-    console.log('loading');
+  const {
+    isLoading: isLoadingInterfaces,
+    error: errorInterfaces,
+    data: dataInterfaces,
+  } = useQuery({
+    queryKey: ['interfaces'],
+    queryFn: fetchInterfaces,
+  });
+
+  if (isLoadingDevices) {
+    console.log('loading devices');
   }
 
-  if (error) {
-    console.error(error.message);
+  if (errorDevices) {
+    console.error(errorDevices.message);
     return null;
   }
 
-  //console.log(data);
+  if (errorInterfaces) {
+    console.error(errorInterfaces.message);
+    return null;
+  }
 
   return (
-    <main className="page flex--grow container--default flex">
+    <main className="page flex--grow container--wide flex">
       <form
         className="page__form flex--grow flex--column flex"
         onSubmit={handleSubmit}
@@ -157,21 +200,105 @@ const Database: FC = () => {
       </form>
 
       <div>
-        <h1>Data</h1>
-        <div>
-          <h2>Devices in network</h2>
-          {isLoading ? (
-            <div>loading</div>
-          ) : (
-            <div>
-              <ul>
+        <h2>Devices in network</h2>
+        {isLoadingDevices ? (
+          <div>loading</div>
+        ) : (
+          <div>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 250 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell align="right">name</TableCell>
+                    <TableCell align="right">type</TableCell>
+                    <TableCell align="right">device_id</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {dataDevices?.map(({ id, name, type, device_id }) => (
+                    <TableRow
+                      key={id}
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                      }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {id}
+                      </TableCell>
+                      <TableCell align="right">{name}</TableCell>
+                      <TableCell align="right">{type}</TableCell>
+                      <TableCell align="right">{device_id}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* <ul>
                 {data?.map((device) => (
                   <li key={device.id}>{[device.name]}</li>
                 ))}
-              </ul>
-            </div>
-          )}
-        </div>
+              </ul> */}
+          </div>
+        )}
+      </div>
+
+      <div>
+        <h2>Interface of device</h2>
+        {isLoadingInterfaces ? (
+          <div>loading</div>
+        ) : (
+          <div>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 350 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>interface_id</TableCell>
+                    <TableCell align="right">name</TableCell>
+                    <TableCell align="right">IP address</TableCell>
+                    <TableCell align="right">interface_id2</TableCell>
+                    <TableCell align="right">id</TableCell>
+                    <TableCell align="right">type</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {dataInterfaces?.map(
+                    ({
+                      interface_id,
+                      name,
+                      IP_address,
+                      interface_id2,
+                      id,
+                      type,
+                    }) => (
+                      <TableRow
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={interface_id}
+                        sx={{
+                          '&:last-child td, &:last-child th': { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {interface_id}
+                        </TableCell>
+                        <TableCell align="right">{name}</TableCell>
+                        <TableCell align="right">{IP_address}</TableCell>
+                        <TableCell align="right">{interface_id2}</TableCell>
+                        <TableCell align="right">{id}</TableCell>
+                        <TableCell align="right">{type}</TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* <ul>
+                {data?.map((device) => (
+                  <li key={device.id}>{[device.name]}</li>
+                ))}
+              </ul> */}
+          </div>
+        )}
       </div>
     </main>
   );

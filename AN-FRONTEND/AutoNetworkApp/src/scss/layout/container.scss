@@ -4,4 +4,8 @@
   &--default {
     @include container(pxToRem(60), pxToRem(90), pxToRem(20));
   }
+
+  &--wide {
+    @include container($top-max: pxToRem(60), $container-width: pxToRem(1200));
+  }
 }
