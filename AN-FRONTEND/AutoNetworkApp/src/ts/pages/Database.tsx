@@ -45,13 +45,12 @@ const dataSchemaInterface = z.array(
   })
 );
 
-
 const Database: FC = () => {
   //console.log('database');
 
   const [networkData, setNetworkData] = useState({
     users: '',
-    vlans: '',
+    vlans: '1',
     IPaddr: '',
     userConnection: '',
   });
@@ -78,7 +77,7 @@ const Database: FC = () => {
     mutationFn: submitForm,
     onSuccess: () => {
       console.log('Form submitted successfully!');
-      setSuccess(true);
+      setSuccess(!success);
     },
     onError: (error) => {
       console.error('Form submission error:', error.message);
@@ -124,13 +123,13 @@ const Database: FC = () => {
 
   const { mutateAsync: deleteDevicesData } = useMutation({
     mutationFn: () => {
-      const devices= deleteDevices();
+      const devices = deleteDevices();
       deleteInterfaces();
       return devices;
     },
     onSuccess: () => {
       console.log('Deleted data');
-      setSuccess(false);
+      setSuccess(!success);
     },
     onError: (error) => {
       console.error('error:', error.message);
@@ -160,7 +159,6 @@ const Database: FC = () => {
     return dataSchemaInterface.parse(json);
   };
 
-
   const {
     isLoading: isLoadingDevices,
     error: errorDevices,
@@ -181,6 +179,9 @@ const Database: FC = () => {
 
   if (isLoadingDevices) {
     console.log('loading devices');
+  }
+  if (isLoadingInterfaces) {
+    console.log('loading interfaces');
   }
 
   if (errorDevices) {
@@ -211,7 +212,7 @@ const Database: FC = () => {
             autoComplete="off"
           />
         </div>
-        <div>
+        {/* <div>
           <TextField
             onChange={(event) =>
               setNetworkData({ ...networkData, vlans: event.target.value })
@@ -221,7 +222,7 @@ const Database: FC = () => {
             variant="outlined"
             autoComplete="off"
           />
-        </div>
+        </div> */}
         <div>
           <TextField
             onChange={(event) =>
