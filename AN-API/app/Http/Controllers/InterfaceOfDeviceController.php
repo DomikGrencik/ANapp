@@ -145,4 +145,14 @@ class InterfaceOfDeviceController extends Controller
     {
         //
     }
+
+    /**
+     * Remove all resources from storage.
+     */
+    public function delete()
+    {
+        InterfaceOfDevice::truncate();
+
+        return json_encode([]);
+    }
 }

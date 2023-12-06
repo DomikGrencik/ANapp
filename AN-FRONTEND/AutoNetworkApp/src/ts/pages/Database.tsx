@@ -45,6 +45,7 @@ const dataSchemaInterface = z.array(
   })
 );
 
+
 const Database: FC = () => {
   //console.log('database');
 
@@ -54,6 +55,8 @@ const Database: FC = () => {
     IPaddr: '',
     userConnection: '',
   });
+
+  const [success, setSuccess] = useState(false);
 
   const submitForm = async (networkData: YourFormData) => {
     const response = await fetch(`${API_ROUTE_BASE}devices_in_networks`, {
@@ -71,10 +74,11 @@ const Database: FC = () => {
     return response.json();
   };
 
-  const { mutateAsync } = useMutation({
+  const { mutateAsync: postNetwork } = useMutation({
     mutationFn: submitForm,
     onSuccess: () => {
       console.log('Form submitted successfully!');
+      setSuccess(true);
     },
     onError: (error) => {
       console.error('Form submission error:', error.message);
@@ -85,7 +89,57 @@ const Database: FC = () => {
     console.log('submit');
     console.log(JSON.stringify(networkData));
     event.preventDefault();
-    return mutateAsync(networkData);
+    return postNetwork(networkData);
+  };
+
+  const deleteDevices = async () => {
+    const response = await fetch(
+      `${API_ROUTE_BASE}devices_in_networks/delete`,
+      {
+        method: 'DELETE',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to delete Devices');
+    }
+
+    return response.json();
+  };
+
+  const deleteInterfaces = async () => {
+    const response = await fetch(
+      `${API_ROUTE_BASE}interface_of_devices/delete`,
+      {
+        method: 'DELETE',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to delete Devices');
+    }
+
+    return response.json();
+  };
+
+  const { mutateAsync: deleteDevicesData } = useMutation({
+    mutationFn: () => {
+      const devices= deleteDevices();
+      deleteInterfaces();
+      return devices;
+    },
+    onSuccess: () => {
+      console.log('Deleted data');
+      setSuccess(false);
+    },
+    onError: (error) => {
+      console.error('error:', error.message);
+    },
+  });
+
+  const handleDelete = () => {
+    console.log('delete');
+    deleteDevicesData();
   };
 
   const fetchDevices = async () => {
@@ -106,12 +160,13 @@ const Database: FC = () => {
     return dataSchemaInterface.parse(json);
   };
 
+
   const {
     isLoading: isLoadingDevices,
     error: errorDevices,
     data: dataDevices,
   } = useQuery({
-    queryKey: ['devices'],
+    queryKey: ['devices', success],
     queryFn: fetchDevices,
   });
 
@@ -120,7 +175,7 @@ const Database: FC = () => {
     error: errorInterfaces,
     data: dataInterfaces,
   } = useQuery({
-    queryKey: ['interfaces'],
+    queryKey: ['interfaces', success],
     queryFn: fetchInterfaces,
   });
 
@@ -193,8 +248,20 @@ const Database: FC = () => {
           />
         </div>
         <div>
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" sx={{ top: 10 }}>
             Post
+          </Button>
+        </div>
+        <div>
+          <Button
+            onClick={() => {
+              handleDelete();
+            }}
+            variant="contained"
+            color="error"
+            sx={{ top: 20 }}
+          >
+            Delete
           </Button>
         </div>
       </form>

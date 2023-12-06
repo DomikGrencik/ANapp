@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DevicesInNetwork;
 use App\Models\Port;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class DevicesInNetworkController extends Controller
 {
@@ -220,5 +221,17 @@ class DevicesInNetworkController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Remove all resources from storage.
+     */
+    public function delete()
+    {
+        Schema::disableForeignKeyConstraints();
+        DevicesInNetwork::truncate();
+        Schema::enableForeignKeyConstraints();
+
+        return json_encode([]);
     }
 }

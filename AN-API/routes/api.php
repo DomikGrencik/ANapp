@@ -34,7 +34,9 @@ Route::controller(DevicesInNetworkController::class)->group(function () {
     Route::post('devices_in_networks', 'store');
     Route::get('devices_in_networks/{device}', 'show');
     Route::get('devices_in_networks/findDeviceType/{type}', 'findDeviceType');
+    Route::delete('devices_in_networks/delete', 'delete');
 });
 Route::controller(InterfaceOfDeviceController::class)->group(function () {
     Route::get('interface_of_devices', 'index');
+    Route::delete('interface_of_devices/delete', 'delete');
 });
