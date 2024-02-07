@@ -267,7 +267,7 @@ const Database: FC = () => {
           </Button>
         </div>
         <div>
-          <MyButton onClick={() => console.log('clicked')}>MyButton</MyButton>
+          <MyButton type="submit">MyPostButton</MyButton>
         </div>
         <div>
           <MyButton onClick={() => console.log('clicked')}>MyButton</MyButton>

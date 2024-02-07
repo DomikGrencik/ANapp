@@ -1,13 +1,14 @@
-import React from 'react';
+import { FC } from 'react';
 
 interface ButtonProps {
-  onClick: () => void;
-  children: string;
+  onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset' | undefined;
+  children?: string;
 }
 
-const MyButton: React.FC<ButtonProps> = ({ onClick, children }) => {
+const MyButton: FC<ButtonProps> = ({ onClick, type, children }) => {
   return (
-    <button className="my-button" type="button" onClick={onClick}>
+    <button className="my-button" type={type || 'button'} onClick={onClick}>
       {children}
     </button>
   );
