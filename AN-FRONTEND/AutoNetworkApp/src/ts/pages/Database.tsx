@@ -13,6 +13,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import MyButton from '../components/MyButton';
 import { API_ROUTE_BASE } from '../utils/variables';
 
 type YourFormData = {
@@ -264,6 +265,12 @@ const Database: FC = () => {
           >
             Delete
           </Button>
+        </div>
+        <div>
+          <MyButton onClick={() => console.log('clicked')}>MyButton</MyButton>
+        </div>
+        <div>
+          <MyButton onClick={() => console.log('clicked')}>MyButton</MyButton>
         </div>
       </form>
 
