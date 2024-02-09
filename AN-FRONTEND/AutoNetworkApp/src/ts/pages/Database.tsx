@@ -14,6 +14,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import MyButton from '../components/MyButton';
+import MyForm from '../components/MyForm';
 import { API_ROUTE_BASE } from '../utils/variables';
 
 type YourFormData = {
@@ -47,7 +48,6 @@ const dataSchemaInterface = z.array(
 );
 
 const Database: FC = () => {
-  //console.log('database');
 
   const [networkData, setNetworkData] = useState({
     users: '',
@@ -197,6 +197,9 @@ const Database: FC = () => {
 
   return (
     <main className="page flex--grow container--wide flex">
+      <div>
+        <MyForm onSubmit={() => console.log('submitted')} />
+      </div>
       <form
         className="page__form flex--grow flex--column flex"
         onSubmit={handleSubmit}
