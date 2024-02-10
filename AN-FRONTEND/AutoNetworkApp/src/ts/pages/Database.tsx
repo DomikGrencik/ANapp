@@ -48,7 +48,6 @@ const dataSchemaInterface = z.array(
 );
 
 const Database: FC = () => {
-
   const [networkData, setNetworkData] = useState({
     users: '',
     vlans: '1',
@@ -296,9 +295,12 @@ const Database: FC = () => {
                 <TableBody>
                   {dataDevices?.map(({ id, name, type, device_id }) => (
                     <TableRow
+                      onClick={() => console.log('clicked')}
+                      hover
                       key={id}
                       sx={{
                         '&:last-child td, &:last-child th': { border: 0 },
+                        cursor: 'pointer',
                       }}
                     >
                       <TableCell component="th" scope="row">
