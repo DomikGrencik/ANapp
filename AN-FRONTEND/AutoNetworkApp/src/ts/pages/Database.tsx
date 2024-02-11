@@ -13,9 +13,10 @@ import { z } from 'zod';
 
 import MyForm, { YourFormData } from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
+import MyTable from '../components/MyTable';
 import { API_ROUTE_BASE } from '../utils/variables';
 
-const dataSchemaDevices = z.array(
+export const dataSchemaDevices = z.array(
   z.object({
     id: z.number().int(),
     name: z.string(),
@@ -176,7 +177,7 @@ const Database: FC = () => {
         <MyButton onClick={handleDelete}>Delete</MyButton>
       </div>
 
-      <div>
+      {/* <div>
         <h2>Devices in network</h2>
         {isLoadingDevices ? (
           <div>loading</div>
@@ -215,6 +216,18 @@ const Database: FC = () => {
               </Table>
             </TableContainer>
           </div>
+        )}
+      </div> */}
+
+      <div>
+        <h2>Devices in network</h2>
+        {isLoadingDevices ? (
+          <div>loading</div>
+        ) : (
+          <MyTable
+            onClick={() => console.log('clicked')}
+            data={dataDevices ?? []}
+          />
         )}
       </div>
 

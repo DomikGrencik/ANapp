@@ -2,17 +2,22 @@ import { FC } from 'react';
 import {
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
 } from '@mui/material';
+import { z } from 'zod';
+
+import { dataSchemaDevices } from '../pages/Database';
 
 interface TableProps {
   onClick: () => void;
+  data: z.infer<typeof dataSchemaDevices>;
 }
 
-const MyTable: FC<TableProps> = ({ onClick }) => {
+const MyTable: FC<TableProps> = ({ onClick, data }) => {
   return (
     <div>
       <TableContainer component={Paper}>
@@ -25,8 +30,8 @@ const MyTable: FC<TableProps> = ({ onClick }) => {
               <TableCell align="right">device_id</TableCell>
             </TableRow>
           </TableHead>
-          {/* <TableBody>
-            {dataDevices?.map(({ id, name, type, device_id }) => (
+          <TableBody>
+            {data?.map(({ id, name, type, device_id }) => (
               <TableRow
                 onClick={onClick}
                 hover
@@ -44,7 +49,7 @@ const MyTable: FC<TableProps> = ({ onClick }) => {
                 <TableCell align="right">{device_id}</TableCell>
               </TableRow>
             ))}
-          </TableBody> */}
+          </TableBody>
         </Table>
       </TableContainer>
     </div>
