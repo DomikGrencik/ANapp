@@ -19,4 +19,10 @@
   &:active {
     background-color: #d0d0d0;
   }
+
+  &:disabled {
+    background-color: #f0f0f0;
+    color: #ccc;
+    cursor: not-allowed;
+  }
 }

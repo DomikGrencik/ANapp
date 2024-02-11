@@ -5,7 +5,7 @@ import MyButton from '../MyButton';
 
 import MyFormikInput from './MyFormikInput';
 
-type YourFormData = {
+export type YourFormData = {
   users: string;
   vlans: string;
   IPaddr: string;

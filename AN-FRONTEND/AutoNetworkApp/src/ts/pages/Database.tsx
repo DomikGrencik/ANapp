@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from 'react';
+import { FC, useState } from 'react';
 import {
   Paper,
   Table,
@@ -11,16 +11,9 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
-import MyForm from '../components/form/MyForm';
+import MyForm, { YourFormData } from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
 import { API_ROUTE_BASE } from '../utils/variables';
-
-type YourFormData = {
-  users: string;
-  vlans: string;
-  IPaddr: string;
-  userConnection: string;
-};
 
 const dataSchemaDevices = z.array(
   z.object({
@@ -46,33 +39,19 @@ const dataSchemaInterface = z.array(
 );
 
 const Database: FC = () => {
-  const [networkData, setNetworkData] = useState({
-    users: '',
-    vlans: '1',
-    IPaddr: '',
-    userConnection: '',
-  });
-
   const [success, setSuccess] = useState(false);
 
-  const submitForm = async (networkData: YourFormData) => {
-    const response = await fetch(`${API_ROUTE_BASE}devices_in_networks`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(networkData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to submit form');
-    }
-
-    return response.json();
-  };
-
+  // This function handles the submission of the form data to the server
   const { mutateAsync: postNetwork } = useMutation({
-    mutationFn: submitForm,
+    mutationFn: (values: YourFormData) => {
+      return fetch(`${API_ROUTE_BASE}devices_in_networks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+    },
     onSuccess: () => {
       console.log('Form submitted successfully!');
       setSuccess(!success);
@@ -81,13 +60,6 @@ const Database: FC = () => {
       console.error('Form submission error:', error.message);
     },
   });
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    console.log('submit');
-    console.log(JSON.stringify(networkData));
-    event.preventDefault();
-    return postNetwork(networkData);
-  };
 
   const deleteDevices = async () => {
     const response = await fetch(
@@ -203,82 +175,6 @@ const Database: FC = () => {
         />
         <MyButton onClick={handleDelete}>Delete</MyButton>
       </div>
-      {/* <form
-        className="page__form flex--grow flex--column flex"
-        onSubmit={handleSubmit}
-      >
-        <h1>Form</h1>
-        <div>
-          <TextField
-            onChange={(event) =>
-              setNetworkData({ ...networkData, users: event.target.value })
-            }
-            required
-            label="Users"
-            variant="outlined"
-            autoComplete="off"
-          />
-        </div>
-        <div>
-          <TextField
-            onChange={(event) =>
-              setNetworkData({ ...networkData, vlans: event.target.value })
-            }
-            required
-            label="Vlans"
-            variant="outlined"
-            autoComplete="off"
-          />
-        </div>
-        <div>
-          <TextField
-            onChange={(event) =>
-              setNetworkData({ ...networkData, IPaddr: event.target.value })
-            }
-            required
-            label="IP address"
-            variant="outlined"
-            autoComplete="off"
-          />
-        </div>
-        <div>
-          <TextField
-            onChange={(event) =>
-              setNetworkData({
-                ...networkData,
-                userConnection: event.target.value,
-              })
-            }
-            required
-            label="Connection"
-            variant="outlined"
-            autoComplete="off"
-          />
-        </div>
-        <div>
-          <Button type="submit" variant="contained" sx={{ top: 10 }}>
-            Post
-          </Button>
-        </div>
-        <div>
-          <Button
-            onClick={() => {
-              handleDelete();
-            }}
-            variant="contained"
-            color="error"
-            sx={{ top: 20 }}
-          >
-            Delete
-          </Button>
-        </div>
-        <div>
-          <MyButton type="submit">MyPostButton</MyButton>
-        </div>
-        <div>
-          <MyButton onClick={() => console.log('clicked')}>MyButton</MyButton>
-        </div>
-      </form> */}
 
       <div>
         <h2>Devices in network</h2>
@@ -318,11 +214,6 @@ const Database: FC = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* <ul>
-                {data?.map((device) => (
-                  <li key={device.id}>{[device.name]}</li>
-                ))}
-              </ul> */}
           </div>
         )}
       </div>
@@ -376,11 +267,6 @@ const Database: FC = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* <ul>
-                {data?.map((device) => (
-                  <li key={device.id}>{[device.name]}</li>
-                ))}
-              </ul> */}
           </div>
         )}
       </div>
