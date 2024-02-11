@@ -1,14 +1,20 @@
 import { FC } from 'react';
 
-interface ButtonProps {
+export interface ButtonProps {
   onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset' | undefined;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
   children?: string;
 }
 
-const MyButton: FC<ButtonProps> = ({ onClick, type, children }) => {
+const MyButton: FC<ButtonProps> = ({ onClick, type, disabled, children }) => {
   return (
-    <button className="my-button" type={type || 'button'} onClick={onClick}>
+    <button
+      className="my-button"
+      type={type || 'button'}
+      disabled={disabled}
+      onClick={onClick}
+    >
       {children}
     </button>
   );

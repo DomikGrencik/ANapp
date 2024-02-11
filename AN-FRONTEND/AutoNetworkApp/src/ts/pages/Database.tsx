@@ -1,6 +1,5 @@
 import { FC, FormEvent, useState } from 'react';
 import {
-  Button,
   Paper,
   Table,
   TableBody,
@@ -8,13 +7,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
 } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
+import MyForm from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
-import MyForm from '../components/MyForm';
 import { API_ROUTE_BASE } from '../utils/variables';
 
 type YourFormData = {
@@ -196,10 +194,16 @@ const Database: FC = () => {
 
   return (
     <main className="page flex--grow container--wide flex">
-      <div>
-        <MyForm onSubmit={() => console.log('submitted')} />
+      <div className="flex--column flex">
+        <MyForm
+          onSubmit={async (values, formikHelpers) => {
+            await postNetwork(values);
+            formikHelpers.resetForm();
+          }}
+        />
+        <MyButton onClick={handleDelete}>Delete</MyButton>
       </div>
-      <form
+      {/* <form
         className="page__form flex--grow flex--column flex"
         onSubmit={handleSubmit}
       >
@@ -215,7 +219,7 @@ const Database: FC = () => {
             autoComplete="off"
           />
         </div>
-        {/* <div>
+        <div>
           <TextField
             onChange={(event) =>
               setNetworkData({ ...networkData, vlans: event.target.value })
@@ -225,7 +229,7 @@ const Database: FC = () => {
             variant="outlined"
             autoComplete="off"
           />
-        </div> */}
+        </div>
         <div>
           <TextField
             onChange={(event) =>
@@ -274,7 +278,7 @@ const Database: FC = () => {
         <div>
           <MyButton onClick={() => console.log('clicked')}>MyButton</MyButton>
         </div>
-      </form>
+      </form> */}
 
       <div>
         <h2>Devices in network</h2>
