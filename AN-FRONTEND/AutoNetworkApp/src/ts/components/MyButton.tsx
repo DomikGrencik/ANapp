@@ -5,12 +5,19 @@ export interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   children?: string;
+  className?: string;
 }
 
-const MyButton: FC<ButtonProps> = ({ onClick, type, disabled, children }) => {
+const MyButton: FC<ButtonProps> = ({
+  onClick,
+  type,
+  disabled,
+  children,
+  className,
+}) => {
   return (
     <button
-      className="my-button"
+      className={`my-button ${className}`}
       type={type || 'button'}
       disabled={disabled}
       onClick={onClick}

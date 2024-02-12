@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import {
   Paper,
   Table,
@@ -12,12 +12,22 @@ import { z } from 'zod';
 
 import { dataSchemaDevices } from '../pages/Database';
 
+import MyModal from './MyModal';
+
 interface TableProps {
   //onClick: () => void;
   data: z.infer<typeof dataSchemaDevices>;
 }
 
 const MyTable: FC<TableProps> = ({ data }) => {
+  const [open, setOpen] = useState(false);
+  const [devData, setDevData] = useState({
+    id: 0,
+    name: '',
+    type: '',
+    device_id: 0,
+  });
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -34,8 +44,8 @@ const MyTable: FC<TableProps> = ({ data }) => {
             {data?.map(({ id, name, type, device_id }) => (
               <TableRow
                 onClick={() => {
-                  console.log('clicked');
-                  console.log({ id, name, type, device_id });
+                  setOpen(true);
+                  setDevData({ id, name, type, device_id });
                 }}
                 hover
                 key={id}
@@ -55,6 +65,14 @@ const MyTable: FC<TableProps> = ({ data }) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {open ? (
+        <div>
+          <MyModal isOpen={open} onClose={() => setOpen(false)}>
+            {devData.id} {devData.name}
+          </MyModal>
+        </div>
+      ) : null}
     </div>
   );
 };

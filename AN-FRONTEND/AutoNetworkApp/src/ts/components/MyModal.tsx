@@ -34,7 +34,9 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, children }) => {
       />
       <div className="my-modal my-modal--overlay my-modal--content">
         {children}
-        <MyButton onClick={handleClose}>Close</MyButton>
+        <div>
+          <MyButton onClick={handleClose}>Close</MyButton>
+        </div>
       </div>
     </div>
   );
