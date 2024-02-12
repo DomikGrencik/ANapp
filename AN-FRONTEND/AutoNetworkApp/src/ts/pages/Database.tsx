@@ -13,6 +13,7 @@ import { z } from 'zod';
 
 import MyForm, { YourFormData } from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
+import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
 import { API_ROUTE_BASE } from '../utils/variables';
 
@@ -25,7 +26,7 @@ export const dataSchemaDevices = z.array(
   })
 );
 
-const dataSchemaInterface = z.array(
+export const dataSchemaInterface = z.array(
   z.object({
     interface_id: z.number().int(),
     name: z.string(),
@@ -41,6 +42,7 @@ const dataSchemaInterface = z.array(
 
 const Database: FC = () => {
   const [success, setSuccess] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // This function handles the submission of the form data to the server
   const { mutateAsync: postNetwork } = useMutation({
@@ -175,7 +177,23 @@ const Database: FC = () => {
           }}
         />
         <MyButton onClick={handleDelete}>Delete</MyButton>
+        <MyButton
+          onClick={() => {
+            console.log('clicked modal');
+            setOpen(true);
+          }}
+        >
+          Modal
+        </MyButton>
       </div>
+
+      {open ? (
+        <div>
+          <MyModal isOpen={open} onClose={() => setOpen(false)}>
+            Ja som modal
+          </MyModal>
+        </div>
+      ) : null}
 
       {/* <div>
         <h2>Devices in network</h2>
@@ -224,10 +242,7 @@ const Database: FC = () => {
         {isLoadingDevices ? (
           <div>loading</div>
         ) : (
-          <MyTable
-            onClick={() => console.log('clicked')}
-            data={dataDevices ?? []}
-          />
+          <MyTable data={dataDevices ?? []} />
         )}
       </div>
 

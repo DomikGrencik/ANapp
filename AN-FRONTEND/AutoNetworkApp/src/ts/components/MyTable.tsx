@@ -13,11 +13,11 @@ import { z } from 'zod';
 import { dataSchemaDevices } from '../pages/Database';
 
 interface TableProps {
-  onClick: () => void;
+  //onClick: () => void;
   data: z.infer<typeof dataSchemaDevices>;
 }
 
-const MyTable: FC<TableProps> = ({ onClick, data }) => {
+const MyTable: FC<TableProps> = ({ data }) => {
   return (
     <div>
       <TableContainer component={Paper}>
@@ -33,7 +33,10 @@ const MyTable: FC<TableProps> = ({ onClick, data }) => {
           <TableBody>
             {data?.map(({ id, name, type, device_id }) => (
               <TableRow
-                onClick={onClick}
+                onClick={() => {
+                  console.log('clicked');
+                  console.log({ id, name, type, device_id });
+                }}
                 hover
                 key={id}
                 sx={{
