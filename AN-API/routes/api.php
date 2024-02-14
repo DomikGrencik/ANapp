@@ -38,5 +38,6 @@ Route::controller(DevicesInNetworkController::class)->group(function () {
 });
 Route::controller(InterfaceOfDeviceController::class)->group(function () {
     Route::get('interface_of_devices', 'index');
+    Route::get('interface_of_devices/getInterfacesOfDevice/{id}', 'getInterfacesOfDevice');
     Route::delete('interface_of_devices/delete', 'delete');
 });

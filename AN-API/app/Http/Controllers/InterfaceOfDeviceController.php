@@ -17,6 +17,14 @@ class InterfaceOfDeviceController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function getInterfacesOfDevice(string $id)
+    {
+        return InterfaceOfDevice::all()->where('id', $id)->values();
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

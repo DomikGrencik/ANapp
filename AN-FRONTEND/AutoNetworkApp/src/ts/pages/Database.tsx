@@ -1,13 +1,4 @@
 import { FC, useState } from 'react';
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
@@ -246,7 +237,7 @@ const Database: FC = () => {
         )}
       </div>
 
-      <div>
+      {/* <div>
         <h2>Interface of device</h2>
         {isLoadingInterfaces ? (
           <div>loading</div>
@@ -297,7 +288,7 @@ const Database: FC = () => {
             </TableContainer>
           </div>
         )}
-      </div>
+      </div> */}
     </main>
   );
 };
