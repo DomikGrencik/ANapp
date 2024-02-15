@@ -67,6 +67,7 @@ const Database: FC = () => {
       throw new Error('Failed to delete Devices');
     }
 
+    console.log(response);
     return response.json();
   };
 
@@ -105,6 +106,10 @@ const Database: FC = () => {
     deleteDevicesData();
   };
 
+  /**
+   * Fetches devices from the server.
+   * @returns {Promise<DataSchemaDevices>} A promise that resolves to the parsed devices data.
+   */
   const fetchDevices = async () => {
     const response = await fetch(`${API_ROUTE_BASE}devices_in_networks`, {
       method: 'GET',
@@ -112,15 +117,6 @@ const Database: FC = () => {
     const json = await response.json();
 
     return dataSchemaDevices.parse(json);
-  };
-
-  const fetchInterfaces = async () => {
-    const response = await fetch(`${API_ROUTE_BASE}interface_of_devices`, {
-      method: 'GET',
-    });
-    const json = await response.json();
-
-    return dataSchemaInterface.parse(json);
   };
 
   const {
@@ -132,29 +128,8 @@ const Database: FC = () => {
     queryFn: fetchDevices,
   });
 
-  const {
-    isLoading: isLoadingInterfaces,
-    error: errorInterfaces,
-    data: dataInterfaces,
-  } = useQuery({
-    queryKey: ['interfaces', success],
-    queryFn: fetchInterfaces,
-  });
-
-  if (isLoadingDevices) {
-    console.log('loading devices');
-  }
-  if (isLoadingInterfaces) {
-    console.log('loading interfaces');
-  }
-
   if (errorDevices) {
     console.error(errorDevices.message);
-    return null;
-  }
-
-  if (errorInterfaces) {
-    console.error(errorInterfaces.message);
     return null;
   }
 
@@ -186,48 +161,6 @@ const Database: FC = () => {
         </div>
       ) : null}
 
-      {/* <div>
-        <h2>Devices in network</h2>
-        {isLoadingDevices ? (
-          <div>loading</div>
-        ) : (
-          <div>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 250 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell align="right">name</TableCell>
-                    <TableCell align="right">type</TableCell>
-                    <TableCell align="right">device_id</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dataDevices?.map(({ id, name, type, device_id }) => (
-                    <TableRow
-                      onClick={() => console.log('clicked')}
-                      hover
-                      key={id}
-                      sx={{
-                        '&:last-child td, &:last-child th': { border: 0 },
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {id}
-                      </TableCell>
-                      <TableCell align="right">{name}</TableCell>
-                      <TableCell align="right">{type}</TableCell>
-                      <TableCell align="right">{device_id}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-        )}
-      </div> */}
-
       <div>
         <h2>Devices in network</h2>
         {isLoadingDevices ? (
@@ -236,59 +169,6 @@ const Database: FC = () => {
           <MyTable data={dataDevices ?? []} />
         )}
       </div>
-
-      {/* <div>
-        <h2>Interface of device</h2>
-        {isLoadingInterfaces ? (
-          <div>loading</div>
-        ) : (
-          <div>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 350 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>interface_id</TableCell>
-                    <TableCell align="right">name</TableCell>
-                    <TableCell align="right">IP address</TableCell>
-                    <TableCell align="right">interface_id2</TableCell>
-                    <TableCell align="right">id</TableCell>
-                    <TableCell align="right">type</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dataInterfaces?.map(
-                    ({
-                      interface_id,
-                      name,
-                      IP_address,
-                      interface_id2,
-                      id,
-                      type,
-                    }) => (
-                      <TableRow
-                        // eslint-disable-next-line react/no-array-index-key
-                        key={interface_id}
-                        sx={{
-                          '&:last-child td, &:last-child th': { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {interface_id}
-                        </TableCell>
-                        <TableCell align="right">{name}</TableCell>
-                        <TableCell align="right">{IP_address}</TableCell>
-                        <TableCell align="right">{interface_id2}</TableCell>
-                        <TableCell align="right">{id}</TableCell>
-                        <TableCell align="right">{type}</TableCell>
-                      </TableRow>
-                    )
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-        )}
-      </div> */}
     </main>
   );
 };
