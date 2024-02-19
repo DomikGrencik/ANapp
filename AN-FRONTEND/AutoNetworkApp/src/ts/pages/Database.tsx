@@ -67,7 +67,6 @@ const Database: FC = () => {
       throw new Error('Failed to delete Devices');
     }
 
-    console.log(response);
     return response.json();
   };
 
@@ -134,7 +133,7 @@ const Database: FC = () => {
   }
 
   return (
-    <main className="page flex--grow container--wide flex">
+    <main className="page flex--justify-space-between container--wide flex">
       <div className="flex--column flex">
         <MyForm
           onSubmit={async (values, formikHelpers) => {
@@ -160,6 +159,14 @@ const Database: FC = () => {
           </MyModal>
         </div>
       ) : null}
+
+      <div style={{ paddingLeft: '20px', paddingRight: '20px' }}>
+        <h2>Topology</h2>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
+        cupiditate sunt saepe nulla ad sapiente debitis obcaecati ab? Amet,
+        similique animi. Quidem sint tenetur expedita quas blanditiis, nulla ex?
+        Sed.
+      </div>
 
       <div>
         <h2>Devices in network</h2>
