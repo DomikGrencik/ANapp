@@ -60,7 +60,7 @@ const MyTable: FC<TableProps> = ({ data }) => {
 
   return (
     <div>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{height: '80vh'}}>
         <Table sx={{ minWidth: 250 }} aria-label="simple table">
           <TableHead>
             <TableRow>

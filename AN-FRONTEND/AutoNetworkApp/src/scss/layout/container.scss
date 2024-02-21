@@ -6,6 +6,6 @@
   }
 
   &--wide {
-    @include container($top-max: pxToRem(60), $container-width: pxToRem(1200));
+    @include container($top-max: pxToRem(60), $container-width: pxToRem(1600));
   }
 }
