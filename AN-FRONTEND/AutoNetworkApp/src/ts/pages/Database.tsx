@@ -1,14 +1,4 @@
-import { FC, useCallback, useState } from 'react';
-import ReactFlow, {
-  addEdge,
-  Background,
-  Connection,
-  Controls,
-  Edge,
-  MiniMap,
-  useEdgesState,
-  useNodesState,
-} from 'reactflow';
+import { FC, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
@@ -16,15 +6,10 @@ import MyForm, { YourFormData } from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
 import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
+import MyTopology from '../components/MyTopology';
 import { API_ROUTE_BASE } from '../utils/variables';
 
 import 'reactflow/dist/style.css';
-
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
 export const dataSchemaDevices = z.array(
   z.object({
@@ -52,14 +37,6 @@ export const dataSchemaInterface = z.array(
 const Database: FC = () => {
   const [success, setSuccess] = useState(false);
   const [open, setOpen] = useState(false);
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-  const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
 
   // This function handles the submission of the form data to the server
   const { mutateAsync: postNetwork } = useMutation({
@@ -188,23 +165,15 @@ const Database: FC = () => {
 
       <div
         style={{
-          paddingLeft: '20px',
-          paddingRight: '20px',
           width: '100%',
-          height: 'vh',
+          minWidth: '300px',
+          border: '1px solid #e5e5e5',
+          borderRadius: '5px',
+          marginLeft: '20px',
+          marginRight: '20px',
         }}
       >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-        >
-          <Controls />
-          <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
-        </ReactFlow>
+        <MyTopology data={dataDevices ?? []} />
       </div>
 
       <div>
