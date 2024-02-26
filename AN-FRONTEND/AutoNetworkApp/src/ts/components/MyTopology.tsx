@@ -61,7 +61,7 @@ const MyTopology: FC<TopologyProps> = ({ data }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={(event, node) => console.log(node.id)}
+        onNodeClick={(_event, node) => console.log(node.id)}
       >
         <Controls />
         <MiniMap />
