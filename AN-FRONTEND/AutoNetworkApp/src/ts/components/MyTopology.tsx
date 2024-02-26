@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, SetStateAction, useCallback } from 'react';
 import ReactFlow, {
   addEdge,
   Background,
@@ -6,6 +6,7 @@ import ReactFlow, {
   Controls,
   Edge,
   MiniMap,
+  Node,
   useEdgesState,
   useNodesState,
 } from 'reactflow';
@@ -13,20 +14,35 @@ import { z } from 'zod';
 
 import { dataSchemaDevices } from '../pages/Database';
 
+import MyButton from './MyButton';
+
 interface TopologyProps {
   data: z.infer<typeof dataSchemaDevices>;
 }
 
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
-
 const MyTopology: FC<TopologyProps> = ({ data }) => {
+  let posY = 0;
+
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const nodesData:
+    | SetStateAction<Node<unknown, string | undefined>[]>
+    | {
+        id: string;
+        position: { x: number; y: number };
+        data: { label: string };
+      }[] = [];
+
+  data.forEach((element) => {
+    nodesData.push({
+      id: element.id.toString(),
+      position: { x: 0, y: posY },
+      data: { label: element.name },
+    });
+    posY += 100;
+  });
   // Add your component logic here
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -45,11 +61,14 @@ const MyTopology: FC<TopologyProps> = ({ data }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={(event, node) => console.log(node.id)}
       >
         <Controls />
         <MiniMap />
         <Background variant="dots" gap={12} size={1} />
       </ReactFlow>
+
+      <MyButton onClick={() => setNodes(nodesData)}>nodes</MyButton>
     </div>
   );
 };
