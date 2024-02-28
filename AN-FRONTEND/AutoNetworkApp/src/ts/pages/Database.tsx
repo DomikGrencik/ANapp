@@ -147,7 +147,6 @@ const Database: FC = () => {
         <MyButton onClick={handleDelete}>Delete</MyButton>
         <MyButton
           onClick={() => {
-            console.log('clicked modal');
             setOpen(true);
           }}
         >
