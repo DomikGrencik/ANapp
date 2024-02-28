@@ -42,7 +42,6 @@ const MyTopology: FC<TopologyProps> = ({ data }) => {
     });
     posY += 100;
   });
-  // Add your component logic here
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
