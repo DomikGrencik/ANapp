@@ -121,6 +121,19 @@ const Database: FC = () => {
     return dataSchemaDevices.parse(json);
   };
 
+  /**
+   * Fetches interfaces from the server.
+   * @returns {Promise<DataSchemaInterface>} A promise that resolves to the parsed interfaces data.
+   */
+  const fetchInterfaces = async () => {
+    const response = await fetch(`${API_ROUTE_BASE}interface_of_devices`, {
+      method: 'GET',
+    });
+    const json = await response.json();
+
+    return dataSchemaInterface.parse(json);
+  };
+
   const {
     isLoading: isLoadingDevices,
     error: errorDevices,
@@ -130,8 +143,22 @@ const Database: FC = () => {
     queryFn: fetchDevices,
   });
 
+  const {
+    isLoading: isLoadingInterfaces,
+    error: errorInterfaces,
+    data: dataInterfaces,
+  } = useQuery({
+    queryKey: ['interfaces', success],
+    queryFn: fetchInterfaces,
+  });
+
   if (errorDevices) {
     console.error(errorDevices.message);
+    return null;
+  }
+
+  if (errorInterfaces) {
+    console.error(errorInterfaces.message);
     return null;
   }
 
@@ -172,11 +199,14 @@ const Database: FC = () => {
           marginRight: '20px',
         }}
       >
-        <MyTopology data={dataDevices ?? []} />
+        <MyTopology
+          dataDevices={dataDevices ?? []}
+          dataInterfaces={dataInterfaces ?? []}
+        />
       </div>
 
       <div>
-        {isLoadingDevices ? (
+        {isLoadingDevices || isLoadingInterfaces ? (
           <div>loading</div>
         ) : (
           <MyTable data={dataDevices ?? []} />
