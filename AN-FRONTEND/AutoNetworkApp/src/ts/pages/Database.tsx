@@ -6,7 +6,7 @@ import MyForm, { YourFormData } from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
 import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
-import MyTopology from '../components/MyTopology';
+import MyTopology from '../components/topology/MyTopology';
 import { API_ROUTE_BASE } from '../utils/variables';
 
 import 'reactflow/dist/style.css';

@@ -12,15 +12,18 @@ import ReactFlow, {
 } from 'reactflow';
 import { z } from 'zod';
 
-import { dataSchemaDevices, dataSchemaInterface } from '../pages/Database';
+import { dataSchemaDevices, dataSchemaInterface } from '../../pages/Database';
+import MyButton from '../MyButton';
+import MyModal from '../MyModal';
 
-import MyButton from './MyButton';
-import MyModal from './MyModal';
+import MyRouterNode from './MyRouterNode';
 
 interface TopologyProps {
   dataDevices: z.infer<typeof dataSchemaDevices>;
   dataInterfaces: z.infer<typeof dataSchemaInterface>;
 }
+
+const nodeTypes = { routerNode: MyRouterNode };
 
 const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
   let posY = 0;
@@ -32,6 +35,9 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+  const [isToggledNodes, setIsToggledNodes] = useState(true);
+  const [isToggledEdges, setIsToggledEdges] = useState(true);
+
   const [open, setOpen] = useState(false);
   const [idDevice, setIdDevice] = useState(0);
 
@@ -39,6 +45,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
     | SetStateAction<Node<unknown, string | undefined>[]>
     | {
         id: string;
+        type: string;
         position: { x: number; y: number };
         data: { label: string };
       }[] = [];
@@ -54,12 +61,12 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
   dataDevices.forEach((element) => {
     nodesData.push({
       id: element.id.toString(),
+      type: 'routerNode',
       position: { x: 0, y: posY },
       data: { label: element.name },
     });
     posY += 100;
   });
-
 
   const uniqueEdges = new Set<string>();
 
@@ -85,6 +92,22 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
     }
   }
 
+  const toggleNodes = () => {
+    if (isToggledNodes) {
+      setNodes(nodesData);
+    } else setNodes([]);
+
+    setIsToggledNodes((prevState) => !prevState);
+  };
+
+  const toggleEdges = () => {
+    if (isToggledEdges) {
+      setEdges(edgesData);
+    } else setEdges([]);
+
+    setIsToggledEdges((prevState) => !prevState);
+  };
+
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -107,14 +130,20 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
             setOpen(true);
             setIdDevice(parseInt(node.id));
           }}
+          nodeTypes={nodeTypes}
         >
           <Controls />
           <MiniMap />
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
 
-        <MyButton onClick={() => setNodes(nodesData)}>nodes</MyButton>
-        <MyButton onClick={() => setEdges(edgesData)}>edges</MyButton>
+        <MyButton onClick={toggleNodes}>
+          nodes {isToggledNodes ? 'ON' : 'OFF'}
+        </MyButton>
+        <MyButton onClick={toggleEdges}>
+          edges {isToggledEdges ? 'ON' : 'OFF'}
+        </MyButton>
+        <MyButton onClick={() => console.log(edges)}>console edges</MyButton>
       </div>
       {open ? (
         <div>

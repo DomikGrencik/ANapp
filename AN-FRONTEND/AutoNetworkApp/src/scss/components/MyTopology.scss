@@ -1,0 +1,25 @@
+.my-topology {
+  border: 1px solid #363636;
+  padding: 5px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 18px;
+  font-weight: bold;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+
+  &:active {
+    background: #d0d0d0;
+  }
+
+  &--router {
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+  }
+}
