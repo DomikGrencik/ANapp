@@ -23,6 +23,13 @@ interface TopologyProps {
   dataInterfaces: z.infer<typeof dataSchemaInterface>;
 }
 
+interface Interfacetypes {
+  sourceInt: number;
+  targetInt: number;
+  sourceDev: number;
+  targetDev: number;
+}
+
 const nodeTypes = { routerNode: MyRouterNode };
 
 const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
@@ -31,6 +38,13 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
   let targetInt: number;
   let sourceDev: number;
   let targetDev: number;
+
+  const [interfaceProps, setInterfaceProps] = useState<Interfacetypes>({
+    sourceInt: 0,
+    targetInt: 0,
+    sourceDev: 0,
+    targetDev: 0,
+  });
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);

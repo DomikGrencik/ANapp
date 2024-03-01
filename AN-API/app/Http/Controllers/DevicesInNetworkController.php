@@ -46,6 +46,7 @@ class DevicesInNetworkController extends Controller
         $s = 1;
         $e = 1;
 
+        //najprv je volaná metóda chooseDevice, ktorá vráti pole s id zariadení a ich typom
         $device = $this->chooseDevice($users, $vlans, $userConnection);
 
         $switch_id = array();
@@ -74,6 +75,7 @@ class DevicesInNetworkController extends Controller
                     break;
             }
 
+            //musim premenit metodu na createMany
             $this->storeDevice($name, $type, $device_id);
 
             $id = DevicesInNetwork::all()->max('id');

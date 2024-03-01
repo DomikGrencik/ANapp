@@ -39,6 +39,7 @@ class InterfaceOfDeviceController extends Controller
     {
         $ports = Port::all()->where('device_id', $device_id);
 
+        //tu tiez urobit create many
         foreach ($ports as $key => $value) {
             for ($i = 0; $i < $value->number_of_ports; $i++) {
                 InterfaceOfDevice::create([
