@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DevicesInNetwork;
 use App\Models\Port;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class DevicesInNetworkController extends Controller
@@ -75,21 +76,28 @@ class DevicesInNetworkController extends Controller
                     break;
             }
 
-            //musim premenit metodu na createMany
-            $this->storeDevice($name, $type, $device_id);
+            $devicesArray[] = [
+                'name' => $name,
+                'type' => $type,
+                'device_id' => $device_id
+            ];
 
-            $id = DevicesInNetwork::all()->max('id');
 
-            (new InterfaceOfDeviceController)->storeInterface($id, $device_id);
+
+            //$id = DevicesInNetwork::all()->max('id');
+
+            //(new InterfaceOfDeviceController)->storeInterface($id, $device_id);
         }
 
-        $r = $r - 1;
+        DB::table('devices_in_networks')->insert($devicesArray);
+        
+       /*  $r = $r - 1;
         $s = $s - 1;
         $e = $e - 1;
 
-        (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr);
+        (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr); */
 
-        return json_encode([]);
+        //return json_encode([]);
     }
 
     /**
