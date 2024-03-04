@@ -12,7 +12,7 @@ class Device extends Model
     protected $fillable = [
         'manufacturer',
         'model',
-        'type'
+        'type',
     ];
     protected $table = 'devices';
     protected $primaryKey = 'device_id';

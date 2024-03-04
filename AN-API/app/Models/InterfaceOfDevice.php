@@ -31,4 +31,15 @@ class InterfaceOfDevice extends Model
     {
         return date('j.n.y', strtotime($value));
     }
+
+    public function devices_in_networks()
+    {
+        return $this->belongsTo(DevicesInNetwork::class, 'id', 'device_id');
+    }
+
+    public function connections()
+    {
+        return $this->hasOne(Connection::class, 'interface_id1', 'interface_id');
+        return $this->hasOne(Connection::class, 'interface_id2', 'interface_id');
+    }
 }

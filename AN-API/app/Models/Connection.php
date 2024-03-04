@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DevicesInNetwork extends Model
+class Connection extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'type',
-        'device_id',
+        'interface_id1',
+        'interface_id2',
+        'name1',
+        'name2',
     ];
-    protected $table = 'devices_in_networks';
-    protected $primaryKey = 'id';
+    protected $table = 'connections';
+    protected $primaryKey = 'connection_id';
 
     public function getCreatedAtAttribute($value)
     {
@@ -29,11 +30,7 @@ class DevicesInNetwork extends Model
 
     public function interface_of_devices()
     {
-        return $this->hasMany(InterfaceOfDevice::class, 'interface_id', 'id');
-    }
-
-    public function devices()
-    {
-        return $this->belongsTo(Device::class, 'device_id', 'device_id');
+        return $this->belongsTo(InterfaceOfDevice::class, 'interface_id1', 'interface_id');
+        return $this->belongsTo(InterfaceOfDevice::class, 'interface_id2', 'interface_id');
     }
 }

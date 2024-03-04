@@ -16,7 +16,7 @@ class Port extends Model
         'speed',
         'number_of_ports',
         'type',
-        'device_id'
+        'device_id',
     ];
     protected $table = 'ports';
     protected $primaryKey = 'port_id';
@@ -29,5 +29,10 @@ class Port extends Model
     public function getUpdatedAtAttribute($value)
     {
         return date('j.n.y', strtotime($value));
+    }
+
+    public function devices()
+    {
+        return $this->belongsTo(Device::class, 'device_id', 'device_id');
     }
 }
