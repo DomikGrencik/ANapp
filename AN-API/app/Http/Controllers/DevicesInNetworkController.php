@@ -30,14 +30,13 @@ class DevicesInNetworkController extends Controller
             'userConnection' => 'required',
         ]);
 
-        $users = $request->users; //20, 40, 60, ...
+        $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans;
         $IPaddr = $request->IPaddr;
-        $userConnection = $request->userConnection; //FE, 1GE, 10GE
-        //pre router potrebujem dalsi parameter throughput
+        $userConnection = $request->userConnection; // FE, 1GE, 10GE
+        // pre router potrebujem dalsi parameter throughput
 
-        //$this->IP($users, $IPaddr);
-
+        // $this->IP($users, $IPaddr);
 
         $name = 'R3';
         $type = 'router';
@@ -47,10 +46,10 @@ class DevicesInNetworkController extends Controller
         $s = 1;
         $e = 1;
 
-        //najprv je volaná metóda chooseDevice, ktorá vráti pole s id zariadení a ich typom
+        // najprv je volaná metóda chooseDevice, ktorá vráti pole s id zariadení a ich typom
         $device = $this->chooseDevice($users, $vlans, $userConnection);
 
-        $switch_id = array();
+        $switch_id = [];
 
         for ($i = 0; $i < count($device); $i += 2) {
             $device_id = $device[$i];
@@ -59,45 +58,71 @@ class DevicesInNetworkController extends Controller
             switch ($type) {
                 case 'router':
                     $name = "R{$r}";
-                    $r++;
+                    ++$r;
                     break;
                 case 'switch':
                     $name = "S{$s}";
-                    $switch_id[$s-1] = $device[$i];
-                    $s++;
+                    $switch_id[$s - 1] = $device[$i];
+                    ++$s;
                     break;
                 case 'ED':
                     $name = "ED{$e}";
-                    $e++;
+                    ++$e;
                     break;
 
                 default:
-                    # code...
+                    // code...
                     break;
             }
 
             $devicesArray[] = [
                 'name' => $name,
                 'type' => $type,
-                'device_id' => $device_id
+                'device_id' => $device_id,
             ];
-
-
-
-            //$id = DevicesInNetwork::all()->max('id');
-
-            //(new InterfaceOfDeviceController)->storeInterface($id, $device_id);
         }
 
+        // ziska najvacsi id v tabulke devices_in_networks pre pripad, ze by uz boli v tabulke nejake zaznamy
+        $maxID = DevicesInNetwork::max('id');
+
+        // vlozi do tabulky devices_in_networks udaje obsiahnute v poli $devicesArray
+        // je pouzita metoda insert, pretoze su vkladane naraz viacere zaznamy a
+        // insert je rychlejsi ako createMany
         DB::table('devices_in_networks')->insert($devicesArray);
-        
-       /*  $r = $r - 1;
-        $s = $s - 1;
-        $e = $e - 1;
 
-        (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr); */
+        // ziska vsetky zariadenia, ktore maju id vacsie ako $maxID
+        $devices = DevicesInNetwork::all()->where('id', '>', $maxID);
 
-        //return json_encode([]);
+        // pre kazde vlozene zariadenie zapise do pola $interfacesArray udaje o jeho portoch
+        foreach ($devices as $key => $deviceValue) {
+            // ziska vsetky porty zariadenia podla device_id
+            $ports = Port::all()->where('device_id', $deviceValue->device_id);
+
+            // prejde vsetky porty zariadenia a udaje zapise do pola $interfacesArray
+            foreach ($ports as $key => $portValue) {
+                for ($i = 0; $i < $portValue->number_of_ports; ++$i) {
+                    $interfacesArray[] = [
+                        'name' => "{$portValue->name}{$i}",
+                        'connector' => $portValue->connector,
+                        'AN' => $portValue->AN,
+                        'speed' => $portValue->speed,
+                        'id' => $deviceValue->id,
+                        'type' => $portValue->type,
+                    ];
+                }
+            }
+        }
+
+        // vlozi do tabulky interface_of_devices udaje obsiahnute v poli $interfacesArray
+        DB::table('interface_of_devices')->insert($interfacesArray);
+
+         $r = $r - 1;
+         $s = $s - 1;
+         $e = $e - 1;
+
+         (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr);
+
+        return json_encode([]);
     }
 
     /**
@@ -108,10 +133,9 @@ class DevicesInNetworkController extends Controller
         DevicesInNetwork::create([
             'name' => $name,
             'type' => $type,
-            'device_id' => $device_id
+            'device_id' => $device_id,
         ]);
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -127,20 +151,19 @@ class DevicesInNetworkController extends Controller
         $users = $request->users; //20, 40, 60, ...
         $vlans = $request->vlans;
         $userConnection = $request->userConnection; //100, 1000, 10000 */
-        //pre router potrebujem dalsi parameter throughput
+        // pre router potrebujem dalsi parameter throughput
 
         $ports = Port::all();
         $routerPorts = $ports->where('type', 'router');
         $switchPorts = $ports->where('type', 'switch');
         $EDPorts = $ports->where('type', 'ED');
-        $devices = array();
+        $devices = [];
 
         $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection);
 
         $router_id = $router->last()->device_id;
 
         array_push($devices, $router_id, 'router');
-
 
         $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
@@ -161,14 +184,12 @@ class DevicesInNetworkController extends Controller
             }
         }
 
-        $users = $users + 1;
-
+        ++$users;
 
         if ($users <= min($portCounts)) {
             asort($portCounts);
             array_push($devices, array_search(min($portCounts), $portCounts), 'switch');
         } else {
-
             arsort($portCounts);
 
             $sum = 0;
@@ -189,17 +210,16 @@ class DevicesInNetworkController extends Controller
             }
         }
 
-        $users = $users - 1;
+        --$users;
 
         $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
 
-        for ($i = 0; $i < $users; $i++) {
+        for ($i = 0; $i < $users; ++$i) {
             array_push($devices, $ED, 'ED');
         }
 
         return $devices;
     }
-
 
     /**
      * Display the specified resource.
@@ -222,7 +242,6 @@ class DevicesInNetworkController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
     }
 
     /**
@@ -230,7 +249,6 @@ class DevicesInNetworkController extends Controller
      */
     public function destroy(string $id)
     {
-        //
     }
 
     /**
