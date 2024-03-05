@@ -34,6 +34,18 @@ export const dataSchemaInterface = z.array(
   })
 );
 
+export const dataSchemaConnections = z.array(
+  z.object({
+    connection_id: z.number().int(),
+    interface_id1: z.number().int(),
+    interface_id2: z.number().int(),
+    device_id1: z.number().int(),
+    device_id2: z.number().int(),
+    name1: z.string(),
+    name2: z.string(),
+  })
+);
+
 const Database: FC = () => {
   const [success, setSuccess] = useState(false);
   const [open, setOpen] = useState(false);
@@ -88,10 +100,23 @@ const Database: FC = () => {
     return response.json();
   };
 
+  const deleteConnections = async () => {
+    const response = await fetch(`${API_ROUTE_BASE}connections/delete`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete Devices');
+    }
+
+    return response.json();
+  };
+
   const { mutateAsync: deleteDevicesData } = useMutation({
     mutationFn: () => {
       const devices = deleteDevices();
       deleteInterfaces();
+      deleteConnections();
       return devices;
     },
     onSuccess: () => {
@@ -125,13 +150,26 @@ const Database: FC = () => {
    * Fetches interfaces from the server.
    * @returns {Promise<DataSchemaInterface>} A promise that resolves to the parsed interfaces data.
    */
-  const fetchInterfaces = async () => {
+  /* const fetchInterfaces = async () => {
     const response = await fetch(`${API_ROUTE_BASE}interface_of_devices`, {
       method: 'GET',
     });
     const json = await response.json();
 
     return dataSchemaInterface.parse(json);
+  }; */
+
+  /**
+   * Fetches connections from the server.
+   * @returns {Promise<DataSchemaConnections>} A promise that resolves to the parsed interfaces data.
+   */
+  const fetchConnections = async () => {
+    const response = await fetch(`${API_ROUTE_BASE}connections`, {
+      method: 'GET',
+    });
+    const json = await response.json();
+
+    return dataSchemaConnections.parse(json);
   };
 
   const {
@@ -143,13 +181,22 @@ const Database: FC = () => {
     queryFn: fetchDevices,
   });
 
-  const {
+  /* const {
     isLoading: isLoadingInterfaces,
     error: errorInterfaces,
     data: dataInterfaces,
   } = useQuery({
     queryKey: ['interfaces', success],
     queryFn: fetchInterfaces,
+  }); */
+
+  const {
+    isLoading: isLoadingConnections,
+    error: errorConnections,
+    data: dataConnections,
+  } = useQuery({
+    queryKey: ['connections', success],
+    queryFn: fetchConnections,
   });
 
   if (errorDevices) {
@@ -157,8 +204,13 @@ const Database: FC = () => {
     return null;
   }
 
-  if (errorInterfaces) {
+  /* if (errorInterfaces) {
     console.error(errorInterfaces.message);
+    return null;
+  } */
+
+  if (errorConnections) {
+    console.error(errorConnections.message);
     return null;
   }
 
@@ -201,12 +253,12 @@ const Database: FC = () => {
       >
         <MyTopology
           dataDevices={dataDevices ?? []}
-          dataInterfaces={dataInterfaces ?? []}
+          dataConnections={dataConnections ?? []}
         />
       </div>
 
       <div>
-        {isLoadingDevices || isLoadingInterfaces ? (
+        {isLoadingDevices || isLoadingConnections ? (
           <div>loading</div>
         ) : (
           <MyTable data={dataDevices ?? []} />

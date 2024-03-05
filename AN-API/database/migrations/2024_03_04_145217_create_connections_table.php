@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class() extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,6 +14,8 @@ return new class extends Migration
             $table->id('connection_id');
             $table->unsignedBigInteger('interface_id1');
             $table->unsignedBigInteger('interface_id2');
+            $table->unsignedBigInteger('device_id1');
+            $table->unsignedBigInteger('device_id2');
             $table->string('name1');
             $table->string('name2');
             $table->timestamps();

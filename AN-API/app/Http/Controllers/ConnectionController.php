@@ -12,7 +12,7 @@ class ConnectionController extends Controller
      */
     public function index()
     {
-        //
+        return Connection::all();
     }
 
     /**
@@ -20,7 +20,6 @@ class ConnectionController extends Controller
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
@@ -28,7 +27,6 @@ class ConnectionController extends Controller
      */
     public function show(string $id)
     {
-        //
     }
 
     /**
@@ -36,7 +34,6 @@ class ConnectionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
     }
 
     /**
@@ -44,7 +41,6 @@ class ConnectionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
     }
 
     /**

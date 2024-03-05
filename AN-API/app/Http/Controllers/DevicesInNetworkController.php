@@ -120,42 +120,43 @@ class DevicesInNetworkController extends Controller
 
         $interfaces = InterfaceOfDevice::all()->where('interface_id', '>', $maxInterfaceID);
 
-        //rozdeli interface podla typu zariadenia, pre router a end dvice je potrebne vyfiltrovat aj dalsie parametre, hlavne konektor, aby bol rovnak ako konektor switchu
+        // rozdeli interface podla typu zariadenia, pre router a end dvice je potrebne vyfiltrovat aj dalsie parametre, hlavne konektor, aby bol rovnak ako konektor switchu
         $switchInterfaces = $interfaces->where('type', 'switch');
         $routerInterfaces = $interfaces->where('type', 'router')->where('AN', '!=', 'WAN')->where('connector', $switchInterfaces->first()->connector);
         $EDInterfaces = $interfaces->where('type', 'ED')->where('connector', $switchInterfaces->first()->connector);
 
         $prev_sw_id = 0;
-        $si =  $switchInterfaces->keys()->first();
+        $si = $switchInterfaces->keys()->first();
         $ri = $routerInterfaces->keys()->first();
         $ei = $EDInterfaces->keys()->first();
 
-        for ($i = $si; $i < (count($EDInterfaces) + $si + $s); $i++) {
-            if (($switchInterfaces[$i]->id) != $prev_sw_id) {
+        for ($i = $si; $i < (count($EDInterfaces) + $si + $s); ++$i) {
+            if ($switchInterfaces[$i]->id != $prev_sw_id) {
                 $connectionsArray[] = [
-                    'interface_id1' => $switchInterfaces[$i]->interface_id,
-                    'interface_id2' => $routerInterfaces[$ri]->interface_id,
-                    'name1' => $switchInterfaces[$i]->name,
-                    'name2' => $routerInterfaces[$ri]->name,
+                    'interface_id1' => $routerInterfaces[$ri]->interface_id,
+                    'interface_id2' => $switchInterfaces[$i]->interface_id,
+                    'device_id1' => $routerInterfaces[$ri]->id,
+                    'device_id2' => $switchInterfaces[$i]->id,
+                    'name1' => $routerInterfaces[$ri]->name,
+                    'name2' => $switchInterfaces[$i]->name,
                 ];
-                //print_r($connectionsArray);
-                $ri++;
+                ++$ri;
             } else {
                 $connectionsArray[] = [
                     'interface_id1' => $switchInterfaces[$i]->interface_id,
                     'interface_id2' => $EDInterfaces[$ei]->interface_id,
+                    'device_id1' => $switchInterfaces[$i]->id,
+                    'device_id2' => $EDInterfaces[$ei]->id,
                     'name1' => $switchInterfaces[$i]->name,
                     'name2' => $EDInterfaces[$ei]->name,
                 ];
-                //print_r($connectionsArray);
-                $ei++;
+                ++$ei;
             }
 
             $prev_sw_id = $switchInterfaces[$i]->id;
         }
 
         DB::table('connections')->insert($connectionsArray);
-
 
         /* $r = $r - 1;
          $s = $s - 1;

@@ -12,7 +12,7 @@ import ReactFlow, {
 } from 'reactflow';
 import { z } from 'zod';
 
-import { dataSchemaDevices, dataSchemaInterface } from '../../pages/Database';
+import { dataSchemaConnections, dataSchemaDevices } from '../../pages/Database';
 import MyButton from '../MyButton';
 import MyModal from '../MyModal';
 
@@ -20,31 +20,13 @@ import MyRouterNode from './MyRouterNode';
 
 interface TopologyProps {
   dataDevices: z.infer<typeof dataSchemaDevices>;
-  dataInterfaces: z.infer<typeof dataSchemaInterface>;
-}
-
-interface Interfacetypes {
-  sourceInt: number;
-  targetInt: number;
-  sourceDev: number;
-  targetDev: number;
+  dataConnections: z.infer<typeof dataSchemaConnections>;
 }
 
 const nodeTypes = { routerNode: MyRouterNode };
 
-const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
+const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
   let posY = 0;
-  let sourceInt: number;
-  let targetInt: number;
-  let sourceDev: number;
-  let targetDev: number;
-
-  const [interfaceProps, setInterfaceProps] = useState<Interfacetypes>({
-    sourceInt: 0,
-    targetInt: 0,
-    sourceDev: 0,
-    targetDev: 0,
-  });
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -70,6 +52,8 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
         id: string;
         source: string;
         target: string;
+        sourceHandle: string;
+        targetHandle: string;
       }[] = [];
 
   dataDevices.forEach((element) => {
@@ -82,29 +66,15 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataInterfaces }) => {
     posY += 100;
   });
 
-  const uniqueEdges = new Set<string>();
-
-  for (let i = 0; i < dataInterfaces.length; i++) {
-    if (dataInterfaces[i].interface_id2 !== null) {
-      sourceInt = dataInterfaces[i].interface_id;
-      targetInt = dataInterfaces[i].interface_id2 ?? 0;
-      sourceDev = dataInterfaces[i].id;
-      targetDev = dataInterfaces[targetInt - 1].id;
-
-      const edgeId = `${sourceInt}-${targetInt}`;
-      const reverseEdgeId = `${targetInt}-${sourceInt}`;
-
-      if (!uniqueEdges.has(edgeId) && !uniqueEdges.has(reverseEdgeId)) {
-        edgesData.push({
-          id: edgeId,
-          source: sourceDev.toString(),
-          target: targetDev.toString(),
-        });
-
-        uniqueEdges.add(edgeId);
-      }
-    }
-  }
+  dataConnections.forEach((element) => {
+    edgesData.push({
+      id: `${element.interface_id1.toString()}-${element.interface_id2.toString()}`,
+      source: element.device_id1.toString(),
+      target: element.device_id2.toString(),
+      sourceHandle: element.name1,
+      targetHandle: element.name2,
+    });
+  });
 
   const toggleNodes = () => {
     if (isToggledNodes) {

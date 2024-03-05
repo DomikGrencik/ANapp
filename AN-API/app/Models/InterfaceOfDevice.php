@@ -17,7 +17,7 @@ class InterfaceOfDevice extends Model
         'speed',
         'interface_id2',
         'id',
-        'type'
+        'type',
     ];
     protected $table = 'interface_of_devices';
     protected $primaryKey = 'interface_id';
@@ -40,6 +40,7 @@ class InterfaceOfDevice extends Model
     public function connections()
     {
         return $this->hasOne(Connection::class, 'interface_id1', 'interface_id');
+
         return $this->hasOne(Connection::class, 'interface_id2', 'interface_id');
     }
 }

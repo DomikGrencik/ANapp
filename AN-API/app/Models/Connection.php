@@ -12,6 +12,8 @@ class Connection extends Model
     protected $fillable = [
         'interface_id1',
         'interface_id2',
+        'device_id1',
+        'device_id2',
         'name1',
         'name2',
     ];
@@ -31,6 +33,7 @@ class Connection extends Model
     public function interface_of_devices()
     {
         return $this->belongsTo(InterfaceOfDevice::class, 'interface_id1', 'interface_id');
+
         return $this->belongsTo(InterfaceOfDevice::class, 'interface_id2', 'interface_id');
     }
 }
