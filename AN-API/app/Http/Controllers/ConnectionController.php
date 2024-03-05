@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Connection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ConnectionController extends Controller
 {
@@ -48,7 +49,9 @@ class ConnectionController extends Controller
      */
     public function delete()
     {
+        Schema::disableForeignKeyConstraints();
         Connection::truncate();
+        Schema::enableForeignKeyConstraints();
 
         return json_encode([]);
     }

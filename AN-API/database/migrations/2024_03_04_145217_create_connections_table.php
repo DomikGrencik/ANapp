@@ -30,6 +30,14 @@ return new class() extends Migration {
                 ->references('interface_id')
                 ->on('interface_of_devices')
                 ->onDelete('cascade');
+            $table->foreign('device_id1')
+                ->references('id')
+                ->on('devices_in_networks')
+                ->onDelete('cascade');
+            $table->foreign('device_id2')
+                ->references('id')
+                ->on('devices_in_networks')
+                ->onDelete('cascade');
         });
     }
 

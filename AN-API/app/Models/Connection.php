@@ -35,5 +35,9 @@ class Connection extends Model
         return $this->belongsTo(InterfaceOfDevice::class, 'interface_id1', 'interface_id');
 
         return $this->belongsTo(InterfaceOfDevice::class, 'interface_id2', 'interface_id');
+
+        return $this->belongsTo(InterfaceOfDevice::class, 'device_id1', 'id');
+
+        return $this->belongsTo(InterfaceOfDevice::class, 'device_id2', 'id');
     }
 }

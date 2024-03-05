@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Connection;
 use App\Models\DevicesInNetwork;
 use App\Models\InterfaceOfDevice;
 use App\Models\Port;
@@ -300,6 +301,7 @@ class DevicesInNetworkController extends Controller
     {
         Schema::disableForeignKeyConstraints();
         DevicesInNetwork::truncate();
+        //Connection::truncate();
         Schema::enableForeignKeyConstraints();
 
         return json_encode([]);

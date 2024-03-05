@@ -42,5 +42,9 @@ class InterfaceOfDevice extends Model
         return $this->hasOne(Connection::class, 'interface_id1', 'interface_id');
 
         return $this->hasOne(Connection::class, 'interface_id2', 'interface_id');
+
+        return $this->hasOne(Connection::class, 'device_id1', 'id');
+
+        return $this->hasOne(Connection::class, 'device_id2', 'id');
     }
 }
