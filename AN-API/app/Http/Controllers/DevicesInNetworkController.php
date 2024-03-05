@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DevicesInNetwork;
+use App\Models\InterfaceOfDevice;
 use App\Models\Port;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,9 +43,9 @@ class DevicesInNetworkController extends Controller
         $type = 'router';
         $device_id = '1';
 
-        $r = 1;
-        $s = 1;
-        $e = 1;
+        $r = 0;
+        $s = 0;
+        $e = 0;
 
         // najprv je volaná metóda chooseDevice, ktorá vráti pole s id zariadení a ich typom
         $device = $this->chooseDevice($users, $vlans, $userConnection);
@@ -83,15 +84,14 @@ class DevicesInNetworkController extends Controller
         }
 
         // ziska najvacsi id v tabulke devices_in_networks pre pripad, ze by uz boli v tabulke nejake zaznamy
-        $maxID = DevicesInNetwork::max('id');
+        $maxDeviceID = DevicesInNetwork::max('id');
 
         // vlozi do tabulky devices_in_networks udaje obsiahnute v poli $devicesArray
-        // je pouzita metoda insert, pretoze su vkladane naraz viacere zaznamy a
-        // insert je rychlejsi ako createMany
+        // je pouzita metoda insert, pretoze su vkladane naraz viacere zaznamy a insert je rychlejsi ako createMany
         DB::table('devices_in_networks')->insert($devicesArray);
 
         // ziska vsetky zariadenia, ktore maju id vacsie ako $maxID
-        $devices = DevicesInNetwork::all()->where('id', '>', $maxID);
+        $devices = DevicesInNetwork::all()->where('id', '>', $maxDeviceID);
 
         // pre kazde vlozene zariadenie zapise do pola $interfacesArray udaje o jeho portoch
         foreach ($devices as $key => $deviceValue) {
@@ -113,14 +113,55 @@ class DevicesInNetworkController extends Controller
             }
         }
 
+        $maxInterfaceID = InterfaceOfDevice::max('interface_id');
+
         // vlozi do tabulky interface_of_devices udaje obsiahnute v poli $interfacesArray
         DB::table('interface_of_devices')->insert($interfacesArray);
 
-         $r = $r - 1;
+        $interfaces = InterfaceOfDevice::all()->where('interface_id', '>', $maxInterfaceID);
+
+        //rozdeli interface podla typu zariadenia, pre router a end dvice je potrebne vyfiltrovat aj dalsie parametre, hlavne konektor, aby bol rovnak ako konektor switchu
+        $switchInterfaces = $interfaces->where('type', 'switch');
+        $routerInterfaces = $interfaces->where('type', 'router')->where('AN', '!=', 'WAN')->where('connector', $switchInterfaces->first()->connector);
+        $EDInterfaces = $interfaces->where('type', 'ED')->where('connector', $switchInterfaces->first()->connector);
+
+        $prev_sw_id = 0;
+        $si =  $switchInterfaces->keys()->first();
+        $ri = $routerInterfaces->keys()->first();
+        $ei = $EDInterfaces->keys()->first();
+
+        for ($i = $si; $i < (count($EDInterfaces) + $si + $s); $i++) {
+            if (($switchInterfaces[$i]->id) != $prev_sw_id) {
+                $connectionsArray[] = [
+                    'interface_id1' => $switchInterfaces[$i]->interface_id,
+                    'interface_id2' => $routerInterfaces[$ri]->interface_id,
+                    'name1' => $switchInterfaces[$i]->name,
+                    'name2' => $routerInterfaces[$ri]->name,
+                ];
+                //print_r($connectionsArray);
+                $ri++;
+            } else {
+                $connectionsArray[] = [
+                    'interface_id1' => $switchInterfaces[$i]->interface_id,
+                    'interface_id2' => $EDInterfaces[$ei]->interface_id,
+                    'name1' => $switchInterfaces[$i]->name,
+                    'name2' => $EDInterfaces[$ei]->name,
+                ];
+                //print_r($connectionsArray);
+                $ei++;
+            }
+
+            $prev_sw_id = $switchInterfaces[$i]->id;
+        }
+
+        DB::table('connections')->insert($connectionsArray);
+
+
+        /* $r = $r - 1;
          $s = $s - 1;
          $e = $e - 1;
 
-         (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr);
+         (new InterfaceOfDeviceController)->connection($s, $switch_id, $IPaddr); */
 
         return json_encode([]);
     }

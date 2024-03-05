@@ -4,6 +4,7 @@ use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\DevicesInNetworkController;
 use App\Http\Controllers\InterfaceOfDeviceController;
 use App\Http\Controllers\PortController;
+use App\Http\Controllers\ConnectionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +41,12 @@ Route::controller(InterfaceOfDeviceController::class)->group(function () {
     Route::get('interface_of_devices', 'index');
     Route::get('interface_of_devices/getInterfacesOfDevice/{id}', 'getInterfacesOfDevice');
     Route::delete('interface_of_devices/delete', 'delete');
+});
+Route::controller(ConnectionController::class)->group(function () {
+    Route::get('connections', 'index');
+    Route::post('connections', 'store');
+    Route::get('connections/{connection}', 'show');
+    Route::put('connections/{connection}', 'update');
+    Route::delete('connections/{connection}', 'destroy');
+    Route::delete('connections/delete', 'delete');
 });

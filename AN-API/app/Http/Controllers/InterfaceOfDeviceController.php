@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\InterfaceOfDevice;
 use App\Models\Port;
+use Illuminate\Support\Facades\Schema;
 
 class InterfaceOfDeviceController extends Controller
 {
@@ -75,6 +76,7 @@ class InterfaceOfDeviceController extends Controller
      */
     public function connection(int $s, array $switch_id, string $IPaddr)
     {
+        //IP adresy
         $switches = Port::all()->whereIn('device_id', $switch_id)->pluck('number_of_ports')->toArray();
         arsort($switches);
 
@@ -160,7 +162,9 @@ class InterfaceOfDeviceController extends Controller
      */
     public function delete()
     {
+        Schema::disableForeignKeyConstraints();
         InterfaceOfDevice::truncate();
+        Schema::enableForeignKeyConstraints();
 
         return json_encode([]);
     }

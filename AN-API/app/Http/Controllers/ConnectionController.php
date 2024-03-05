@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Connection;
 use Illuminate\Http\Request;
 
 class ConnectionController extends Controller
@@ -44,5 +45,15 @@ class ConnectionController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Remove all resources from storage.
+     */
+    public function delete()
+    {
+        Connection::truncate();
+
+        return json_encode([]);
     }
 }
