@@ -43,7 +43,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
         id: string;
         type: string;
         position: { x: number; y: number };
-        data: { label: string, id: number};
+        data: { label: string; id: number };
       }[] = [];
 
   const edgesData:
@@ -61,7 +61,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
       id: element.id.toString(),
       type: 'routerNode',
       position: { x: 0, y: posY },
-      data: { label: element.name , id: element.id},
+      data: { label: element.name, id: element.id },
     });
     posY += 100;
   });
