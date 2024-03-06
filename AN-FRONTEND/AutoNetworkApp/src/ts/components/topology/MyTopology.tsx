@@ -43,7 +43,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
         id: string;
         type: string;
         position: { x: number; y: number };
-        data: { label: string };
+        data: { label: string, id: number};
       }[] = [];
 
   const edgesData:
@@ -61,7 +61,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
       id: element.id.toString(),
       type: 'routerNode',
       position: { x: 0, y: posY },
-      data: { label: element.name },
+      data: { label: element.name , id: element.id},
     });
     posY += 100;
   });
@@ -71,8 +71,8 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
       id: `${element.interface_id1.toString()}-${element.interface_id2.toString()}`,
       source: element.device_id1.toString(),
       target: element.device_id2.toString(),
-      sourceHandle: element.name1,
-      targetHandle: element.name2,
+      sourceHandle: element.interface_id1.toString(),
+      targetHandle: element.interface_id2.toString(),
     });
   });
 
@@ -137,7 +137,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
             hasTable
             idDevice={idDevice}
           >
-            Ja som modal
+            {/* Ja som modal */}
           </MyModal>
         </div>
       ) : null}
