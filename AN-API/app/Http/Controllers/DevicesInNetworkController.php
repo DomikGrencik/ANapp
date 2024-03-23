@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Connection;
+use App\Models\Device;
 use App\Models\DevicesInNetwork;
 use App\Models\InterfaceOfDevice;
 use App\Models\Port;
@@ -262,6 +263,105 @@ class DevicesInNetworkController extends Controller
         }
 
         return $devices;
+    }
+    public function choose(request $request)
+    {
+        $request->validate([
+            'users' => 'required',
+            'vlans' => 'required',
+            'userConnection' => 'required',
+            'SDWAN' => 'required',
+        ]);
+
+        $users = $request->users; //20, 40, 60, ...
+        $vlans = $request->vlans;
+        $userConnection = $request->userConnection; //100, 1000, 10000
+        $SDWAN = $request->SDWAN; //yes, no, -
+        // pre router potrebujem dalsi parameter throughput
+
+        // mal by som urobit stupnicu, ktora bude urcovat, ktore zariadenie sa zvoli pri danom stupni vyuzitia siete, najmenej narocna bude 1 a zvysuje sa narocnostou siete
+        //Pre router sa bude vyberat hlavne podla parametra throughput. Potom sa budu filtrovat podla dalsich parametrov - sd-wan, security parametre
+
+        
+        // 1 - bez SD-WAN, 100Mbps, maximalne
+
+
+        $devices = Device::all();
+        $ports = Port::all();
+
+        $routerDevices = $devices->where('type', 'router')->where('SD-WAN', $SDWAN);
+
+        $routerIds = $routerDevices->pluck('device_id')->values();
+
+        $routerPorts = $ports->where('type', 'router');
+        $switchPorts = $ports->where('type', 'switch');
+        $EDPorts = $ports->where('type', 'ED');
+        $chosenDevices = [];
+
+        $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users/47)->whereIn('device_id', $routerIds);
+
+        return $router;
+
+        $router_id = $router->last()->device_id;
+
+        array_push($chosenDevices, $router_id, 'router');
+
+        $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
+
+        //return $switch;
+
+        // Initialize an empty array to store the counts for each device_id
+        $portCounts = [];
+
+        // Iterate through the array and calculate the counts
+        foreach ($switch as $item) {
+            $deviceId = $item['device_id'];
+
+            // Check if the device_id is already in the portCounts array
+            if (isset($portCounts[$deviceId])) {
+                // If it exists, increment the count
+                $portCounts[$deviceId] += $item['number_of_ports'];
+            } else {
+                // If it doesn't exist, initialize the count
+                $portCounts[$deviceId] = $item['number_of_ports'];
+            }
+        }
+
+        ++$users;
+
+        if ($users <= min($portCounts)) {
+            asort($portCounts);
+            array_push($chosenDevices, array_search(min($portCounts), $portCounts), 'switch');
+        } else {
+            arsort($portCounts);
+
+            $sum = 0;
+            $prev = 100;
+            foreach ($portCounts as $key => $value) {
+                if ($value < $prev) {
+                    do {
+                        $sum += $value;
+                        array_push($chosenDevices, $key, 'switch');
+                    } while (($sum + $value) <= $users);
+                }
+
+                $prev = $value;
+
+                if ($sum >= $users) {
+                    break;
+                }
+            }
+        }
+
+        --$users;
+
+        $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
+
+        for ($i = 0; $i < $users; ++$i) {
+            array_push($chosenDevices, $ED, 'ED');
+        }
+
+        return $chosenDevices;
     }
 
     /**

@@ -13,6 +13,8 @@ class Device extends Model
         'manufacturer',
         'model',
         'type',
+        'throughput', //tento parameter je povazovany ako IPsec IMIX throughput (Mbps)
+        'SD-WAN',
     ];
     protected $table = 'devices';
     protected $primaryKey = 'device_id';

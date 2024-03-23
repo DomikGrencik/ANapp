@@ -17,17 +17,58 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C931-4P',
-            'type' => 'router'
+            'type' => 'router',
+            'throughput' => '250',
+            'SD-WAN' => 'no'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C1131(X)-8PW',
-            'type' => 'router'
+            'type' => 'router',
+            'throughput' => '470',
+            'SD-WAN' => 'yes'
+        ]);
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C1161(X)-8P',
+            'type' => 'router',
+            'throughput' => '595',
+            'SD-WAN' => 'yes'
+        ]);
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C8300-1N1S-6T',
+            'type' => 'router',
+            'throughput' => '1800',
+            'SD-WAN' => 'yes'
+        ]);
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C8300-1N1S-6T+C-NIM-8T',
+            'type' => 'router',
+            'throughput' => '1800',
+            'SD-WAN' => 'yes'
         ]);
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C8300-1N1S-4T2X',
-            'type' => 'router'
+            'type' => 'router',
+            'throughput' => '6300',
+            'SD-WAN' => 'yes'
+        ]);
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C8300-1N1S-4T2X+C-NIM-8T',
+            'type' => 'router',
+            'throughput' => '6300',
+            'SD-WAN' => 'yes'
+        ]);
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C8300-1N1S-4T2X+C-NIM-4X',
+            'type' => 'router',
+            'throughput' => '6300',
+            'SD-WAN' => 'yes'
         ]);
 
         //---------------------------------SWITCHES
