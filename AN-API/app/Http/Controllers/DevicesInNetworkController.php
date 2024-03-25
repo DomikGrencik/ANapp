@@ -282,8 +282,36 @@ class DevicesInNetworkController extends Controller
         // mal by som urobit stupnicu, ktora bude urcovat, ktore zariadenie sa zvoli pri danom stupni vyuzitia siete, najmenej narocna bude 1 a zvysuje sa narocnostou siete
         //Pre router sa bude vyberat hlavne podla parametra throughput. Potom sa budu filtrovat podla dalsich parametrov - sd-wan, security parametre
 
-        
+
         // 1 - bez SD-WAN, 100Mbps, maximalne
+
+        for ($i = 1; $i < 10; $i++) {
+            # code...
+            switch (true) {
+                case $users <= 30 * $i && $users > 30 * ($i - 1):
+                    switch ($userConnection) {
+                        case 100:
+                            return 100 * $i;
+                            break;
+                        case 1000:
+                            return 1000 * $i;
+                            break;
+                        case 10000:
+                            return 10000 * $i;
+                            break;
+
+                        default:
+                            # code...
+                            break;
+                    }
+                    return 30 * $i;
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+        }
 
 
         $devices = Device::all();
@@ -298,7 +326,7 @@ class DevicesInNetworkController extends Controller
         $EDPorts = $ports->where('type', 'ED');
         $chosenDevices = [];
 
-        $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users/47)->whereIn('device_id', $routerIds);
+        $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users / 47)->whereIn('device_id', $routerIds);
 
         return $router;
 
