@@ -277,13 +277,16 @@ class DevicesInNetworkController extends Controller
         $vlans = $request->vlans;
         $userConnection = $request->userConnection; //100, 1000, 10000
         $SDWAN = $request->SDWAN; //yes, no, -
-        // pre router potrebujem dalsi parameter throughput
 
-        // mal by som urobit stupnicu, ktora bude urcovat, ktore zariadenie sa zvoli pri danom stupni vyuzitia siete, najmenej narocna bude 1 a zvysuje sa narocnostou siete
+
         //Pre router sa bude vyberat hlavne podla parametra throughput. Potom sa budu filtrovat podla dalsich parametrov - sd-wan, security parametre
+        //Throughput - kolko dat dokaze realne preposielat (Gbps)
+
+        //Pre switch sa bude vyberat najprv podla poctu portov a rychlosti portov. Potom sa bude vyberat podla parametrov:
+        //Forwarding performance - kolko (milionov) paketov za sekundu dokaze preposielat (Mpps) - pre 100Mb 24 portov je potrebne 0.1488Mpps*24=3.57Mpps
+        //Switching capacity - celkova schoponst vymeny dat switchu (Gbps) - pre 100Mb 24 portov je potrebne 24*2(full-duplex)*100Mb=4.8Gbps
 
 
-        // 1 - bez SD-WAN, 100Mbps, maximalne
 
         for ($i = 1; $i < 10; $i++) {
             # code...
