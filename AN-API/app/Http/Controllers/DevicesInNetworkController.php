@@ -264,6 +264,7 @@ class DevicesInNetworkController extends Controller
 
         return $devices;
     }
+
     public function choose(request $request)
     {
         $request->validate([
@@ -273,54 +274,24 @@ class DevicesInNetworkController extends Controller
             'SDWAN' => 'required',
         ]);
 
-        $users = $request->users; //20, 40, 60, ...
+        $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans;
-        $userConnection = $request->userConnection; //100, 1000, 10000
-        $SDWAN = $request->SDWAN; //yes, no, -
+        $userConnection = $request->userConnection; // 100, 1000, 10000
+        $SDWAN = $request->SDWAN; // yes, no, -
 
+        // Pre router sa bude vyberat hlavne podla parametra throughput. Potom sa budu filtrovat podla dalsich parametrov - sd-wan, security parametre
+        // Throughput - kolko dat dokaze realne preposielat (Gbps)
 
-        //Pre router sa bude vyberat hlavne podla parametra throughput. Potom sa budu filtrovat podla dalsich parametrov - sd-wan, security parametre
-        //Throughput - kolko dat dokaze realne preposielat (Gbps)
-
-        //Pre switch sa bude vyberat najprv podla poctu portov a rychlosti portov. Potom sa bude vyberat podla parametrov:
-        //Forwarding performance - kolko (milionov) paketov za sekundu dokaze preposielat (Mpps) - pre 100Mb 24 portov je potrebne 0.1488Mpps*24=3.57Mpps
-        //Switching capacity - celkova schoponst vymeny dat switchu (Gbps) - pre 100Mb 24 portov je potrebne 24*2(full-duplex)*100Mb=4.8Gbps
-
-
-
-        for ($i = 1; $i < 10; $i++) {
-            # code...
-            switch (true) {
-                case $users <= 30 * $i && $users > 30 * ($i - 1):
-                    switch ($userConnection) {
-                        case 100:
-                            return 100 * $i;
-                            break;
-                        case 1000:
-                            return 1000 * $i;
-                            break;
-                        case 10000:
-                            return 10000 * $i;
-                            break;
-
-                        default:
-                            # code...
-                            break;
-                    }
-                    return 30 * $i;
-                    break;
-
-                default:
-                    # code...
-                    break;
-            }
-        }
+        // Pre switch sa bude vyberat najprv podla poctu portov a rychlosti portov. Potom sa bude vyberat podla parametrov:
+        // Forwarding performance - kolko (milionov) paketov za sekundu dokaze preposielat (Mpps) - pre 100Mb 24 portov je potrebne 0.1488Mpps*24=3.57Mpps
+        // Switching capacity - celkova schoponst vymeny dat switchu (Gbps) -
+        // pre 100Mb 24 portov je potrebne 24*2(full-duplex)*100Mb=4.8Gbps
 
 
         $devices = Device::all();
         $ports = Port::all();
 
-        $routerDevices = $devices->where('type', 'router')->where('SD-WAN', $SDWAN);
+        $routerDevices = $devices->where('type', 'router')->where('r-SD-WAN', $SDWAN);
 
         $routerIds = $routerDevices->pluck('device_id')->values();
 
@@ -331,15 +302,20 @@ class DevicesInNetworkController extends Controller
 
         $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users / 47)->whereIn('device_id', $routerIds);
 
-        return $router;
 
         $router_id = $router->last()->device_id;
 
         array_push($chosenDevices, $router_id, 'router');
 
+
+        
+
+        $switchDevices = $devices->where('type', 'switch')->where('s-vlan', $vlans);
+        return $switchDevices;
+
         $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
-        //return $switch;
+        // return $switch;
 
         // Initialize an empty array to store the counts for each device_id
         $portCounts = [];
@@ -432,7 +408,7 @@ class DevicesInNetworkController extends Controller
     {
         Schema::disableForeignKeyConstraints();
         DevicesInNetwork::truncate();
-        //Connection::truncate();
+        // Connection::truncate();
         Schema::enableForeignKeyConstraints();
 
         return json_encode([]);
