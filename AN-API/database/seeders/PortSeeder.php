@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,8 +12,10 @@ class PortSeeder extends Seeder
      */
     public function run(): void
     {
-        //---------------------------------ROUTERS
-        //Cisco C921-4P router
+        // --------------------------------------\\
+        // ---------------------------------ROUTERS
+        // --------------------------------------\\
+        // Cisco C921-4P router
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -34,7 +35,7 @@ class PortSeeder extends Seeder
             'device_id' => '1',
         ]);
 
-        //Cisco C1131(X)-8PW
+        // Cisco C1131(X)-8PW
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -54,7 +55,7 @@ class PortSeeder extends Seeder
             'device_id' => '2',
         ]);
 
-        //Cisco C1161(X)-8PW
+        // Cisco C1161(X)-8PW
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -74,7 +75,7 @@ class PortSeeder extends Seeder
             'device_id' => '3',
         ]);
 
-        //Cisco C8300-1N1S-6T
+        // Cisco C8300-1N1S-6T
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -95,7 +96,7 @@ class PortSeeder extends Seeder
             'device_id' => '4',
         ]);
 
-        //Cisco C8300-1N1S-6T-C-NIM-8T
+        // Cisco C8300-1N1S-6T-C-NIM-8T
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -116,7 +117,7 @@ class PortSeeder extends Seeder
             'device_id' => '5',
         ]);
 
-        //Cisco C8300-1N1S-4T2X
+        // Cisco C8300-1N1S-4T2X
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -136,7 +137,7 @@ class PortSeeder extends Seeder
             'device_id' => '6',
         ]);
 
-        //Cisco C8300-1N1S-4T2X-C-NIM-8T
+        // Cisco C8300-1N1S-4T2X-C-NIM-8T
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -156,7 +157,7 @@ class PortSeeder extends Seeder
             'device_id' => '7',
         ]);
 
-        //Cisco C8300-1N1S-4T2X-C-NIM-4X
+        // Cisco C8300-1N1S-4T2X-C-NIM-4X
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -176,8 +177,21 @@ class PortSeeder extends Seeder
             'device_id' => '8',
         ]);
 
-        //---------------------------------SWITCHES
-        //Cisco C9200L-24T-4G
+        // ---------------------------------------\\
+        // ---------------------------------SWITCHES
+        // ---------------------------------------\\
+        // Cisco CBS110-16T
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 16,
+            'type' => 'switch',
+            'device_id' => '9',
+        ]);
+
+        // Cisco CBS110-24T
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -185,30 +199,10 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 24,
             'type' => 'switch',
-            'device_id' => '9',
-        ]);
-
-        //Cisco C9200L-48T-4G
-        DB::table('ports')->insert([
-            'name' => 'GE',
-            'connector' => 'RJ45',
-            'AN' => 'LAN',
-            'speed' => '1000',
-            'number_of_ports' => 48,
-            'type' => 'switch',
             'device_id' => '10',
         ]);
 
-        //Cisco C9200L-24PXG-4X
-        DB::table('ports')->insert([
-            'name' => 'GE',
-            'connector' => 'RJ45',
-            'AN' => 'LAN',
-            'speed' => '10000',
-            'number_of_ports' => 8,
-            'type' => 'switch',
-            'device_id' => '11',
-        ]);
+        // Cisco CBS220-16T-2G
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -219,7 +213,84 @@ class PortSeeder extends Seeder
             'device_id' => '11',
         ]);
 
-        //Cisco C9200L-48PXG-4X
+        // Cisco CBS220-24T-2G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 24,
+            'type' => 'switch',
+            'device_id' => '12',
+        ]);
+
+        // Cisco CBS220-48T-2G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 48,
+            'type' => 'switch',
+            'device_id' => '13',
+        ]);
+
+        // Cisco C1300-16T-2G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 16,
+            'type' => 'switch',
+            'device_id' => '14',
+        ]);
+
+        // Cisco C1300-24T-4G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 24,
+            'type' => 'switch',
+            'device_id' => '15',
+        ]);
+
+        // Cisco C1300-48T-4G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 48,
+            'type' => 'switch',
+            'device_id' => '16',
+        ]);
+
+        // Cisco C9200L-24T-4G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 24,
+            'type' => 'switch',
+            'device_id' => '17',
+        ]);
+
+        // Cisco C9200L-48T-4G
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 48,
+            'type' => 'switch',
+            'device_id' => '18',
+        ]);
+
+        // Cisco C9200L-24PXG-4X
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -227,7 +298,27 @@ class PortSeeder extends Seeder
             'speed' => '10000',
             'number_of_ports' => 8,
             'type' => 'switch',
-            'device_id' => '12',
+            'device_id' => '19',
+        ]);
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 16,
+            'type' => 'switch',
+            'device_id' => '19',
+        ]);
+
+        // Cisco C9200L-48PXG-4X
+        DB::table('ports')->insert([
+            'name' => 'GE',
+            'connector' => 'RJ45',
+            'AN' => 'LAN',
+            'speed' => '10000',
+            'number_of_ports' => 8,
+            'type' => 'switch',
+            'device_id' => '20',
         ]);
         DB::table('ports')->insert([
             'name' => 'GE',
@@ -236,11 +327,13 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 40,
             'type' => 'switch',
-            'device_id' => '12',
+            'device_id' => '20',
         ]);
 
-        //---------------------------------EndDevices
-        //desktop
+        // -----------------------------------------\\
+        // ---------------------------------EndDevices
+        // -----------------------------------------\\
+        // desktop
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -248,10 +341,10 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 1,
             'type' => 'ED',
-            'device_id' => '13',
+            'device_id' => '21',
         ]);
 
-        //laptop
+        // laptop
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
@@ -259,7 +352,7 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 1,
             'type' => 'ED',
-            'device_id' => '14',
+            'device_id' => '22',
         ]);
         DB::table('ports')->insert([
             'name' => 'GE',
@@ -268,7 +361,7 @@ class PortSeeder extends Seeder
             'speed' => 'Wireless',
             'number_of_ports' => 1,
             'type' => 'ED',
-            'device_id' => '14',
+            'device_id' => '22',
         ]);
     }
 }

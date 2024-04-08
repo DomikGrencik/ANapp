@@ -16,8 +16,13 @@ return new class extends Migration
             $table->string('manufacturer');
             $table->string('model');
             $table->enum('type', ['router', 'switch', 'ED']);
-            $table->integer('throughput')->nullable();
-            $table->enum('SD-WAN', ['yes', 'no', '-'])->default('-');
+            $table->integer('r-throughput')->nullable();
+            $table->enum('r-SD-WAN', ['yes', 'no', '-'])->default('-');
+            $table->float('s-forwarding_rate')->nullable();
+            $table->float('s-switching_capacity')->nullable();
+            $table->enum('s-vlan', ['yes', 'no', '-'])->default('-');
+            $table->enum('s-L3', ['yes', 'no', '-'])->default('-');
+            $table->integer('price')->nullable();
             $table->timestamps();
         });
     }
