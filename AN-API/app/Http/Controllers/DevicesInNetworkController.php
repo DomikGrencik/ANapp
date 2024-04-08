@@ -287,7 +287,6 @@ class DevicesInNetworkController extends Controller
         // Switching capacity - celkova schoponst vymeny dat switchu (Gbps) -
         // pre 100Mb 24 portov je potrebne 24*2(full-duplex)*100Mb=4.8Gbps
 
-
         $devices = Device::all();
         $ports = Port::all();
 
@@ -302,15 +301,31 @@ class DevicesInNetworkController extends Controller
 
         $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users / 47)->whereIn('device_id', $routerIds);
 
-
         $router_id = $router->last()->device_id;
 
         array_push($chosenDevices, $router_id, 'router');
 
+        do {
+            if ($users - 47 >= 0) {
+                print_r("47\n");
+                $users -= 47;
+            } elseif ($users - 47 < 0) {
+                print_r($users."\n");
+                if ($users > 23) {
+                    print_r("zostatok_47\n");
+                } elseif ($users > 15) {
+                    print_r("zostatok_23\n");
+                } else {
+                    print_r("zostatok_15\n");
+                }
+                $users -= 47;
+            }
+        } while ($users > 0);
 
-        
+        return null;
 
         $switchDevices = $devices->where('type', 'switch')->where('s-vlan', $vlans);
+
         return $switchDevices;
 
         $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
