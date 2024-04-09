@@ -291,42 +291,42 @@ class DevicesInNetworkController extends Controller
         $ports = Port::all();
 
         $routerDevices = $devices->where('type', 'router')->where('r-SD-WAN', $SDWAN);
-
         $routerIds = $routerDevices->pluck('device_id')->values();
-
         $routerPorts = $ports->where('type', 'router');
-        $switchPorts = $ports->where('type', 'switch');
-        $EDPorts = $ports->where('type', 'ED');
-        $chosenDevices = [];
-
         $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users / 47)->whereIn('device_id', $routerIds);
+
+        $chosenDevices = [];
 
         $router_id = $router->last()->device_id;
 
         array_push($chosenDevices, $router_id, 'router');
 
+        $switchDevices = $devices->where('type', 'switch')->where('s-vlan', $vlans);
+        $switchIds = $switchDevices->pluck('device_id')->values();
+        $switchPorts = $ports->where('type', 'switch')->whereIn('device_id', $switchIds);
+        $maxPorts = $switchPorts->max('number_of_ports');
+
         do {
-            if ($users - 47 >= 0) {
-                print_r("47\n");
-                $users -= 47;
-            } elseif ($users - 47 < 0) {
-                print_r($users."\n");
+            if ($users - ($maxPorts - 1) >= 0) {
+                $numberOfPorts = $maxPorts;
+                $users -= ($maxPorts - 1);
+            } elseif ($users - ($maxPorts - 1) < 0) {
                 if ($users > 23) {
-                    print_r("zostatok_47\n");
+                    $numberOfPorts = $maxPorts;
                 } elseif ($users > 15) {
-                    print_r("zostatok_23\n");
+                    $numberOfPorts = 24;
                 } else {
-                    print_r("zostatok_15\n");
+                    $numberOfPorts = 16;
                 }
-                $users -= 47;
+                $users -= ($maxPorts - 1);
             }
+            $forwardingRate = 0.001488 * $userConnection * $numberOfPorts;
+            $switchingCapacity = 2 * $userConnection * $numberOfPorts / 1000;
+
+            $switch[] = $switchDevices->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('price')->first()->device_id;
         } while ($users > 0);
 
-        return null;
-
-        $switchDevices = $devices->where('type', 'switch')->where('s-vlan', $vlans);
-
-        return $switchDevices;
+        return $switch;
 
         $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
 
@@ -377,6 +377,7 @@ class DevicesInNetworkController extends Controller
 
         --$users;
 
+        $EDPorts = $ports->where('type', 'ED');
         $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
 
         for ($i = 0; $i < $users; ++$i) {
