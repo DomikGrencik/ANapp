@@ -320,10 +320,13 @@ class DevicesInNetworkController extends Controller
                 }
                 $users -= ($maxPorts - 1);
             }
+
             $forwardingRate = 0.001488 * $userConnection * $numberOfPorts;
             $switchingCapacity = 2 * $userConnection * $numberOfPorts / 1000;
 
-            $switch[] = $switchDevices->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('price')->first()->device_id;
+            $switchByPorts = $switchPorts->where('number_of_ports', '>=', $numberOfPorts)->pluck('device_id');
+
+            $switch[] = $switchDevices->whereIn('device_id', $switchByPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('price')->first()->device_id;
         } while ($users > 0);
 
         return $switch;
