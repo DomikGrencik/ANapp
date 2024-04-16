@@ -17,10 +17,12 @@ const fetchDevices = async () => {
 };
 
 const useFetchDevices = () => {
-  useQuery({
+  const { data } = useQuery({
     queryKey: ['devices'],
     queryFn: fetchDevices,
   });
+
+  return data;
 };
 
 export default useFetchDevices;

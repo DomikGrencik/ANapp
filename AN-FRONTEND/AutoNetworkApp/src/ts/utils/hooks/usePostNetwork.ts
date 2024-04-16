@@ -6,7 +6,7 @@ import { API_ROUTE_BASE } from '../variables';
 const usePostNetwork = () => {
   const queryClient = useQueryClient();
 
-  useMutation({
+  const { mutateAsync: postNetwork } = useMutation({
     mutationFn: (values: YourFormData) => {
       return fetch(`${API_ROUTE_BASE}devices_in_networks`, {
         method: 'POST',
@@ -26,6 +26,8 @@ const usePostNetwork = () => {
       console.error('Form submission error:', error.message);
     },
   });
+
+  return postNetwork;
 };
 
 export default usePostNetwork;

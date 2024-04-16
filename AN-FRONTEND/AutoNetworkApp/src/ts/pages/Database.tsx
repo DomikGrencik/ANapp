@@ -1,5 +1,6 @@
 import { FC, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { FormikHelpers } from 'formik';
 import { z } from 'zod';
 
 import MyForm, { YourFormData } from '../components/form/MyForm';
@@ -7,6 +8,8 @@ import MyButton from '../components/MyButton';
 import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
 import MyTopology from '../components/topology/MyTopology';
+import useFetchDevices from '../utils/hooks/useFetchDevices';
+import usePostNetwork from '../utils/hooks/usePostNetwork';
 import { API_ROUTE_BASE } from '../utils/variables';
 
 import 'reactflow/dist/style.css';
@@ -49,6 +52,9 @@ export const dataSchemaConnections = z.array(
 const Database: FC = () => {
   const [success, setSuccess] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const postNetworkData = usePostNetwork();
+  const devicesData = useFetchDevices();
 
   // This function handles the submission of the form data to the server
   const { mutateAsync: postNetwork } = useMutation({
@@ -214,15 +220,22 @@ const Database: FC = () => {
     return null;
   }
 
+  const handleSubmit = async (
+    values: YourFormData,
+    formikHelpers: FormikHelpers<YourFormData>
+  ) => {
+    try {
+      await postNetworkData(values);
+      formikHelpers.resetForm();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+
   return (
     <main className="page flex--justify-space-between container--wide flex">
       <div className="flex--column flex">
-        <MyForm
-          onSubmit={async (values, formikHelpers) => {
-            await postNetwork(values);
-            formikHelpers.resetForm();
-          }}
-        />
+        <MyForm onSubmit={handleSubmit} />
         <MyButton onClick={handleDelete}>Delete</MyButton>
         <MyButton
           onClick={() => {
@@ -261,7 +274,7 @@ const Database: FC = () => {
         {isLoadingDevices || isLoadingConnections ? (
           <div>loading</div>
         ) : (
-          <MyTable data={dataDevices ?? []} />
+          <MyTable data={devicesData ?? []} />
         )}
       </div>
     </main>
