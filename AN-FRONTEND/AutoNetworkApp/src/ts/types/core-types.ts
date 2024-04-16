@@ -20,3 +20,10 @@ export type UnknownObject = Record<string, unknown>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyObject = Record<string, any>;
+
+export type YourFormData = {
+  users: string;
+  vlans: string;
+  IPaddr: string;
+  userConnection: string;
+};
