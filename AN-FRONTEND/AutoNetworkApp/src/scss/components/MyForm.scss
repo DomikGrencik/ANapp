@@ -8,13 +8,22 @@
 .my-input {
   font-size: 1rem;
   padding: 1rem;
-  background: $c-primary-light;
-  border: 2px solid $c-primary-dark;
-  color: $c-primary-dark;
+  background: $c-secondary-base;
+  border: 2px solid $c-secondary-light;
+  color: $c-secondary-light;
   border-radius: 5px;
 
   &::placeholder {
-    color: $c-primary-light-accent;
+    color: $c-secondary-light-accent;
+  }
+
+  &:hover {
+    border-color: $c-secondary-dark-accent;
+  }
+
+  &:focus {
+    border-color: $c-secondary-dark-accent;
+    outline: none;
   }
 
   &__label {
@@ -22,6 +31,6 @@
     font-size: 1rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
-    color: $c-primary-dark;
+    color: $c-secondary-light;
   }
 }

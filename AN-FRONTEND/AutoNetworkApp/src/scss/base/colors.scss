@@ -6,6 +6,13 @@ $color-palette: (
     'light-accent': #748d92,
     'dark-accent': #212a31,
   ),
+  'secondary': (
+    'base': #49455a,
+    'light': #d6d9dd,
+    'dark': #1f1c27,
+    'light-accent': #6c697c,
+    'dark-accent': #7d66b4,
+  ),
 );
 
 @function color-palette($color, $tone) {
@@ -33,6 +40,13 @@ $c-primary-light: color-palette('primary', 'light');
 $c-primary-dark: color-palette('primary', 'dark');
 $c-primary-light-accent: color-palette('primary', 'light-accent');
 $c-primary-dark-accent: color-palette('primary', 'dark-accent');
+//
+$c-secondary-base: color-palette('secondary', 'base');
+$c-secondary-light: color-palette('secondary', 'light');
+$c-secondary-dark: color-palette('secondary', 'dark');
+$c-secondary-light-accent: color-palette('secondary', 'light-accent');
+$c-secondary-dark-accent: color-palette('secondary', 'dark-accent');
+//
 $c-font: rgba(0, 0, 0, 0.6);
 $c-background: #ffffff;
 $c-scroll-track: #aaaaaa;

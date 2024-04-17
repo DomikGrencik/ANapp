@@ -75,11 +75,10 @@ const AutoNetwork: FC = () => {
       </div>
 
       <div className="layout__table">
-        {isLoadingDevices || isLoadingConnections ? (
-          <div>loading</div>
-        ) : (
-          <MyTable data={dataDevices ?? []} />
-        )}
+        <MyTable
+          data={dataDevices ?? []}
+          isLoading={isLoadingDevices || isLoadingConnections}
+        />
       </div>
     </main>
   );
