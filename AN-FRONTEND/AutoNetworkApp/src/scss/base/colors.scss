@@ -1,10 +1,14 @@
 $color-palette: (
   'primary': (
-    'base': #a5a5a5,
+    'base': #124e66,
+    'light': #d3d9d5,
+    'dark': #2f3943,
+    'light-accent': #748d92,
+    'dark-accent': #212a31,
   ),
 );
 
-@function color-palette($color, $tone: 'base') {
+@function color-palette($color, $tone) {
   $map: map-get($color-palette, $color);
   @return map-get($map, $tone);
 }
@@ -24,7 +28,11 @@ $color-social: (
 }
 
 // BINDS
-$c-primary: color-palette('primary');
+$c-primary-base: color-palette('primary', 'base');
+$c-primary-light: color-palette('primary', 'light');
+$c-primary-dark: color-palette('primary', 'dark');
+$c-primary-light-accent: color-palette('primary', 'light-accent');
+$c-primary-dark-accent: color-palette('primary', 'dark-accent');
 $c-font: rgba(0, 0, 0, 0.6);
 $c-background: #ffffff;
 $c-scroll-track: #aaaaaa;

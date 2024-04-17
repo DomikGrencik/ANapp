@@ -7,15 +7,21 @@
 
 .my-input {
   font-size: 1rem;
-
   padding: 1rem;
-  border: 1px solid #363636;
+  background: $c-primary-light;
+  border: 2px solid $c-primary-dark;
+  color: $c-primary-dark;
   border-radius: 5px;
+
+  &::placeholder {
+    color: $c-primary-light-accent;
+  }
 
   &__label {
     display: block;
     font-size: 1rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    color: $c-primary-dark;
   }
 }
