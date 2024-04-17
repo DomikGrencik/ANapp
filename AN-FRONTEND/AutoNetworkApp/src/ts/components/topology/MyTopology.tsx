@@ -99,11 +99,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
 
   return (
     <>
-      <div
-        style={{
-          height: '100%',
-        }}
-      >
+      <div className="my-topology">
         <ReactFlow
           nodes={nodes}
           edges={edges}

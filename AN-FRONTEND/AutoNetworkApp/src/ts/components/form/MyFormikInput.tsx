@@ -1,6 +1,7 @@
 import { FC } from 'react';
-import { TextField } from '@mui/material';
 import { useField } from 'formik';
+
+import MyInput from './MyInput';
 
 const MyFormikInput: FC<{
   name: string;
@@ -12,13 +13,11 @@ const MyFormikInput: FC<{
   const [{ value }, , { setValue }] = useField<string>(name);
 
   return (
-    <TextField
+    <MyInput
       {...props}
       value={value}
       onChange={(e) => setValue(e.target.value)}
       required
-      variant="outlined"
-      autoComplete="off"
     />
   );
 };

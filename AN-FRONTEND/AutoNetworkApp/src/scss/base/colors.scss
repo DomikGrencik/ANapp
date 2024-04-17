@@ -1,21 +1,21 @@
 $color-palette: (
-  "primary": (
-    "base": #478ef8,
+  'primary': (
+    'base': #a5a5a5,
   ),
 );
 
-@function color-palette($color, $tone: "base") {
+@function color-palette($color, $tone: 'base') {
   $map: map-get($color-palette, $color);
   @return map-get($map, $tone);
 }
 
 $color-social: (
-  "social": (
-    "facebook": #1778f2,
-    "youtube": #f70000,
-    "twitter": #1c9be9,
-    "linkedin": #0a66c2,
-    "rss": #eb802c,
+  'social': (
+    'facebook': #1778f2,
+    'youtube': #f70000,
+    'twitter': #1c9be9,
+    'linkedin': #0a66c2,
+    'rss': #eb802c,
   ),
 );
 
@@ -24,7 +24,7 @@ $color-social: (
 }
 
 // BINDS
-$c-main: color-palette("primary");
+$c-primary: color-palette('primary');
 $c-font: rgba(0, 0, 0, 0.6);
 $c-background: #ffffff;
 $c-scroll-track: #aaaaaa;

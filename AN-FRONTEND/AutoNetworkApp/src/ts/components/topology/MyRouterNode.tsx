@@ -33,8 +33,7 @@ const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
   }
 
   return (
-    <div className="my-topology my-topology--router">
-
+    <div className="node node--router">
       {/* {dataInterfaces &&
         dataInterfaces.map((element, index) => (
           <Handle

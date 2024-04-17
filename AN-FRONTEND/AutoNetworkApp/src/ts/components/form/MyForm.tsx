@@ -31,7 +31,7 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
       }}
     >
       {({ isSubmitting }) => (
-        <Form className="flex--column my-form flex">
+        <Form className="my-form">
           <MyFormikInput
             name="users"
             props={{ label: 'Users', placeholder: 'Enter number of users' }}

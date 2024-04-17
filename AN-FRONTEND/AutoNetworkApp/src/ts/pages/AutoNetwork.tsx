@@ -61,29 +61,20 @@ const AutoNetwork: FC = () => {
   };
 
   return (
-    <main className="page flex--justify-space-between container--wide flex">
-      <div className="flex--column flex">
+    <main className="layout">
+      <div className="layout__form">
         <MyForm onSubmit={handleSubmit} />
         <MyButton onClick={handleDelete}>Delete</MyButton>
       </div>
 
-      <div
-        style={{
-          width: '100%',
-          minWidth: '300px',
-          border: '1px solid #e5e5e5',
-          borderRadius: '5px',
-          marginLeft: '20px',
-          marginRight: '20px',
-        }}
-      >
+      <div className="layout__topology">
         <MyTopology
           dataDevices={dataDevices ?? []}
           dataConnections={dataConnections ?? []}
         />
       </div>
 
-      <div>
+      <div className="layout__table">
         {isLoadingDevices || isLoadingConnections ? (
           <div>loading</div>
         ) : (
