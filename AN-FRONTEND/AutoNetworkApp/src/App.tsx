@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import Database from './ts/pages/Database';
+import AutoNetwork from './ts/pages/AutoNetwork';
 
 const queryClient = new QueryClient();
 
@@ -8,7 +8,8 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       {/* <VitePage /> */}
-      <Database />
+      {/* <Database /> */}
+      <AutoNetwork />
     </QueryClientProvider>
   );
 };

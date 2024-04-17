@@ -5,7 +5,6 @@ import { API_ROUTE_BASE } from '../variables';
 
 /**
  * Fetches devices from the server.
- * @returns {Promise<dataSchemaDevices>} A promise that resolves to the parsed devices data.
  */
 const fetchDevices = async () => {
   const response = await fetch(`${API_ROUTE_BASE}devices_in_networks`, {
@@ -17,12 +16,12 @@ const fetchDevices = async () => {
 };
 
 const useFetchDevices = () => {
-  const { data } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['devices'],
     queryFn: fetchDevices,
   });
 
-  return data;
+  return { data, isLoading, error };
 };
 
 export default useFetchDevices;

@@ -3,11 +3,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { FormikHelpers } from 'formik';
 import { z } from 'zod';
 
-import MyForm, { YourFormData } from '../components/form/MyForm';
+import MyForm from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
 import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
 import MyTopology from '../components/topology/MyTopology';
+import { YourFormData } from '../types/core-types';
 import useFetchDevices from '../utils/hooks/useFetchDevices';
 import usePostNetwork from '../utils/hooks/usePostNetwork';
 import { API_ROUTE_BASE } from '../utils/variables';
@@ -54,7 +55,12 @@ const Database: FC = () => {
   const [open, setOpen] = useState(false);
 
   const postNetworkData = usePostNetwork();
-  const devicesData = useFetchDevices();
+
+  const {
+    data: dataDevices,
+    isLoading: isLoadingDevices,
+    error: errorDevices,
+  } = useFetchDevices();
 
   // This function handles the submission of the form data to the server
   const { mutateAsync: postNetwork } = useMutation({
@@ -178,14 +184,14 @@ const Database: FC = () => {
     return dataSchemaConnections.parse(json);
   };
 
-  const {
+  /* const {
     isLoading: isLoadingDevices,
     error: errorDevices,
     data: dataDevices,
   } = useQuery({
     queryKey: ['devices', success],
     queryFn: fetchDevices,
-  });
+  }); */
 
   /* const {
     isLoading: isLoadingInterfaces,
@@ -274,7 +280,7 @@ const Database: FC = () => {
         {isLoadingDevices || isLoadingConnections ? (
           <div>loading</div>
         ) : (
-          <MyTable data={devicesData ?? []} />
+          <MyTable data={dataDevices ?? []} />
         )}
       </div>
     </main>

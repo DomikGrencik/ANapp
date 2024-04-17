@@ -1,16 +1,10 @@
 import { FC } from 'react';
 import { Form, Formik, FormikHelpers } from 'formik';
 
+import { YourFormData } from '../../types/core-types';
 import MyButton from '../MyButton';
 
 import MyFormikInput from './MyFormikInput';
-
-export type YourFormData = {
-  users: string;
-  vlans: string;
-  IPaddr: string;
-  userConnection: string;
-};
 
 interface FormProps {
   onSubmit: (
@@ -37,7 +31,7 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
       }}
     >
       {({ isSubmitting }) => (
-        <Form className="flex--column flex my-form">
+        <Form className="flex--column my-form flex">
           <MyFormikInput
             name="users"
             props={{ label: 'Users', placeholder: 'Enter number of users' }}
