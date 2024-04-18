@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { CircularProgress } from '@mui/material';
 import { z } from 'zod';
 
 import { dataSchemaDevices } from '../pages/Database';
@@ -24,44 +25,6 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
   return (
     <>
       <div className="my-table__wrapper">
-        {/* <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 250 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell align="right">name</TableCell>
-                <TableCell align="right">type</TableCell>
-                <TableCell align="right">device_id</TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {data?.map(({ id, name, type, device_id }) => (
-                <TableRow
-                  onClick={() => {
-                    setOpen(true);
-                    setDevData({ id, name, type, device_id });
-                  }}
-                  hover
-                  key={id}
-                  sx={{
-                    '&:last-child td, &:last-child th': { border: 0 },
-                    cursor: 'pointer',
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    {id}
-                  </TableCell>
-                  <TableCell align="right">{name}</TableCell>
-                  <TableCell align="right">{type}</TableCell>
-                  <TableCell align="right">{device_id}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer> */}
-        {/* {isLoading ? <CircularProgress /> : null} */}
-
         <div className="my-table">
           <div className="my-table__header">
             <div>ID</div>
@@ -69,9 +32,12 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
             <div>type</div>
             <div>device_id</div>
           </div>
-
           {isLoading ? (
-            <div>loading</div>
+            <div className="my-table__loading-wrapper">
+              <div className="my-table__loading">
+                <CircularProgress sx={{ color: '#d6d9dd' }} />
+              </div>
+            </div>
           ) : (
             <div className="my-table__body-wrapper">
               {data?.map(({ id, name, type, device_id }) => (
