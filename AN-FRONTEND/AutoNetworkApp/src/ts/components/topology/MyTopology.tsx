@@ -116,15 +116,17 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
           <MiniMap />
           <Background variant="dots" gap={12} size={1} />
         </ReactFlow>
-
-        <MyButton onClick={toggleNodes}>
-          nodes {isToggledNodes ? 'ON' : 'OFF'}
-        </MyButton>
-        <MyButton onClick={toggleEdges}>
-          edges {isToggledEdges ? 'ON' : 'OFF'}
-        </MyButton>
-        <MyButton onClick={() => console.log(edges)}>console edges</MyButton>
+        <div>
+          <MyButton onClick={toggleNodes}>
+            nodes {isToggledNodes ? 'ON' : 'OFF'}
+          </MyButton>
+          <MyButton onClick={toggleEdges}>
+            edges {isToggledEdges ? 'ON' : 'OFF'}
+          </MyButton>
+          <MyButton onClick={() => console.log(edges)}>console edges</MyButton>
+        </div>
       </div>
+
       {open ? (
         <div>
           <MyModal

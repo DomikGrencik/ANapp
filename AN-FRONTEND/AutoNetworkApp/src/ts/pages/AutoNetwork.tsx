@@ -64,7 +64,7 @@ const AutoNetwork: FC = () => {
     <main className="layout">
       <div className="layout__form">
         <MyForm onSubmit={handleSubmit} />
-        <MyButton onClick={handleDelete}>Delete</MyButton>
+        <MyButton className='layout__delete-button' onClick={handleDelete}>Delete</MyButton>
       </div>
 
       <div className="layout__topology">
@@ -75,10 +75,12 @@ const AutoNetwork: FC = () => {
       </div>
 
       <div className="layout__table">
-        <MyTable
-          data={dataDevices ?? []}
-          isLoading={isLoadingDevices || isLoadingConnections}
-        />
+        <div className='layout__table-wrapper'>
+          <MyTable
+            data={dataDevices ?? []}
+            isLoading={isLoadingDevices || isLoadingConnections}
+          />
+        </div>
       </div>
     </main>
   );
