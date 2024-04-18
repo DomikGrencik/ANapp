@@ -62,43 +62,43 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
         </TableContainer> */}
         {/* {isLoading ? <CircularProgress /> : null} */}
 
-        <table className="my-table">
-          <div>
-
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>name</th>
-              <th>type</th>
-              <th>device_id</th>
-            </tr>
-          </thead>
+        <div className="my-table">
+          <div className="my-table__header">
+            <div>ID</div>
+            <div>name</div>
+            <div>type</div>
+            <div>device_id</div>
           </div>
 
           {isLoading ? (
             <div>loading</div>
           ) : (
             <div className="my-table__body-wrapper">
-              <tbody>
-                {data?.map(({ id, name, type, device_id }) => (
-                  <tr
-                    onClick={() => {
-                      setOpen(true);
-                      setDevData({ id, name, type, device_id });
-                    }}
-                    key={id}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <td>{id}</td>
-                    <td>{name}</td>
-                    <td>{type}</td>
-                    <td>{device_id}</td>
-                  </tr>
-                ))}
-              </tbody>
+              {data?.map(({ id, name, type, device_id }) => (
+                <div
+                  className="my-table__body"
+                  onClick={() => {
+                    setOpen(true);
+                    setDevData({ id, name, type, device_id });
+                  }}
+                  onKeyDown={(e) => {
+                    e.key === 'Enter' &&
+                      (setOpen(true),
+                      setDevData({ id, name, type, device_id }));
+                  }}
+                  key={id}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div>{id}</div>
+                  <div>{name}</div>
+                  <div>{type}</div>
+                  <div>{device_id}</div>
+                </div>
+              ))}
             </div>
           )}
-        </table>
+        </div>
       </div>
 
       {open ? (
