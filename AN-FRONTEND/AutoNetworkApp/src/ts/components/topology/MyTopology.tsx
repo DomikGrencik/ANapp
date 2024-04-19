@@ -127,18 +127,14 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
         </div>
       </div>
 
-      {open ? (
-        <div>
-          <MyModal
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            hasTable
-            idDevice={idDevice}
-          >
-            {/* Ja som modal */}
-          </MyModal>
-        </div>
-      ) : null}
+      <MyModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        hasTable
+        idDevice={idDevice}
+      >
+        {/* Ja som modal */}
+      </MyModal>
     </>
   );
 };
