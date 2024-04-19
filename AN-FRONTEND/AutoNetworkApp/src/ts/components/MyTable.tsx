@@ -24,9 +24,8 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
 
   return (
     <>
-      <div className="my-table__wrapper">
         <div className="my-table">
-          <div className="my-table__header">
+          <div className="my-table__layout my-table__layout-header">
             <div>ID</div>
             <div>name</div>
             <div>type</div>
@@ -39,10 +38,10 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
               </div>
             </div>
           ) : (
-            <div className="my-table__body-wrapper">
+            <div className="my-table__body">
               {data?.map(({ id, name, type, device_id }) => (
                 <div
-                  className="my-table__body"
+                  className="my-table__layout my-table__layout-body"
                   onClick={() => {
                     setOpen(true);
                     setDevData({ id, name, type, device_id });
@@ -65,20 +64,15 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
             </div>
           )}
         </div>
-      </div>
 
-      {open ? (
-        <div>
-          <MyModal
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            hasTable
-            idDevice={devData.id}
-          >
-            {devData.id} {devData.name}
-          </MyModal>
-        </div>
-      ) : null}
+      <MyModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        hasTable
+        idDevice={devData.id}
+      >
+        {devData.id} {devData.name}
+      </MyModal>
     </>
   );
 };

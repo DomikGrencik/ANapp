@@ -1,53 +1,45 @@
 .my-table {
+  display: grid;
+  grid-template-rows: min-content 1fr;
   width: 100%;
   height: 100%;
   background-color: $c-secondary-base;
   color: $c-secondary-light;
   border-radius: 5px;
+  overflow: hidden;
+  outline: 1px solid $c-secondary-light;
 
-  &__wrapper {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    outline: 1px solid $c-secondary-light;
-    border-radius: 5px;
-  }
-
-  &__header {
+  &__layout {
     display: grid;
     grid-template-columns: repeat(3, 50px) 1fr;
     gap: 1rem;
     padding: 1rem;
-    background-color: $c-secondary-dark;
     border-bottom: 1px solid $c-secondary-light;
-    font-weight: bold;
-  }
 
-  &__body {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr) 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    //padding-right: 0;
-    background-color: $c-secondary-base;
-    border-bottom: 1px solid $c-secondary-light;
-    cursor: pointer;
-
-    &:nth-child(even) {
+    &-header {
+      font-weight: bold;
       background-color: $c-secondary-dark;
     }
 
-    &:hover,
-    &:focus {
-      background-color: $c-secondary-dark-accent;
-      outline: none;
-    }
+    &-body {
+      cursor: pointer;
+      background-color: $c-secondary-base;
 
-    &-wrapper {
-      overflow-y: auto;
-      height: 100%;
-      padding-bottom: 50px;
+      &:nth-child(even) {
+        background-color: $c-secondary-dark;
+      }
+
+      &:hover,
+      &:focus {
+        background-color: $c-secondary-dark-accent;
+        outline: none;
+      }
     }
+  }
+
+  &__body {
+    overflow-y: auto;
+    height: 100%;
   }
 
   &__loading {
