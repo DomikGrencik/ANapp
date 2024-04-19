@@ -9,10 +9,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
 
-import { dataSchemaInterface } from '../pages/Database';
-import { API_ROUTE_BASE } from '../utils/variables';
+import useFetchInterfaces from '../utils/hooks/useFetchInterfaces';
 
 import MyButton from './MyButton';
 
@@ -31,7 +29,7 @@ const Modal: FC<ModalProps> = ({
   hasTable,
   idDevice,
 }) => {
-  const fetchInterfacesOfDevice = async () => {
+  /* const fetchInterfacesOfDevice = async () => {
     const response = await fetch(
       `${API_ROUTE_BASE}interface_of_devices/getInterfacesOfDevice/${idDevice}`,
       {
@@ -55,11 +53,37 @@ const Modal: FC<ModalProps> = ({
   if (errorInterfaces) {
     console.error(errorInterfaces.message);
     return null;
+  } */
+  /*  const [filteredData, setFilteredData] = useState({
+    id: 0,
+    name: '',
+    type: '',
+    interface_id: 0,
+    IP_address: '',
+    connector: '',
+    AN: '',
+    speed: '',
+    interface_id2: 0,
+  }); */
+
+  const {
+    data: dataInterfaces,
+    isLoading: isLoadingInterfaces,
+    error,
+  } = useFetchInterfaces();
+
+  if (error) {
+    console.error(error.message);
+    return null;
   }
 
   if (!isOpen) {
     return null;
   }
+
+  //setFilteredData(dataInterfaces?.filter((item) => item.id === idDevice));
+
+  //const filteredData = dataInterfaces?.filter((item) => item.id === idDevice);
 
   return (
     <div
@@ -76,7 +100,7 @@ const Modal: FC<ModalProps> = ({
         role="button"
         tabIndex={0}
       >
-        <div className='my-modal__content'>
+        <div className="my-modal__content">
           {children}
           {hasTable ? (
             <>
