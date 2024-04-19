@@ -7,7 +7,7 @@
   color: $c-secondary-light;
   border-radius: 5px;
   overflow: hidden;
-  outline: 1px solid $c-secondary-light;
+  border: 2px solid $c-secondary-light;
 
   &__layout {
     display: grid;
@@ -22,17 +22,20 @@
     }
 
     &-body {
-      cursor: pointer;
       background-color: $c-secondary-base;
 
       &:nth-child(even) {
         background-color: $c-secondary-dark;
       }
 
-      &:hover,
-      &:focus {
-        background-color: $c-secondary-dark-accent;
-        outline: none;
+      &-interactive {
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          background-color: $c-secondary-dark-accent;
+          outline: none;
+        }
       }
     }
   }
