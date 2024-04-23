@@ -265,6 +265,43 @@ class DevicesInNetworkController extends Controller
         return $devices;
     }
 
+    public function accessSwitch(int $users, int $userConnection, $accessSwitches, $accessSwitchPorts)
+    {
+        $maxPorts = $accessSwitchPorts->max('number_of_ports');
+        $s = 0;
+        do {
+            ++$s;
+            if ($users - ($maxPorts - 1) >= 0) {
+                $numberOfPorts = $maxPorts;
+                $users -= ($maxPorts - 1);
+            } elseif ($users - ($maxPorts - 1) < 0) {
+                if ($users > 23) {
+                    $numberOfPorts = $maxPorts;
+                } elseif ($users > 15) {
+                    $numberOfPorts = 24;
+                } else {
+                    $numberOfPorts = 16;
+                }
+                $users -= ($maxPorts - 1);
+            }
+
+            $forwardingRate = 0.001488 * $userConnection * $numberOfPorts;
+            $switchingCapacity = 2 * $userConnection * $numberOfPorts / 1000;
+
+            $switchByPorts = $accessSwitchPorts->where('number_of_ports', '>=', $numberOfPorts)->pluck('device_id');
+
+            $accessSwitch = $accessSwitches->whereIn('device_id', $switchByPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('price')->first();
+
+            $devicesArray[] = [
+                'name' => "S{$s}",
+                'type' => 'accessSwitch',
+                'device_id' => $accessSwitch->device_id,
+            ];
+        } while ($users > 0);
+
+        return $devicesArray;
+    }
+
     public function choose(request $request)
     {
         $request->validate([
@@ -349,16 +386,25 @@ class DevicesInNetworkController extends Controller
          array_push($chosenDevices, $router_id, 'router'); */
 
         $switchDevices = $devices->where('type', 'switch')->where('s-vlan', $vlans);
-        $AccessSwitches = $switchDevices->where('s-L3', 'no');
-        $DistributionSwitches = $switchDevices->where('s-L3', 'yes');
+        $accessSwitches = $switchDevices->where('s-L3', 'no');
+        $distributionSwitches = $switchDevices->where('s-L3', 'yes');
+
+        $accessSwitchIds = $accessSwitches->pluck('device_id')->values();
+        $accessSwitchPorts = $ports->where('type', 'switch')->whereIn('device_id', $accessSwitchIds)->whereIn('connector', $routerPorts->pluck('connector')->toArray());
 
         if ($users <= 150) {
-            // code...
+            $accessSwitch = $this->accessSwitch($users, $userConnection, $accessSwitches, $accessSwitchPorts);
+
+            $devicesArray = array_merge($devicesArray, $accessSwitch);
+
+            return $devicesArray;
+
+            // return $switch;
         } else {
             // code...
         }
 
-        $switchIds = $switchDevices->pluck('device_id')->values();
+        /* $switchIds = $switchDevices->pluck('device_id')->values();
         $switchPorts = $ports->where('type', 'switch')->whereIn('device_id', $switchIds);
         $maxPorts = $switchPorts->max('number_of_ports');
 
@@ -434,7 +480,7 @@ class DevicesInNetworkController extends Controller
             }
         }
 
-        --$users;
+        --$users; */
 
         $EDPorts = $ports->where('type', 'ED');
         $ED = $EDPorts->where('speed', '>=', $userConnection)->first()->device_id;
