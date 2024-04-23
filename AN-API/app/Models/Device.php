@@ -14,7 +14,7 @@ class Device extends Model
         'model',
         'type',
         'r-throughput', //tento parameter je povazovany ako IPsec IMIX throughput (Mbps)
-        'r-SD-WAN',
+        'r-branch', //tento parameter indikuje velkost branchu (small, medium, large) podla poctu pouzivatelov
         's-forwarding_rate', //tento parameter je povazovany ako Forwarding Rate (Mpps)
         's-switching_capacity', //tento parameter je povazovany ako Switching Capacity (Gbps)
         's-vlan',

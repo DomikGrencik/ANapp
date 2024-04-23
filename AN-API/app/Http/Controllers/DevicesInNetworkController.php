@@ -271,13 +271,13 @@ class DevicesInNetworkController extends Controller
             'users' => 'required',
             'vlans' => 'required',
             'userConnection' => 'required',
-            'SDWAN' => 'required',
+            'networkTraffic' => 'required',
         ]);
 
         $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans;
         $userConnection = $request->userConnection; // 100, 1000, 10000
-        $SDWAN = $request->SDWAN; // yes, no, -
+        $networkTraffic = $request->networkTraffic; // small, medium, large
 
         // Pre router sa bude vyberat hlavne podla parametra throughput. Potom sa budu filtrovat podla dalsich parametrov - sd-wan, security parametre
         // Throughput - kolko dat dokaze realne preposielat (Gbps)
@@ -290,18 +290,74 @@ class DevicesInNetworkController extends Controller
         $devices = Device::all();
         $ports = Port::all();
 
-        $routerDevices = $devices->where('type', 'router')->where('r-SD-WAN', $SDWAN);
-        $routerIds = $routerDevices->pluck('device_id')->values();
-        $routerPorts = $ports->where('type', 'router');
-        $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users / 47)->whereIn('device_id', $routerIds);
+        $routerDevices = $devices->where('type', 'router');
+
+        // prebieha filtracia routerov podla poctu pouzivatelov
+        switch ($users) {
+            case $users <= 50:
+                $routerDevices = $routerDevices->where('r-branch', 'small');
+                break;
+
+            case $users <= 150:
+                $routerDevices = $routerDevices->where('r-branch', 'medium');
+                break;
+
+            default:
+                $routerDevices = $routerDevices->where('r-branch', 'large');
+                break;
+        }
+
+        // prebieha filtracia routerov podla vyťaženosti siete (prenosovej rychlosti)
+        switch ($networkTraffic) {
+            case 'small':
+                $routerDevices = $routerDevices->where('r-throughput', $routerDevices->min('r-throughput'));
+                break;
+            case 'medium':
+                $routerDevices = $routerDevices->where('r-throughput', $routerDevices->median('r-throughput'));
+                break;
+            case 'large':
+                $routerDevices = $routerDevices->where('r-throughput', $routerDevices->max('r-throughput'));
+                break;
+
+            default:
+                // code...
+                break;
+        }
+
+        $devicesArray[] = [
+            'name' => 'R1',
+            'type' => $routerDevices->first()->type,
+            'device_id' => $routerDevices->first()->device_id,
+        ];
+
+        // return $devicesArray;
 
         $chosenDevices = [];
 
-        $router_id = $router->last()->device_id;
+        $routerId = $routerDevices->first()->device_id;
+        $routerPorts = $ports->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('device_id', $routerId);
 
-        array_push($chosenDevices, $router_id, 'router');
+        // return $routerPorts;
+
+        /* $routerPorts = $ports->where('type', 'router');
+        $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->whereIn('device_id', $routerId); */
+
+        /*  $router = $routerPorts->where('AN', '!=', 'WAN')->where('speed', '>=', $userConnection)->where('number_of_ports', '>=', $users / 47)->whereIn('device_id', $routerId);
+
+         $router_id = $router->last()->device_id;
+
+         array_push($chosenDevices, $router_id, 'router'); */
 
         $switchDevices = $devices->where('type', 'switch')->where('s-vlan', $vlans);
+        $AccessSwitches = $switchDevices->where('s-L3', 'no');
+        $DistributionSwitches = $switchDevices->where('s-L3', 'yes');
+
+        if ($users <= 150) {
+            // code...
+        } else {
+            // code...
+        }
+
         $switchIds = $switchDevices->pluck('device_id')->values();
         $switchPorts = $ports->where('type', 'switch')->whereIn('device_id', $switchIds);
         $maxPorts = $switchPorts->max('number_of_ports');
@@ -331,7 +387,7 @@ class DevicesInNetworkController extends Controller
 
         return $switch;
 
-        $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $router->pluck('connector')->toArray());
+        $switch = $switchPorts->where('speed', '>=', $userConnection)->whereIn('connector', $routerPorts->pluck('connector')->toArray());
 
         // return $switch;
 

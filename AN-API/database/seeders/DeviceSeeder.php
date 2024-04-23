@@ -18,72 +18,71 @@ class DeviceSeeder extends Seeder
         // 1
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C931-4P',
+            'model' => 'C921-4P',
             'type' => 'router',
-            'r-throughput' => '250',
-            'r-SD-WAN' => 'no',
+            'r-throughput' => '120',
+            'r-branch' => 'small',
+            'price' => '300',
         ]);
         // 2
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C1131(X)-8PW',
+            'model' => 'C931-4P',
             'type' => 'router',
-            'r-throughput' => '470',
-            'r-SD-WAN' => 'yes',
+            'r-throughput' => '200',
+            'r-branch' => 'small',
+            'price' => '500',
         ]);
         // 3
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C1161(X)-8P',
+            'model' => 'C8200L-1N-4T+NIM-ES2-4',
             'type' => 'router',
-            'r-throughput' => '595',
-            'r-SD-WAN' => 'yes',
+            'r-throughput' => '430',
+            'r-branch' => 'small',
+            'price' => '1000',
         ]);
         // 4
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C8300-1N1S-6T',
+            'model' => 'C1131X-8P',
             'type' => 'router',
-            'r-throughput' => '1800',
-            'r-SD-WAN' => 'yes',
+            'r-throughput' => '680',
+            'r-branch' => 'medium',
+            'price' => '1500',
         ]);
         // 5
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C8300-1N1S-6T+C-NIM-8T',
+            'model' => 'C8200-1N-4T+NIM-ES2-8',
             'type' => 'router',
-            'r-throughput' => '1800',
-            'r-SD-WAN' => 'yes',
+            'r-throughput' => '900',
+            'r-branch' => 'medium',
+            'price' => '2000',
         ]);
         // 6
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C8300-1N1S-4T2X',
+            'model' => 'C8300-1N1S-6T+NIM-ES2-4',
             'type' => 'router',
-            'r-throughput' => '6300',
-            'r-SD-WAN' => 'yes',
+            'r-throughput' => '1800',
+            'r-branch' => 'medium',
+            'price' => '5000',
         ]);
         // 7
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C8300-1N1S-4T2X+C-NIM-8T',
+            'model' => 'C8300-1N1S-4T2X+NIM-ES2-4',
             'type' => 'router',
             'r-throughput' => '6300',
-            'r-SD-WAN' => 'yes',
-        ]);
-        // 8
-        DB::table('devices')->insert([
-            'manufacturer' => 'Cisco',
-            'model' => 'C8300-1N1S-4T2X+C-NIM-4X',
-            'type' => 'router',
-            'r-throughput' => '6300',
-            'r-SD-WAN' => 'yes',
+            'r-branch' => 'large',
+            'price' => '10000',
         ]);
 
         // ---------------------------------------\\
         // ---------------------------------SWITCHES
         // ---------------------------------------\\
-        // 9
+        // 8
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS110-16T',
@@ -94,7 +93,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'no',
             'price' => '130',
         ]);
-        // 10
+        // 9
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS110-24T',
@@ -105,7 +104,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'no',
             'price' => '180',
         ]);
-        // 11
+        // 10
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS220-16T-2G',
@@ -116,7 +115,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'no',
             'price' => '200',
         ]);
-        // 12
+        // 11
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS220-24T-4G',
@@ -127,7 +126,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'no',
             'price' => '230',
         ]);
-        // 13
+        // 12
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS220-48T-4G',
@@ -138,7 +137,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'no',
             'price' => '380',
         ]);
-        // 14
+        // 13
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C1300-16T-2G',
@@ -149,7 +148,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'yes',
             'price' => '380',
         ]);
-        // 15
+        // 14
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C1300-24T-4G',
@@ -160,7 +159,7 @@ class DeviceSeeder extends Seeder
             's-L3' => 'yes',
             'price' => '500',
         ]);
-        // 16
+        // 15
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C1300-48T-4G',
@@ -171,41 +170,38 @@ class DeviceSeeder extends Seeder
             's-L3' => 'yes',
             'price' => '800',
         ]);
-        // 17
+        // 16
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-24T-4G',
             'type' => 'switch',
+            's-forwarding_rate' => '41.66',
+            's-switching_capacity' => '56',
+            's-vlan' => 'yes',
+            's-L3' => 'yes',
+            'price' => '1000',
         ]);
-        // 18
+        // 17
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-48T-4G',
             'type' => 'switch',
+            's-forwarding_rate' => '77.38',
+            's-switching_capacity' => '104',
+            's-vlan' => 'yes',
+            's-L3' => 'yes',
+            'price' => '1500',
         ]);
-        // 19
-        DB::table('devices')->insert([
-            'manufacturer' => 'Cisco',
-            'model' => 'C9200L-24PXG-4X',
-            'type' => 'switch',
-        ]);
-        // 20
-        DB::table('devices')->insert([
-            'manufacturer' => 'Cisco',
-            'model' => 'C9200L-48PXG-4X',
-            'type' => 'switch',
-        ]);
-
         // -----------------------------------------\\
         // ---------------------------------EndDevices
         // -----------------------------------------\\
-        // 21
+        // 18
         DB::table('devices')->insert([
             'manufacturer' => 'PC',
             'model' => 'desktop',
             'type' => 'ED',
         ]);
-        // 22
+        // 19
         DB::table('devices')->insert([
             'manufacturer' => 'PC',
             'model' => 'laptop',

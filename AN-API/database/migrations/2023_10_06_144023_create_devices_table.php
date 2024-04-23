@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class() extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,7 +16,7 @@ return new class extends Migration
             $table->string('model');
             $table->enum('type', ['router', 'switch', 'ED']);
             $table->integer('r-throughput')->nullable();
-            $table->enum('r-SD-WAN', ['yes', 'no', '-'])->default('-');
+            $table->enum('r-branch', ['small', 'medium', 'large', '-'])->default('-');
             $table->float('s-forwarding_rate')->nullable();
             $table->float('s-switching_capacity')->nullable();
             $table->enum('s-vlan', ['yes', 'no', '-'])->default('-');
