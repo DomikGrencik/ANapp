@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class() extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,7 +19,7 @@ return new class extends Migration
             $table->enum('speed', ['100', '1000', '2500', '10000', 'Wireless']);
             $table->unsignedBigInteger('interface_id2')->nullable();
             $table->unsignedBigInteger('id');
-            $table->enum('type', ['router', 'switch', 'ED'])->nullable();
+            $table->enum('type', ['router', 'switch', 'accessSwitch', 'distributionSwitch', 'ED'])->nullable();
             $table->timestamps();
         });
 
