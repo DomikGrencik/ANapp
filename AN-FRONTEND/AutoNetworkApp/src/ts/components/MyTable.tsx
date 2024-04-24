@@ -27,8 +27,8 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
         <div className="my-table__layout my-table__layout-header">
           <div>ID</div>
           <div>name</div>
-          <div>type</div>
-          <div>device_id</div>
+          <div>dev_id</div>
+          <div>type_of_network_device</div>
         </div>
         {isLoading ? (
           <div className="my-table__loading-wrapper">
@@ -55,8 +55,8 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
               >
                 <div>{id}</div>
                 <div>{name}</div>
-                <div>{type}</div>
                 <div>{device_id}</div>
+                <div>{type}</div>
               </div>
             ))}
           </div>

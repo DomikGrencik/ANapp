@@ -19,8 +19,8 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
       initialValues={{
         users: '',
         vlans: '',
-        IPaddr: '',
         userConnection: '',
+        networkTraffic: '',
       }}
       onSubmit={async (values, formikHelpers) => {
         try {
@@ -41,14 +41,17 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
             props={{ label: 'Vlans', placeholder: 'Enter number of vlans' }}
           />
           <MyFormikInput
-            name="IPaddr"
-            props={{ label: 'IP address', placeholder: 'Enter IP address' }}
-          />
-          <MyFormikInput
             name="userConnection"
             props={{
               label: 'Connection',
               placeholder: 'Enter connection speed of users',
+            }}
+          />
+          <MyFormikInput
+            name="networkTraffic"
+            props={{
+              label: 'Network traffic',
+              placeholder: 'Enter network traffic',
             }}
           />
           <MyButton type="submit" disabled={isSubmitting}>

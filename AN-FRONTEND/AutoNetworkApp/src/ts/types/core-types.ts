@@ -24,6 +24,6 @@ export type AnyObject = Record<string, any>;
 export type YourFormData = {
   users: string;
   vlans: string;
-  IPaddr: string;
   userConnection: string;
+  networkTraffic: string;
 };
