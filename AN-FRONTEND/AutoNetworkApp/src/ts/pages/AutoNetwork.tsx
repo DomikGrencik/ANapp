@@ -70,12 +70,12 @@ const AutoNetwork: FC = () => {
         <MyButton className="layout__delete-button" onClick={handleDelete}>
           Delete
         </MyButton>
-        <MyButton
+        {/* <MyButton
           className="layout__delete-button"
           onClick={() => setOpen(true)}
         >
           Modal
-        </MyButton>
+        </MyButton> */}
       </div>
 
       <div className="layout__topology">

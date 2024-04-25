@@ -1,12 +1,8 @@
 import { FC } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
-import { useQuery } from '@tanstack/react-query';
-
-import { dataSchemaInterface } from '../../pages/Database';
-import { API_ROUTE_BASE } from '../../utils/variables';
 
 const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
-  const fetchInterfacesOfDevice = async () => {
+  /* const fetchInterfacesOfDevice = async () => {
     const response = await fetch(
       `${API_ROUTE_BASE}interface_of_devices/getInterfacesOfDevice/${data.id}`,
       {
@@ -30,7 +26,7 @@ const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
   if (errorInterfaces) {
     console.error(errorInterfaces.message);
     return null;
-  }
+  } */
 
   return (
     <div className="node node--router">
