@@ -12,6 +12,7 @@
   border: 2px solid $c-secondary-light;
   color: $c-secondary-light;
   border-radius: 5px;
+  width: 100%;
 
   &::placeholder {
     color: $c-secondary-light-accent;
@@ -33,4 +34,10 @@
     margin-bottom: 0.5rem;
     color: $c-secondary-light;
   }
+}
+
+.option {
+  background-color: white;
+  //color: #333;
+  color: $c-secondary-light-accent;
 }

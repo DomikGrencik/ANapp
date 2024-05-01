@@ -8,6 +8,7 @@ const MyFormikInput: FC<{
   props?: {
     label?: string;
     placeholder?: string;
+    options?: string[];
   };
 }> = ({ name, props }) => {
   const [{ value }, , { setValue }] = useField<string>(name);
@@ -16,7 +17,9 @@ const MyFormikInput: FC<{
     <MyInput
       {...props}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+        setValue(e.target.value)
+      }
       required
     />
   );

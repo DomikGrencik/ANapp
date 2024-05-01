@@ -38,7 +38,11 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
           />
           <MyFormikInput
             name="vlans"
-            props={{ label: 'Vlans', placeholder: 'Enter number of vlans' }}
+            props={{
+              label: 'Vlans',
+              placeholder: 'Enter number of vlans',
+              options: ['yes', 'no'],
+            }}
           />
           <MyFormikInput
             name="userConnection"
