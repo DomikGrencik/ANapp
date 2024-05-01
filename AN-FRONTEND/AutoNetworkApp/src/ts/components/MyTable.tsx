@@ -30,11 +30,10 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
           <div>dev_id</div>
           <div>type_of_network_device</div>
         </div>
+
         {isLoading ? (
-          <div className="my-table__loading-wrapper">
-            <div className="my-table__loading">
-              <CircularProgress sx={{ color: '#d6d9dd' }} />
-            </div>
+          <div className="my-table__loading">
+            <CircularProgress sx={{ color: '#d6d9dd' }} />
           </div>
         ) : (
           <div className="my-table__body">
