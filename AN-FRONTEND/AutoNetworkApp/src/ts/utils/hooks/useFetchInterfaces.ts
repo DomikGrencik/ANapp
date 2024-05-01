@@ -4,7 +4,7 @@ import { dataSchemaInterface } from '../../types/data-types';
 import { API_ROUTE_BASE } from '../variables';
 
 /**
- * Fetches devices from the server.
+ * Fetches interfaces from the server.
  */
 const fetchInterfaces = async () => {
   const response = await fetch(`${API_ROUTE_BASE}interface_of_devices`, {

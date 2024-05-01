@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 
 const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
-  /* const fetchInterfacesOfDevice = async () => {
+  /*  const fetchInterfacesOfDevice = async () => {
     const response = await fetch(
       `${API_ROUTE_BASE}interface_of_devices/getInterfacesOfDevice/${data.id}`,
       {

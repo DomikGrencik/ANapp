@@ -94,50 +94,52 @@ const AutoNetwork: FC = () => {
         </div>
       </div>
 
-      <MyModal isOpen={open} onClose={() => setOpen(false)}>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-        <p style={{ width: '100%' }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-          aperiam laudantium ea odio repellendus, omnis iure, veniam in
-          voluptatum eos possimus dolorum quae sunt, adipisci culpa error
-          dignissimos temporibus porro. Lorem
-        </p>
-      </MyModal>
+      {open ? (
+        <MyModal isOpen={open} onClose={() => setOpen(false)}>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+          <p style={{ width: '100%' }}>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+            aperiam laudantium ea odio repellendus, omnis iure, veniam in
+            voluptatum eos possimus dolorum quae sunt, adipisci culpa error
+            dignissimos temporibus porro. Lorem
+          </p>
+        </MyModal>
+      ) : null}
     </main>
   );
 };

@@ -2,6 +2,7 @@ import { FC, SetStateAction, useCallback, useState } from 'react';
 import ReactFlow, {
   addEdge,
   Background,
+  BackgroundVariant,
   Connection,
   Controls,
   Edge,
@@ -114,7 +115,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
         >
           <Controls />
           <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
+          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
         <div>
           <MyButton onClick={toggleNodes}>
@@ -127,14 +128,16 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
         </div>
       </div>
 
-      <MyModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        hasTable
-        idDevice={idDevice}
-      >
-        {/* Ja som modal */}
-      </MyModal>
+      {open ? (
+        <MyModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          hasTable
+          idDevice={idDevice}
+        >
+          {/* Ja som modal */}
+        </MyModal>
+      ) : null}
     </>
   );
 };

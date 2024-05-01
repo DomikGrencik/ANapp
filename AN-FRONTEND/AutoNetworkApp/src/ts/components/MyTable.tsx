@@ -63,14 +63,16 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
         )}
       </div>
 
-      <MyModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        hasTable
-        idDevice={devData.id}
-      >
-        {devData.id} {devData.name}
-      </MyModal>
+      {open ? (
+        <MyModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          hasTable
+          idDevice={devData.id}
+        >
+          {devData.id} {devData.name}
+        </MyModal>
+      ) : null}
     </>
   );
 };
