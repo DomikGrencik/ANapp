@@ -56,6 +56,7 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
             props={{
               label: 'Network traffic',
               placeholder: 'Enter network traffic',
+              options: ['small', 'medium', 'large'],
             }}
           />
           <MyButton type="submit" disabled={isSubmitting}>
