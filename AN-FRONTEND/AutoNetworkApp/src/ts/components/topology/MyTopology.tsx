@@ -20,9 +20,9 @@ import {
 import MyButton from '../MyButton';
 import MyModal from '../MyModal';
 
-import MyAccessSwitchNode from './MyAccessSwitchNode';
-import MyEDNode from './MyEDNode';
-import MyRouterNode from './MyRouterNode';
+import MyAccessSwitchNode from './nodes/MyAccessSwitchNode';
+import MyEDNode from './nodes/MyEDNode';
+import MyRouterNode from './nodes/MyRouterNode';
 
 interface TopologyProps {
   dataDevices: z.infer<typeof dataSchemaDevices>;
