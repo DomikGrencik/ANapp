@@ -45,7 +45,7 @@ class DevicesInNetworkController extends Controller
         // $r = 0;
         // $e = 0;
 
-        $s = 0;
+        //$s = 0;
 
         // najprv je volaná metóda chooseDevice, ktorá vráti pole s id zariadení a ich typom
         /* $device = $this->chooseDevice($users, $vlans, $userConnection);
@@ -122,6 +122,10 @@ class DevicesInNetworkController extends Controller
 
         $interfaces = InterfaceOfDevice::all()->where('interface_id', '>', $maxInterfaceID);
 
+        $accessSwitches = DevicesInNetwork::all()->where('type', 'accessSwitch')->pluck('id');
+
+        $numberOfAccessSwitches = $accessSwitches->count();
+
         if ($users <= 150) {
             $switchInterfaces = $interfaces->where('type', 'accessSwitch');
 
@@ -139,7 +143,7 @@ class DevicesInNetworkController extends Controller
             $ei = $EDInterfaces->keys()->first();
             print_r("$ei|");
 
-            for ($i = $si; $i < (count($EDInterfaces) + $si + $s); ++$i) {
+            for ($i = $si; $i < (count($EDInterfaces) + $si + $numberOfAccessSwitches); ++$i) {
                 if ($switchInterfaces[$i]->id != $prev_sw_id) {
                     $connectionsArray[] = [
                         'interface_id1' => $routerInterfaces[$ri]->interface_id,
@@ -204,7 +208,7 @@ class DevicesInNetworkController extends Controller
                 ];
             }
 
-            for ($i = $asi; $i < (count($EDInterfaces) + $asi + $s); ++$i) {
+            for ($i = $asi; $i < (count($EDInterfaces) + $asi + $numberOfAccessSwitches); ++$i) {
                 if ($accessSwitchInterfaces[$i]->id != $prev_sw_id) {
                     $connectionsArray[] = [
                         'interface_id1' => $distributionSwitchInterfaces[$dsi[0] + 1]->interface_id,
