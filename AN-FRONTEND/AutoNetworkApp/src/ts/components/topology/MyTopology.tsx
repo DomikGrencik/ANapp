@@ -20,7 +20,9 @@ import {
 import MyButton from '../MyButton';
 import MyModal from '../MyModal';
 
+import MyStraightEdge from './edges/MyStraightEdge';
 import MyAccessSwitchNode from './nodes/MyAccessSwitchNode';
+import MyDistributionSwitchNode from './nodes/MyDistributionSwitchNode';
 import MyEDNode from './nodes/MyEDNode';
 import MyRouterNode from './nodes/MyRouterNode';
 
@@ -32,7 +34,12 @@ interface TopologyProps {
 const nodeTypes = {
   router: MyRouterNode,
   accessSwitch: MyAccessSwitchNode,
+  distributionSwitch: MyDistributionSwitchNode,
   ED: MyEDNode,
+};
+
+const edgeTypes = {
+  straight: MyStraightEdge,
 };
 
 const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
@@ -45,11 +52,48 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
   const [open, setOpen] = useState(false);
   const [idDevice, setIdDevice] = useState(0);
 
-  const nodesData: Node<unknown, string | undefined>[] = dataDevices.map(
+  const filteredConnections: z.infer<typeof dataSchemaConnections> = [];
+
+  const deviceIds = new Set();
+  const uniqueDeviceIds = new Set();
+
+  dataConnections.forEach((item, index) => {
+    const prevItem = index > 0 ? dataConnections[index - 1] : null;
+
+    if (item.device_id1 === (prevItem?.device_id1 ?? item.device_id1)) {
+      if (
+        !deviceIds.has(item.device_id1) ||
+        filteredConnections.filter((i) => i.device_id1 === item.device_id1)
+          .length < 10
+      ) {
+        filteredConnections.push(item);
+        deviceIds.add(item.device_id1);
+
+        uniqueDeviceIds.add(item.device_id1);
+        uniqueDeviceIds.add(item.device_id2);
+      }
+    } else {
+      filteredConnections.push(item);
+      deviceIds.add(item.device_id1);
+
+      uniqueDeviceIds.add(item.device_id1);
+      uniqueDeviceIds.add(item.device_id2);
+    }
+  });
+
+  // Filtrácia dataDevices na základe unique device_id
+  const filteredDevices = dataDevices.filter((device) =>
+    uniqueDeviceIds.has(device.id)
+  );
+
+  //console.log(filteredDevices);
+
+  const nodesData: Node<unknown, string | undefined>[] = filteredDevices.map(
     (item, index) => {
+      let position = { x: 0, y: 100 * index };
       switch (item.type) {
         case 'router':
-          console.log('router');
+          position = { x: 100, y: 100 * index };
           break;
 
         default:
@@ -59,21 +103,24 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
       return {
         id: item.id.toString(),
         type: item.type,
-        position: { x: 0, y: 100 * index },
+        position,
         data: { label: item.name, id: item.id },
       };
     }
   );
 
-  const edgesData: Edge<string | undefined>[] = dataConnections.map((item) => {
-    return {
-      id: `${item.interface_id1.toString()}-${item.interface_id2.toString()}`,
-      source: item.device_id1.toString(),
-      target: item.device_id2.toString(),
-      sourceHandle: item.interface_id1.toString(),
-      targetHandle: item.interface_id2.toString(),
-    };
-  });
+  const edgesData: Edge<string | undefined>[] = filteredConnections.map(
+    (item) => {
+      return {
+        id: `${item.interface_id1.toString()}-${item.interface_id2.toString()}`,
+        source: item.device_id1.toString(),
+        target: item.device_id2.toString(),
+        sourceHandle: item.interface_id1.toString(),
+        targetHandle: item.interface_id2.toString(),
+        type: 'straight',
+      };
+    }
+  );
 
   const toggleNodes = () => {
     if (isToggledNodes) {
@@ -110,6 +157,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
             setIdDevice(parseInt(node.id));
           }}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
         >
           <Controls />
           <MiniMap />
