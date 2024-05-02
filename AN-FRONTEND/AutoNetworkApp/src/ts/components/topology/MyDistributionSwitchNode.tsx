@@ -1,22 +1,9 @@
 import { FC } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 
-const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
-
+const MyDistributionSwitchNode: FC<NodeProps> = ({ data, isConnectable }) => {
   return (
-    <div className="node node--router">
-      {/* {dataInterfaces &&
-        dataInterfaces.map((element, index) => (
-          <Handle
-            key={element.interface_id}
-            type="target"
-            position={Position.Top}
-            id={element.interface_id.toString()}
-            isConnectable={isConnectable}
-            style={{ left: 10 * (index + 1) }}
-          />
-        ))} */}
-
+    <div className="node node--switch">
       <Handle
         type="target"
         position={Position.Top}
@@ -38,4 +25,4 @@ const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
   );
 };
 
-export default MyRouterNode;
+export default MyDistributionSwitchNode;
