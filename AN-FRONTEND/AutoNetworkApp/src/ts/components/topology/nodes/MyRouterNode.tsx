@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 
+import routerIcon from '../../../../assets/router_v1.svg';
+
 const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
 
   return (
@@ -25,7 +27,15 @@ const MyRouterNode: FC<NodeProps> = ({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
 
-      <div>{data.label}</div>
+      <div className='node--wrapper'>
+      <div className='node--label'>{data.label}</div>
+      <img src={routerIcon} alt='router' className='node--icon'/>
+      {/* <div className='icon'>
+        <div className='icon--router'/>
+        <div className='icon--router'/>
+      </div> */}
+      </div>
+
 
       <Handle
         type="source"

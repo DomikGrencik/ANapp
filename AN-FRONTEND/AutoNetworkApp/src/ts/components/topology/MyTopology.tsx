@@ -64,7 +64,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
       if (
         !deviceIds.has(item.device_id1) ||
         filteredConnections.filter((i) => i.device_id1 === item.device_id1)
-          .length < 10
+          .length < 4
       ) {
         filteredConnections.push(item);
         deviceIds.add(item.device_id1);
@@ -88,12 +88,33 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
 
   //console.log(filteredDevices);
 
+  let counterDSW = 0;
+  let counterASW = 0;
+  let counterED = 0;
+
   const nodesData: Node<unknown, string | undefined>[] = filteredDevices.map(
     (item, index) => {
       let position = { x: 0, y: 100 * index };
       switch (item.type) {
         case 'router':
-          position = { x: 100, y: 100 * index };
+          position = { x: 750, y: 0 };
+          break;
+        case 'distributionSwitch':
+          counterDSW === 0
+            ? (position = { x: 550, y: 200 })
+            : (position = { x: 550 + 400 * counterDSW, y: 200 });
+          counterDSW++;
+          break;
+        case 'accessSwitch':
+          counterASW === 0
+            ? (position = { x: 150, y: 400 })
+            : (position = { x: 150 + 400 * counterASW, y: 400 });
+
+          counterASW++;
+          break;
+        case 'ED':
+          position = { x: 100 * counterED, y: 600 };
+          counterED++;
           break;
 
         default:
