@@ -12,7 +12,7 @@ const MyEDNode: FC<NodeProps> = ({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
 
-      <div>{data.label}</div>
+      <div className="label">{data.label}</div>
     </div>
   );
 };

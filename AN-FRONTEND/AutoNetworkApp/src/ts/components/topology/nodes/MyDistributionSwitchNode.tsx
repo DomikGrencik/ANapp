@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 
+import switchL3Icon from '../../../../assets/switch_L3_v1.svg';
+
 const MyDistributionSwitchNode: FC<NodeProps> = ({ data, isConnectable }) => {
   return (
     <div className="node node--switch">
@@ -10,9 +12,11 @@ const MyDistributionSwitchNode: FC<NodeProps> = ({ data, isConnectable }) => {
         id="a"
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={isConnectable}
+        className="handle"
       />
 
-      <div>{data.label}</div>
+      <div className="label">{data.label}</div>
+      <img src={switchL3Icon} alt="switch" className="icon" />
 
       <Handle
         type="source"
@@ -20,6 +24,7 @@ const MyDistributionSwitchNode: FC<NodeProps> = ({ data, isConnectable }) => {
         id="b"
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={isConnectable}
+        className="handle"
       />
     </div>
   );
