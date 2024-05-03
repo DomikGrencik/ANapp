@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 }); */
 
 Route::controller(DeviceController::class)->group(function () {
+    Route::get('devices', 'index');
     Route::get('devices/{device}', 'show');
 });
 Route::controller(PortController::class)->group(function () {

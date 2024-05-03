@@ -11,6 +11,7 @@ import useDeleteConnections from '../utils/hooks/useDeleteConnections';
 import useDeleteDevices from '../utils/hooks/useDeleteDevices';
 import useDeleteInterfaces from '../utils/hooks/useDeleteInterfaces';
 import useFetchConnections from '../utils/hooks/useFetchConnentions';
+import useFetchDeviceDatabase from '../utils/hooks/useFetchDeviceDatabase';
 import useFetchDevices from '../utils/hooks/useFetchDevices';
 import usePostNetwork from '../utils/hooks/usePostNetwork';
 
@@ -23,6 +24,12 @@ const AutoNetwork: FC = () => {
   const deleteConnections = useDeleteConnections();
 
   const {
+    data: dataDeviceDatabase,
+    isLoading: isLoadingDeviceDatabase,
+    error: errorDeviceDatabase,
+  } = useFetchDeviceDatabase();
+
+  const {
     data: dataDevices,
     isLoading: isLoadingDevices,
     error: errorDevices,
@@ -33,6 +40,11 @@ const AutoNetwork: FC = () => {
     isLoading: isLoadingConnections,
     error: errorConnections,
   } = useFetchConnections();
+
+  if (errorDeviceDatabase) {
+    console.error(errorDeviceDatabase.message);
+    return null;
+  }
 
   if (errorDevices) {
     console.error(errorDevices.message);
@@ -88,8 +100,15 @@ const AutoNetwork: FC = () => {
       <div className="layout__table">
         <div className="layout__table-wrapper">
           <MyTable
-            data={dataDevices ?? []}
-            isLoading={isLoadingDevices || isLoadingConnections}
+            data={{
+              devices: dataDevices ?? [],
+              devicesDatabase: dataDeviceDatabase ?? [],
+            }}
+            isLoading={
+              isLoadingDevices ||
+              isLoadingConnections ||
+              isLoadingDeviceDatabase
+            }
           />
         </div>
       </div>

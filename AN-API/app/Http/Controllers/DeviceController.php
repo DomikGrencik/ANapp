@@ -12,7 +12,7 @@ class DeviceController extends Controller
      */
     public function index()
     {
-        //
+        return Device::all();
     }
 
     /**

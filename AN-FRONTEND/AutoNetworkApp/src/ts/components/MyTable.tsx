@@ -2,12 +2,18 @@ import { FC, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { z } from 'zod';
 
-import { dataSchemaDevices } from '../types/data-types';
+import {
+  dataSchemaDeviceDatabase,
+  dataSchemaDevices,
+} from '../types/data-types';
 
 import MyModal from './MyModal';
 
 interface TableProps {
-  data: z.infer<typeof dataSchemaDevices>;
+  data: {
+    devices: z.infer<typeof dataSchemaDevices>;
+    devicesDatabase: z.infer<typeof dataSchemaDeviceDatabase>;
+  };
   isLoading?: boolean;
 }
 
@@ -21,14 +27,21 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
     device_id: 0,
   });
 
+  const combinedData = data.devices.map((device) => {
+    const matchingDevice = data.devicesDatabase?.find(
+      (dbDevice) => dbDevice.device_id === device.device_id
+    );
+    return { ...device, ...matchingDevice };
+  });
+
   return (
     <>
       <div className="my-table">
         <div className="my-table__layout my-table__layout-header">
-          <div>ID</div>
-          <div>name</div>
-          <div>dev_id</div>
-          <div>type_of_network_device</div>
+          <div>Typ</div>
+          <div>Názov</div>
+          <div>Výrobca</div>
+          <div>Model_zariadenia</div>
         </div>
 
         {isLoading ? (
@@ -37,27 +50,30 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
           </div>
         ) : (
           <div className="my-table__body">
-            {data?.map(({ id, name, type, device_id }) => (
-              <div
-                className="my-table__layout my-table__layout-body my-table__layout-body-interactive"
-                onClick={() => {
-                  setOpen(true);
-                  setDevData({ id, name, type, device_id });
-                }}
-                onKeyDown={(e) => {
-                  e.key === 'Enter' &&
-                    (setOpen(true), setDevData({ id, name, type, device_id }));
-                }}
-                key={id}
-                role="button"
-                tabIndex={0}
-              >
-                <div>{id}</div>
-                <div>{name}</div>
-                <div>{device_id}</div>
-                <div>{type}</div>
-              </div>
-            ))}
+            {combinedData?.map(
+              ({ id, name, type, device_id, manufacturer, model }) => (
+                <div
+                  className="my-table__layout my-table__layout-body my-table__layout-body-interactive"
+                  onClick={() => {
+                    setOpen(true);
+                    setDevData({ id, name, type, device_id });
+                  }}
+                  onKeyDown={(e) => {
+                    e.key === 'Enter' &&
+                      (setOpen(true),
+                      setDevData({ id, name, type, device_id }));
+                  }}
+                  key={id}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div>{type}</div>
+                  <div>{name}</div>
+                  <div>{manufacturer}</div>
+                  <div>{model}</div>
+                </div>
+              )
+            )}
           </div>
         )}
       </div>
