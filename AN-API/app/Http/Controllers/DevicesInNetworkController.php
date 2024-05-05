@@ -45,7 +45,7 @@ class DevicesInNetworkController extends Controller
         // $r = 0;
         // $e = 0;
 
-        //$s = 0;
+        // $s = 0;
 
         // najprv je volaná metóda chooseDevice, ktorá vráti pole s id zariadení a ich typom
         /* $device = $this->chooseDevice($users, $vlans, $userConnection);
@@ -208,7 +208,7 @@ class DevicesInNetworkController extends Controller
                 ];
             }
 
-            for ($i = $asi; $i < (count($EDInterfaces) + $asi + $numberOfAccessSwitches); ++$i) {
+            for ($i = $asi; $i < (count($EDInterfaces) + $asi + $numberOfAccessSwitches * 2); ++$i) {
                 if ($accessSwitchInterfaces[$i]->id != $prev_sw_id) {
                     $connectionsArray[] = [
                         'interface_id1' => $distributionSwitchInterfaces[$dsi[0] + 1]->interface_id,
@@ -226,6 +226,7 @@ class DevicesInNetworkController extends Controller
                         'name1' => $distributionSwitchInterfaces[$dsi[1] + 1]->name,
                         'name2' => $accessSwitchInterfaces[$i + 1]->name,
                     ];
+                    ++$i;
                     ++$dsi[0];
                     ++$dsi[1];
                 } else {
@@ -398,20 +399,28 @@ class DevicesInNetworkController extends Controller
     {
         $maxPorts = $accessSwitchPorts->max('number_of_ports');
         $s = $numberOfDistributionSwitches;
+
+        if ($users <= 150) {
+            $connectedPorts = 1;
+        } else {
+            $connectedPorts = $numberOfDistributionSwitches;
+        }
+        $usersToConnect = $maxPorts - $connectedPorts;
+
         do {
             ++$s;
-            if ($users - ($maxPorts - (1 + $numberOfDistributionSwitches)) >= 0) {
+            if ($users - $usersToConnect >= 0) {
                 $numberOfPorts = $maxPorts;
-                $users -= ($maxPorts - (1 + $numberOfDistributionSwitches));
-            } elseif ($users - ($maxPorts - (1 + $numberOfDistributionSwitches)) < 0) {
-                if ($users > 23) {
+                $users -= $usersToConnect;
+            } elseif ($users - $usersToConnect < 0) {
+                if ($users > 24 - $connectedPorts) {
                     $numberOfPorts = $maxPorts;
-                } elseif ($users > 15) {
+                } elseif ($users > 15 - $connectedPorts) {
                     $numberOfPorts = 24;
                 } else {
                     $numberOfPorts = 16;
                 }
-                $users -= ($maxPorts - (1 + $numberOfDistributionSwitches));
+                $users -= $usersToConnect;
             }
 
             $forwardingRate = 0.001488 * $userConnection * $numberOfPorts;
