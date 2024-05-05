@@ -2,6 +2,7 @@ import { FC, ReactNode } from 'react';
 import { CircularProgress } from '@mui/material';
 
 import useFetchConnections from '../utils/hooks/useFetchConnentions';
+import useFetchDeviceDatabase from '../utils/hooks/useFetchDeviceDatabase';
 import useFetchDevices from '../utils/hooks/useFetchDevices';
 import useFetchInterfaces from '../utils/hooks/useFetchInterfaces';
 
@@ -29,6 +30,12 @@ const Modal: FC<ModalProps> = ({
   } = useFetchDevices();
 
   const {
+    data: dataDeviceDatabase,
+    isLoading: isLoadingDeviceDatabase,
+    error: errorDeviceDatabase,
+  } = useFetchDeviceDatabase();
+
+  const {
     data: dataInterfaces,
     isLoading: isLoadingInterfaces,
     error: errorInterfaces,
@@ -42,6 +49,11 @@ const Modal: FC<ModalProps> = ({
 
   if (errorDevices) {
     console.error(errorDevices.message);
+    return null;
+  }
+
+  if (errorDeviceDatabase) {
+    console.error(errorDeviceDatabase.message);
     return null;
   }
 
@@ -59,6 +71,12 @@ const Modal: FC<ModalProps> = ({
   const filteredDevices = dataDevices?.filter(
     (device) => device.id === idDevice
   );
+
+  const filteredDeviceDatabase = dataDeviceDatabase?.filter(
+    (device) => device.device_id === filteredDevices?.[0]?.device_id
+  );
+
+  console.log('filteredDeviceDatabase', filteredDeviceDatabase);
 
   // Filtrovanie rozhraní
   const filteredInterfaces = dataInterfaces?.filter(
@@ -109,7 +127,10 @@ const Modal: FC<ModalProps> = ({
   );
 
   const isLoadingData =
-    isLoadingDevices || isLoadingInterfaces || isLoadingConnections;
+    isLoadingDevices ||
+    isLoadingInterfaces ||
+    isLoadingConnections ||
+    isLoadingDeviceDatabase;
 
   if (!isOpen) {
     return null;
@@ -132,7 +153,15 @@ const Modal: FC<ModalProps> = ({
       >
         <div className="my-modal__content">
           {children}
+          <div>
+            <div>Typ zariadenia: {filteredDeviceDatabase?.[0]?.type}</div>
+            <div>Výrobca: {filteredDeviceDatabase?.[0]?.manufacturer}</div>
+            <div>Model: {filteredDeviceDatabase?.[0]?.model}</div>
+            <div>Názov: {filteredDevices?.[0]?.name}</div>
+          </div>
           {hasTable ? (
+            <>
+            <h2>Rozhrania</h2>
             <div className="my-table">
               <div className="my-table__layout my-table__layout-modal my-table__layout-header">
                 <div>Interface</div>
@@ -186,6 +215,7 @@ const Modal: FC<ModalProps> = ({
                 </div>
               )}
             </div>
+            </>
           ) : null}
         </div>
         <div>

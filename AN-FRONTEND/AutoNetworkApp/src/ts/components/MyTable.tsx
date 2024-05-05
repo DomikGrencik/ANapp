@@ -84,9 +84,7 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
           onClose={() => setOpen(false)}
           hasTable
           idDevice={devData.id}
-        >
-          {devData.id} {devData.name}
-        </MyModal>
+        />
       ) : null}
     </>
   );
