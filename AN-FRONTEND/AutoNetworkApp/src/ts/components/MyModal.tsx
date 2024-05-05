@@ -76,8 +76,6 @@ const Modal: FC<ModalProps> = ({
     (device) => device.device_id === filteredDevices?.[0]?.device_id
   );
 
-  console.log('filteredDeviceDatabase', filteredDeviceDatabase);
-
   // Filtrovanie rozhraní
   const filteredInterfaces = dataInterfaces?.filter(
     (interfaceItem) => interfaceItem.id === idDevice
@@ -161,23 +159,23 @@ const Modal: FC<ModalProps> = ({
           </div>
           {hasTable ? (
             <>
-            <h2>Rozhrania</h2>
-            <div className="my-table">
-              <div className="my-table__layout my-table__layout-modal my-table__layout-header">
-                <div>Interface</div>
-                <div />
-                <div>Pripojené zariadenie</div>
-                <div>Rozhranie zariadenia</div>
-              </div>
-              {isLoadingData ? (
-                <div className="my-table__loading-wrapper">
-                  <div className="my-table__loading">
-                    <CircularProgress sx={{ color: '#d6d9dd' }} />
-                  </div>
+              <h2>Rozhrania</h2>
+              <div className="my-table">
+                <div className="my-table__layout my-table__layout-modal my-table__layout-header">
+                  <div>Interface</div>
+                  <div />
+                  <div>Pripojené zariadenie</div>
+                  <div>Rozhranie zariadenia</div>
                 </div>
-              ) : (
-                <div className="my-table__body">
-                  {/* {filteredInterfaces?.map(
+                {isLoadingData ? (
+                  <div className="my-table__loading-wrapper">
+                    <div className="my-table__loading">
+                      <CircularProgress sx={{ color: '#d6d9dd' }} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="my-table__body">
+                    {/* {filteredInterfaces?.map(
                     ({ interface_id, name, id, type }) => (
                       <div
                         className="my-table__layout my-table__layout-body"
@@ -190,31 +188,31 @@ const Modal: FC<ModalProps> = ({
                       </div>
                     )
                   )} */}
-                  {interfacesWithConnections?.map(
-                    ({ interface_id, name, id, connection }) => (
-                      <div
-                        className="my-table__layout my-table__layout-modal my-table__layout-body"
-                        key={interface_id}
-                      >
-                        <div>{name}</div>
-                        {connection ? <div>connected</div> : null}
-                        {id === connection?.device_id1 ? (
-                          <>
-                            <div>{connection?.device2?.name}</div>
-                            <div>{connection?.name2}</div>
-                          </>
-                        ) : (
-                          <>
-                            <div>{connection?.device1?.name}</div>
-                            <div>{connection?.name1}</div>
-                          </>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
-            </div>
+                    {interfacesWithConnections?.map(
+                      ({ interface_id, name, id, connection }) => (
+                        <div
+                          className="my-table__layout my-table__layout-modal my-table__layout-body"
+                          key={interface_id}
+                        >
+                          <div>{name}</div>
+                          {connection ? <div>connected</div> : null}
+                          {id === connection?.device_id1 ? (
+                            <>
+                              <div>{connection?.device2?.name}</div>
+                              <div>{connection?.name2}</div>
+                            </>
+                          ) : (
+                            <>
+                              <div>{connection?.device1?.name}</div>
+                              <div>{connection?.name1}</div>
+                            </>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
             </>
           ) : null}
         </div>
