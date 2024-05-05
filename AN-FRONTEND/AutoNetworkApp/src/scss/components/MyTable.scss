@@ -16,6 +16,10 @@
     padding: 1rem;
     border-bottom: 1px solid $c-secondary-light;
 
+    &-modal {
+      grid-template-columns: repeat(4, 80px);
+    }
+
     &-header {
       font-weight: bold;
       background-color: $c-secondary-dark;
@@ -48,6 +52,5 @@
   &__loading {
     display: grid;
     place-items: center;
-
   }
 }
