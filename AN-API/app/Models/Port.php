@@ -11,11 +11,12 @@ class Port extends Model
 
     protected $fillable = [
         'name',
-        'connector',
-        'AN',
-        'speed',
+        'connector', // 'RJ45', 'SFP', 'SFP+', 'Wireless'
+        'AN', // 'LAN', 'WAN', 'LAN_WAN'
+        'speed', // '100', '1000', '2500', '10000', 'Wireless'
         'number_of_ports',
-        'type',
+        'direction', // 'uplink', 'downlink
+        'type', // 'router', 'switch', 'ED'
         'device_id',
     ];
     protected $table = 'ports';

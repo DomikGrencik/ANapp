@@ -11,11 +11,10 @@ class InterfaceOfDevice extends Model
 
     protected $fillable = [
         'name',
-        'IP_address',
         'connector',
         'AN',
         'speed',
-        'interface_id2',
+        'direction',
         'id',
         'type',
     ];
