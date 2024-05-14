@@ -38,7 +38,7 @@ class DevicesInNetworkController extends Controller
         $userConnection = $request->userConnection; // 100, 1000, 10000
         $networkTraffic = $request->networkTraffic; // small, medium, large
 
-        $chosenDevices = $this->chooseDevices($users, $vlans, $userConnection, $networkTraffic);
+        $chosenDevices = $this->choose($users, $vlans, $userConnection, $networkTraffic);
 
         // ziska najvacsi id v tabulke devices_in_networks pre pripad, ze by uz boli v tabulke nejake zaznamy
         $maxDeviceID = DevicesInNetwork::max('id');
@@ -127,7 +127,111 @@ class DevicesInNetworkController extends Controller
 
             DB::table('connections')->insert($connectionsArray);
         } else {
-            $distributionSwitches = DevicesInNetwork::all()->where('type', 'distributionSwitch')->pluck('id');
+            $distributionSwitches = $devices->where('type', 'distributionSwitch');
+            $DS_IDs = $distributionSwitches->pluck('id');
+
+            $numberOfDistributionSwitches = $distributionSwitches->count();
+
+            $distributionSwitchInterfaces = $interfaces->where('type', 'distributionSwitch');
+
+            // vytvorenie spojenia medzi dvomi distribucnymi switchmi
+            // musime ziskat prvy uplink port kazdeho distribucneho switcha
+            // iterujeme po 2 prvkoch, pretoze vzdy potrebujeme 2 distribucne switche
+            for ($i = 0; $i < $numberOfDistributionSwitches; $i = +2) {
+                $DS_firtstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $DS_IDs[$i])->pluck('interface_id')->first();
+                $DS_firtstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $DS_IDs[$i + 1])->pluck('interface_id')->first();
+
+                $connectionsArray[] = [
+                    'interface_id1' => $DS_firtstUplinkPorts[$i],
+                    'interface_id2' => $DS_firtstUplinkPorts[$i + 1],
+                    'device_id1' => $DS_IDs[$i],
+                    'device_id2' => $DS_IDs[$i + 1],
+                    'name1' => $distributionSwitchInterfaces->where('interface_id', $DS_firtstUplinkPorts[$i])->pluck('name')->first(),
+                    'name2' => $distributionSwitchInterfaces->where('interface_id', $DS_firtstUplinkPorts[$i + 1])->pluck('name')->first(),
+                ];
+            }
+
+            $accessSwitches = $devices->where('type', 'accessSwitch');
+            $AS_IDs = $accessSwitches->pluck('id');
+
+            $numberOfAccessSwitches = $accessSwitches->count();
+
+            $accessSwitchInterfaces = $interfaces->where('type', 'accessSwitch');
+
+            for ($i = 0; $i < $numberOfDistributionSwitches; ++$i) {
+                $DS_DownlinkPorts[] = $interfaces->where('direction', 'downlink')->where('id', $DS_IDs[$i])->pluck('interface_id');
+            }
+
+            // vkladanie routra
+            $router = $devices->where('type', 'router');
+            $R_IDs = $router->pluck('id');
+
+            $routerInterfaces = $interfaces->where('type', 'router')->where('connector', $distributionSwitchInterfaces->where('direction', 'downlink')->first()->connector);
+
+            for ($i = 0; $i < $numberOfDistributionSwitches; ++$i) {
+                $connectionsArray[] = [
+                    'interface_id1' => $routerInterfaces->pluck('interface_id')[$i],
+                    'interface_id2' => $DS_DownlinkPorts[$i][0],
+                    'device_id1' => $R_IDs[0],
+                    'device_id2' => $DS_IDs[$i],
+                    'name1' => $routerInterfaces->pluck('name')[$i],
+                    'name2' => $distributionSwitchInterfaces->where('interface_id', $DS_DownlinkPorts[$i][0])->pluck('name')->first(),
+                ];
+            }
+
+            // dalej potrebujeme vytvorit spojenie medzi distribucnymi switchmi a access switchmi
+            // musime ziskat prvy uplink port kazdeho access switcha
+            for ($i = 0; $i < $numberOfAccessSwitches; ++$i) {
+                $AS_firtstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id')->first();
+                $AS_secondUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id')->skip(1)->first();
+
+                $connectionsArray[] = [
+                    'interface_id1' => $DS_DownlinkPorts[0][$i + 1],
+                    'interface_id2' => $AS_firtstUplinkPorts[$i],
+                    'device_id1' => $DS_IDs[0],
+                    'device_id2' => $AS_IDs[$i],
+                    'name1' => $distributionSwitchInterfaces->where('interface_id', $DS_DownlinkPorts[0][$i + 1])->pluck('name')->first(),
+                    'name2' => $accessSwitchInterfaces->where('interface_id', $AS_firtstUplinkPorts[$i])->pluck('name')->first(),
+                ];
+                $connectionsArray[] = [
+                    'interface_id1' => $DS_DownlinkPorts[1][$i + 1],
+                    'interface_id2' => $AS_secondUplinkPorts[$i],
+                    'device_id1' => $DS_IDs[1],
+                    'device_id2' => $AS_IDs[$i],
+                    'name1' => $distributionSwitchInterfaces->where('interface_id', $DS_DownlinkPorts[1][$i + 1])->pluck('name')->first(),
+                    'name2' => $accessSwitchInterfaces->where('interface_id', $AS_secondUplinkPorts[$i])->pluck('name')->first(),
+                ];
+            }
+
+            // dalej potrebujeme vytvorit spojenie medzi access switchmi a end
+            // devices
+
+            $prev_sw_id = 0;
+            $AS_DownlinkPorts = $accessSwitchInterfaces->where('direction', 'downlink');
+
+            $EDInterfaces = $interfaces->where('type', 'ED')->where('connector', $AS_DownlinkPorts->first()->connector);
+            $ei = $EDInterfaces->keys()->first();
+            $lastED = $EDInterfaces->keys()->last();
+
+            foreach ($AS_DownlinkPorts as $key => $value) {
+                if ($ei > $lastED) {
+                    break; // code...
+                }
+
+                $connectionsArray[] = [
+                    'interface_id1' => $value->interface_id,
+                    'interface_id2' => $EDInterfaces[$ei]->interface_id,
+                    'device_id1' => $value->id,
+                    'device_id2' => $EDInterfaces[$ei]->id,
+                    'name1' => $value->name,
+                    'name2' => $EDInterfaces[$ei]->name,
+                ];
+                ++$ei;
+            }
+
+            DB::table('connections')->insert($connectionsArray);
+
+            /* $distributionSwitches = DevicesInNetwork::all()->where('type', 'distributionSwitch')->pluck('id');
 
             $numberOfDistributionSwitches = $distributionSwitches->count();
 
@@ -198,9 +302,9 @@ class DevicesInNetworkController extends Controller
                 }
 
                 $prev_sw_id = $accessSwitchInterfaces[$i]->id;
-            }
+            } */
 
-            DB::table('connections')->insert($connectionsArray);
+            // DB::table('connections')->insert($connectionsArray);
         }
 
         return json_encode([]);
@@ -269,9 +373,9 @@ class DevicesInNetworkController extends Controller
     /**
      * Selects devices based on user input.
      */
-    public function choose(Request $request)
+    public function choose(/* Request $request */ int $users, string $vlans, int $userConnection, string $networkTraffic)
     {
-        $request->validate([
+        /* $request->validate([
             'users' => 'required',
             'vlans' => 'required',
             'userConnection' => 'required',
@@ -281,7 +385,7 @@ class DevicesInNetworkController extends Controller
         $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans; // yes, no
         $userConnection = $request->userConnection; // 100, 1000, 10000
-        $networkTraffic = $request->networkTraffic; // small, medium, large
+        $networkTraffic = $request->networkTraffic; // small, medium, large */
 
         $network_users = $users;
 
@@ -362,8 +466,6 @@ class DevicesInNetworkController extends Controller
         $distributionSwitchPorts = $ports->where('type', 'switch')->where('direction', 'downlink')->whereIn('connector', $accessSwitches_uplinkConnector)->pluck('device_id');
 
         $distributionSwitch = $switches->where('s-L3', 'yes')->where('s-vlan', 'yes')->where('s-forwarding_rate', '>=', $total_forwardingRate)->where('s-switching_capacity', '>=', $total_switchingCapacity)->whereIn('device_id', $distributionSwitchPorts)->sortBy('s-forwarding_rate')->first();
-
-        // $distributionSwitch = $distributionSwitches->whereIn('device_id', $distributionSwitchPorts->pluck('device_id'))->last();
 
         $distributionSwitchConnector = $ports->where('type', 'switch')->where('direction', 'downlink')->where('device_id', $distributionSwitch->device_id)->pluck('connector')->first();
 

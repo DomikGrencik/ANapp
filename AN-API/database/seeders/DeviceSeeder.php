@@ -118,10 +118,10 @@ class DeviceSeeder extends Seeder
         // 11
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'CBS220-24T-4G',
+            'model' => 'CBS220-24T-4X',
             'type' => 'switch',
-            's-forwarding_rate' => '41.66',
-            's-switching_capacity' => '56',
+            's-forwarding_rate' => '95.24',
+            's-switching_capacity' => '128',
             's-vlan' => 'yes',
             's-L3' => 'no',
             'price' => '230',
@@ -129,10 +129,10 @@ class DeviceSeeder extends Seeder
         // 12
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'CBS220-48T-4G',
+            'model' => 'CBS220-48T-4X',
             'type' => 'switch',
-            's-forwarding_rate' => '74.38',
-            's-switching_capacity' => '104',
+            's-forwarding_rate' => '130.95',
+            's-switching_capacity' => '176',
             's-vlan' => 'yes',
             's-L3' => 'no',
             'price' => '380',
@@ -140,37 +140,27 @@ class DeviceSeeder extends Seeder
         // 13
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C1300-16T-2G',
+            'model' => 'C9300X-12Y',
             'type' => 'switch',
-            's-forwarding_rate' => '26.78',
-            's-switching_capacity' => '36',
+            's-forwarding_rate' => '744.04',
+            's-switching_capacity' => '1000',
             's-vlan' => 'yes',
             's-L3' => 'yes',
-            'price' => '380',
+            'price' => '400',
         ]);
         // 14
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C1300-24T-4G',
+            'model' => 'C9300X-24Y',
             'type' => 'switch',
-            's-forwarding_rate' => '41.66',
-            's-switching_capacity' => '56',
+            's-forwarding_rate' => '1488',
+            's-switching_capacity' => '2000',
             's-vlan' => 'yes',
             's-L3' => 'yes',
-            'price' => '500',
+            'price' => '600',
         ]);
-        // 15
-        DB::table('devices')->insert([
-            'manufacturer' => 'Cisco',
-            'model' => 'C1300-48T-4G',
-            'type' => 'switch',
-            's-forwarding_rate' => '77.38',
-            's-switching_capacity' => '104',
-            's-vlan' => 'yes',
-            's-L3' => 'yes',
-            'price' => '800',
-        ]);
-        // 16
+
+        /* // 16
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9200L-24T-4G',
@@ -191,7 +181,7 @@ class DeviceSeeder extends Seeder
             's-vlan' => 'yes',
             's-L3' => 'yes',
             'price' => '1500',
-        ]);
+        ]); */
         // -----------------------------------------\\
         // ---------------------------------EndDevices
         // -----------------------------------------\\

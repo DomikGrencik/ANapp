@@ -13,11 +13,10 @@ export const dataSchemaInterface = z.array(
   z.object({
     interface_id: z.number().int(),
     name: z.string(),
-    IP_address: z.string().nullable(),
     connector: z.string(),
     AN: z.string().nullable(),
     speed: z.string(),
-    interface_id2: z.number().int().nullable(),
+    direction: z.string().nullable(),
     id: z.number().int(),
     type: z.string(),
   })

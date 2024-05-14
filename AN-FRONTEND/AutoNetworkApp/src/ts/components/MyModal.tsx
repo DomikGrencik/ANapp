@@ -151,44 +151,46 @@ const Modal: FC<ModalProps> = ({
       >
         <div className="my-modal__content">
           {children}
-          <div>
-            <h2>Informácie o zariadení</h2>
-            <div>Typ zariadenia: {filteredDeviceDatabase?.[0]?.type}</div>
-            <div>Výrobca: {filteredDeviceDatabase?.[0]?.manufacturer}</div>
-            <div>Model: {filteredDeviceDatabase?.[0]?.model}</div>
-            <div>Názov: {filteredDevices?.[0]?.name}</div>
-          </div>
+          <div className="information">
+            <div>
+              <h2>Informácie o zariadení</h2>
+              <div>Typ zariadenia: {filteredDeviceDatabase?.[0]?.type}</div>
+              <div>Výrobca: {filteredDeviceDatabase?.[0]?.manufacturer}</div>
+              <div>Model: {filteredDeviceDatabase?.[0]?.model}</div>
+              <div>Názov: {filteredDevices?.[0]?.name}</div>
+            </div>
 
-          <div>
-            <h2>Konfigurácia</h2>
-            {filteredDevices?.[0]?.type === 'router' ? (
-              <>
-                <div>OSPF</div>
-                <div>NAT</div>
-                <div>DHCP</div>
-                <div>Firewall</div>
-              </>
-            ) : null}
-            {filteredDevices?.[0]?.type === 'distributionSwitch' ? (
-              <>
-                <div>OSPF</div>
-                <div>STP</div>
-                <div>HSRP</div>
-                <div>QoS</div>
-              </>
-            ) : null}
-            {filteredDevices?.[0]?.type === 'accessSwitch' ? (
-              <>
-                <div>VLAN</div>
-                <div>IBNS</div>
-                <div>port security</div>
-                <div>DHCP snooping</div>
-                <div>DAI</div>
-                <div>IPSG</div>
-                <div>QoS</div>
-              </>
-            ) : null}
-            {filteredDevices?.[0]?.type === 'ED' ? <div>CSA</div> : null}
+            <div>
+              <h2>Konfigurácia</h2>
+              {filteredDevices?.[0]?.type === 'router' ? (
+                <>
+                  <div>OSPF</div>
+                  <div>NAT</div>
+                  <div>DHCP</div>
+                  <div>Firewall</div>
+                </>
+              ) : null}
+              {filteredDevices?.[0]?.type === 'distributionSwitch' ? (
+                <>
+                  <div>OSPF</div>
+                  <div>STP</div>
+                  <div>HSRP</div>
+                  <div>QoS</div>
+                </>
+              ) : null}
+              {filteredDevices?.[0]?.type === 'accessSwitch' ? (
+                <>
+                  <div>VLAN</div>
+                  <div>IBNS</div>
+                  <div>port security</div>
+                  <div>DHCP snooping</div>
+                  <div>DAI</div>
+                  <div>IPSG</div>
+                  <div>QoS</div>
+                </>
+              ) : null}
+              {filteredDevices?.[0]?.type === 'ED' ? <div>CSA</div> : null}
+            </div>
           </div>
           {hasTable ? (
             <>

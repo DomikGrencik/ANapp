@@ -15,7 +15,7 @@ return new class() extends Migration {
             $table->string('name');
             $table->enum('connector', ['RJ45', 'SFP', 'SFP+', 'Wireless']);
             $table->enum('AN', ['LAN', 'WAN', 'LAN_WAN']);
-            $table->enum('speed', ['100', '1000', '2500', '10000', '25000', '100000', 'Wireless']);
+            $table->enum('speed', ['100', '1000', '2500', '10000', '25000', '40000', '100000', 'Wireless']);
             $table->integer('number_of_ports');
             $table->enum('direction', ['uplink', 'downlink'])->nullable();
             $table->enum('type', ['router', 'switch', 'ED']);

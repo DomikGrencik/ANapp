@@ -41,4 +41,10 @@
     gap: 20px;
     //padding: 0 20px;
   }
+
+  .information {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
 }
