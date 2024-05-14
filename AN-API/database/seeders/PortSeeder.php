@@ -183,7 +183,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1000',
             'number_of_ports' => 16,
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '8',
         ]);
 
@@ -194,7 +194,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1000',
             'number_of_ports' => 24,
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '9',
         ]);
 
@@ -205,7 +205,7 @@ class PortSeeder extends Seeder
             'AN' => 'LAN',
             'speed' => '1000',
             'number_of_ports' => 16,
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '10',
         ]);
 
@@ -217,7 +217,7 @@ class PortSeeder extends Seeder
             'speed' => '10000',
             'number_of_ports' => 4,
             'direction' => 'uplink',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '11',
         ]);
         DB::table('ports')->insert([
@@ -227,7 +227,7 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 24,
             'direction' => 'downlink',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '11',
         ]);
 
@@ -239,7 +239,7 @@ class PortSeeder extends Seeder
             'speed' => '10000',
             'number_of_ports' => 4,
             'direction' => 'uplink',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '12',
         ]);
         DB::table('ports')->insert([
@@ -249,19 +249,19 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 48,
             'direction' => 'downlink',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             'device_id' => '12',
         ]);
 
         // Cisco C9300X-12Y
         DB::table('ports')->insert([
-            'name' => 'SFP+',
-            'connector' => 'SFP+',
+            'name' => 'QSFP',
+            'connector' => 'QSFP',
             'AN' => 'LAN',
             'speed' => '100000',
             'number_of_ports' => 4,
             'direction' => 'uplink',
-            'type' => 'switch',
+            'type' => 'distributionSwitch',
             'device_id' => '13',
         ]);
         DB::table('ports')->insert([
@@ -271,19 +271,19 @@ class PortSeeder extends Seeder
             'speed' => '25000',
             'number_of_ports' => 12,
             'direction' => 'downlink',
-            'type' => 'switch',
+            'type' => 'distributionSwitch',
             'device_id' => '13',
         ]);
 
         // Cisco C9300X-24Y
         DB::table('ports')->insert([
-            'name' => 'SFP+',
-            'connector' => 'SFP+',
+            'name' => 'QSFP',
+            'connector' => 'QSFP',
             'AN' => 'LAN',
             'speed' => '100000',
             'number_of_ports' => 4,
             'direction' => 'uplink',
-            'type' => 'switch',
+            'type' => 'distributionSwitch',
             'device_id' => '14',
         ]);
         DB::table('ports')->insert([
@@ -293,9 +293,32 @@ class PortSeeder extends Seeder
             'speed' => '25000',
             'number_of_ports' => 24,
             'direction' => 'downlink',
-            'type' => 'switch',
+            'type' => 'distributionSwitch',
             'device_id' => '14',
         ]);
+
+        // Cisco C9500X-28C8D
+        DB::table('ports')->insert([
+            'name' => 'QSFP',
+            'connector' => 'QSFP',
+            'AN' => 'LAN',
+            'speed' => '100000',
+            'number_of_ports' => 28,
+            'direction' => 'downlink',
+            'type' => 'coreSwitch',
+            'device_id' => '15',
+        ]);
+        DB::table('ports')->insert([
+            'name' => 'QSFP',
+            'connector' => 'QSFP',
+            'AN' => 'LAN',
+            'speed' => '400000',
+            'number_of_ports' => 8,
+            'direction' => 'uplink',
+            'type' => 'coreSwitch',
+            'device_id' => '15',
+        ]);
+
 
         /* // Cisco C9200L-24T-4G
         DB::table('ports')->insert([
@@ -329,7 +352,7 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 1,
             'type' => 'ED',
-            'device_id' => '15',
+            'device_id' => '16',
         ]);
 
         // laptop
@@ -340,7 +363,7 @@ class PortSeeder extends Seeder
             'speed' => '1000',
             'number_of_ports' => 1,
             'type' => 'ED',
-            'device_id' => '16',
+            'device_id' => '17',
         ]);
         DB::table('ports')->insert([
             'name' => 'GE',
@@ -349,7 +372,7 @@ class PortSeeder extends Seeder
             'speed' => 'Wireless',
             'number_of_ports' => 1,
             'type' => 'ED',
-            'device_id' => '16',
+            'device_id' => '17',
         ]);
     }
 }

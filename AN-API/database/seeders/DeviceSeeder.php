@@ -86,7 +86,7 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS110-16T',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             's-forwarding_rate' => '23.9',
             's-switching_capacity' => '32',
             's-vlan' => 'no',
@@ -97,7 +97,7 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS110-24T',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             's-forwarding_rate' => '35.8',
             's-switching_capacity' => '48',
             's-vlan' => 'no',
@@ -108,7 +108,7 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS220-16T-2G',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             's-forwarding_rate' => '26.78',
             's-switching_capacity' => '36',
             's-vlan' => 'yes',
@@ -119,7 +119,7 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS220-24T-4X',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             's-forwarding_rate' => '95.24',
             's-switching_capacity' => '128',
             's-vlan' => 'yes',
@@ -130,7 +130,7 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'CBS220-48T-4X',
-            'type' => 'switch',
+            'type' => 'accessSwitch',
             's-forwarding_rate' => '130.95',
             's-switching_capacity' => '176',
             's-vlan' => 'yes',
@@ -141,23 +141,34 @@ class DeviceSeeder extends Seeder
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9300X-12Y',
-            'type' => 'switch',
+            'type' => 'distributionSwitch',
             's-forwarding_rate' => '744.04',
             's-switching_capacity' => '1000',
             's-vlan' => 'yes',
             's-L3' => 'yes',
-            'price' => '400',
+            'price' => '10000',
         ]);
         // 14
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
             'model' => 'C9300X-24Y',
-            'type' => 'switch',
+            'type' => 'distributionSwitch',
             's-forwarding_rate' => '1488',
             's-switching_capacity' => '2000',
             's-vlan' => 'yes',
             's-L3' => 'yes',
-            'price' => '600',
+            'price' => '20000',
+        ]);
+        // 15
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C9500X-28C8D',
+            'type' => 'coreSwitch',
+            's-forwarding_rate' => '8000',
+            's-switching_capacity' => '12000',
+            's-vlan' => 'yes',
+            's-L3' => 'yes',
+            'price' => '50000',
         ]);
 
         /* // 16

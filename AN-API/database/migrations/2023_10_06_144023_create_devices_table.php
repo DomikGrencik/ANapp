@@ -14,7 +14,7 @@ return new class() extends Migration {
             $table->id('device_id');
             $table->string('manufacturer');
             $table->string('model');
-            $table->enum('type', ['router', 'switch', 'ED']);
+            $table->enum('type', ['router', 'accessSwitch', 'distributionSwitch', 'coreSwitch', 'ED']);
             $table->integer('r-throughput')->nullable();
             $table->enum('r-branch', ['small', 'medium', 'large', '-'])->default('-');
             $table->float('s-forwarding_rate')->nullable();

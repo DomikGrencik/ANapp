@@ -13,7 +13,7 @@ return new class() extends Migration {
         Schema::create('devices_in_networks', function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
-            $table->enum('type', ['router', 'switch', 'accessSwitch', 'distributionSwitch', 'ED']);
+            $table->enum('type', ['router', 'accessSwitch', 'distributionSwitch', 'coreSwitch', 'ED']);
             $table->unsignedBigInteger('device_id')->nullable();
             $table->timestamps();
         });
