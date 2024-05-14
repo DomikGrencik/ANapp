@@ -435,13 +435,16 @@ class DevicesInNetworkController extends Controller
             $uplink_bw = $downlink_bw * $oversubscription;
 
             $uplink_speed = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->first();
-            $uplink_numberOfPorts = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_speed)->whereIn('device_id', $downlink_switchByPorts)->pluck('number_of_ports')->first();
+            $AS_uplink_speed = $uplink_speed;
+            /* $uplink_numberOfPorts = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_speed)->whereIn('device_id', $downlink_switchByPorts)->pluck('number_of_ports')->first(); */
 
-            $uplink_fowardingRate = 0.001488 * $uplink_speed * $uplink_numberOfPorts;
-            $uplink_switchingCapacity = 2 * $uplink_speed * $uplink_numberOfPorts / 1000;
+            $uplink_fowardingRate = 0.001488 * $uplink_speed * 2;
+            $uplink_switchingCapacity = 2 * $uplink_speed * 2 / 1000;
 
             $forwardingRate = $downlink_forwardingRate + $uplink_fowardingRate;
             $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
+
+            return $forwardingRate;
 
             $total_forwardingRate += $forwardingRate;
             $total_switchingCapacity += $switchingCapacity;
@@ -477,13 +480,14 @@ class DevicesInNetworkController extends Controller
                     'type' => 'distributionSwitch',
                     'device_id' => $distributionSwitch->device_id,
                 ];
-                $numberOfDistributionSwitches = $i;
+                // $numberOfDistributionSwitches = $i;
             }
         } else {
             // vyberia sa distribucny switch podla maximalnej hodnoty spomedzi vsetkych distribucnych switchov, ktore su pripojene na access switche
             $distributionSwitch = $devices->where('type', 'distributionSwitch')->where('s-L3', 'yes')->where('s-vlan', 'yes')->where('s-forwarding_rate', '>=', $max_DS_forwardingRate)->where('s-switching_capacity', '>=', $max_DS_switchingCapacity)->whereIn('device_id', $distributionSwitchPorts)->sortBy('s-forwarding_rate')->first();
 
-            $numberOfAccessSwitches = collect($AS_Array)->count();
+            $numberOfAccessSwitches = count($AS_Array);
+
             // maximalny pocet access switchov, ktore moze obsluhovat jeden distribucny switch
             $max_ASperDS = $max_DS_forwardingRate / $accessSwitches->max('s-forwarding_rate');
 
@@ -498,12 +502,17 @@ class DevicesInNetworkController extends Controller
                 ];
             }
 
-            // core swithce
+            // core switche
 
-            $coreSwitches = $devices->where('type', 'coreSwitch');
+            $numberOfDistributionSwitches = count($DS_Array);
+            return $numberOfDistributionSwitches;
+
+            return $max_DS_forwardingRate * $numberOfDistributionSwitches;
+
+            $coreSwitches = $devices->where('type', 'coreSwitch')->where('s-forwarding_rate', '>=', $max_DS_forwardingRate * $numberOfDistributionSwitches)->where('s-switching_capacity', '>=', $max_DS_switchingCapacity * $numberOfDistributionSwitches)->sortBy('s-forwarding_rate')->first();
+
+            return $coreSwitches;
         }
-
-
 
         // router
         $routerPorts = $ports->where('AN', '!=', 'LAN')->where('connector', $distributionSwitchConnector)->pluck('device_id')->first();
