@@ -407,8 +407,6 @@ class DevicesInNetworkController extends Controller
         }
         $usersToConnect = $maxPorts - $connectedPorts;
 
-        $total_forwardingRate = 0;
-        $total_switchingCapacity = 0;
         do {
             ++$s;
             if ($users - $usersToConnect >= 0) {
@@ -431,23 +429,17 @@ class DevicesInNetworkController extends Controller
             $downlink_switchingCapacity = 2 * $userConnection * $numberOfPorts / 1000;
 
             $downlink_bw = $numberOfPorts * $userConnection;
-            $oversubscription = 0.05;
+            $oversubscription = 1 / 20;
             $uplink_bw = $downlink_bw * $oversubscription;
 
-            $uplink_speed = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->first();
-            $AS_uplink_speed = $uplink_speed;
+            $AS_uplink_speed = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->first();
             /* $uplink_numberOfPorts = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_speed)->whereIn('device_id', $downlink_switchByPorts)->pluck('number_of_ports')->first(); */
 
-            $uplink_fowardingRate = 0.001488 * $uplink_speed * 2;
-            $uplink_switchingCapacity = 2 * $uplink_speed * 2 / 1000;
+            $uplink_fowardingRate = 0.001488 * $AS_uplink_speed * 2;
+            $uplink_switchingCapacity = 2 * $AS_uplink_speed * 2 / 1000;
 
             $forwardingRate = $downlink_forwardingRate + $uplink_fowardingRate;
             $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
-
-            return $forwardingRate;
-
-            $total_forwardingRate += $forwardingRate;
-            $total_switchingCapacity += $switchingCapacity;
 
             $accessSwitch = $accessSwitches->whereIn('device_id', $downlink_switchByPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('s-forwarding_rate')->first();
 
@@ -460,58 +452,89 @@ class DevicesInNetworkController extends Controller
 
         // distribution switches
 
-        $max_DS_forwardingRate = $devices->where('type', 'distributionSwitch')->max('s-forwarding_rate');
-        $max_DS_switchingCapacity = $devices->where('type', 'distributionSwitch')->max('s-switching_capacity');
-
         $deviceIds = collect($AS_Array)->pluck('device_id');
 
         $accessSwitches_uplinkConnector = $accessSwitchPorts->whereIn('device_id', $deviceIds)->where('direction', 'uplink')->pluck('connector');
 
         $distributionSwitchPorts = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->whereIn('connector', $accessSwitches_uplinkConnector)->pluck('device_id');
 
-        if ($total_forwardingRate <= $max_DS_forwardingRate || $total_switchingCapacity <= $max_DS_switchingCapacity) {
-            $distributionSwitch = $devices->where('type', 'distributionSwitch')->where('s-L3', 'yes')->where('s-vlan', 'yes')->where('s-forwarding_rate', '>=', $total_forwardingRate)->where('s-switching_capacity', '>=', $total_switchingCapacity)->whereIn('device_id', $distributionSwitchPorts)->sortBy('s-forwarding_rate')->first();
+        // pouzijeme 8, pretoze jeden distribucny switch moze obsluhovat 8 access
+        // switchov, toto je len urceny parameter, nie je to podmienka
+        $downlink_forwardingRate = 0.001488 * $AS_uplink_speed * 8;
+        $downlink_switchingCapacity = 2 * $AS_uplink_speed * 8 / 1000;
 
-            $distributionSwitchConnector = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->where('device_id', $distributionSwitch->device_id)->pluck('connector')->first();
+        $downlink_bw = 8 * $AS_uplink_speed;
+        $oversubscription = 1 / 4;
+        $uplink_bw = $downlink_bw * $oversubscription;
 
+        $DS_uplink_speed = $ports->where('type', 'distributionSwitch')->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->sortBy('speed')->first();
+
+        if (count($AS_Array) <= 8) {
+            $uplink_fowardingRate = 0.001488 * $DS_uplink_speed * 1;
+            $uplink_switchingCapacity = 2 * $DS_uplink_speed * 1 / 1000;
+        } else {
+            $uplink_fowardingRate = 0.001488 * $DS_uplink_speed * 3;
+            $uplink_switchingCapacity = 2 * $DS_uplink_speed * 3 / 1000;
+        }
+
+        $forwardingRate = $downlink_forwardingRate + $uplink_fowardingRate;
+        $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
+
+        $distributionSwitch = $devices->where('type', 'distributionSwitch')->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->whereIn('device_id', $distributionSwitchPorts)->sortBy('s-forwarding_rate')->first();
+
+        $distributionSwitchConnector = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->where('device_id', $distributionSwitch->device_id)->pluck('connector')->first();
+
+        if (count($AS_Array) <= 8) {
             for ($i = 1; $i <= 2; ++$i) {
                 $DS_Array[] = [
                     'name' => "DS{$i}",
                     'type' => 'distributionSwitch',
                     'device_id' => $distributionSwitch->device_id,
                 ];
-                // $numberOfDistributionSwitches = $i;
             }
         } else {
-            // vyberia sa distribucny switch podla maximalnej hodnoty spomedzi vsetkych distribucnych switchov, ktore su pripojene na access switche
-            $distributionSwitch = $devices->where('type', 'distributionSwitch')->where('s-L3', 'yes')->where('s-vlan', 'yes')->where('s-forwarding_rate', '>=', $max_DS_forwardingRate)->where('s-switching_capacity', '>=', $max_DS_switchingCapacity)->whereIn('device_id', $distributionSwitchPorts)->sortBy('s-forwarding_rate')->first();
+            // potrebujem zistit kolko distribucnych celkov (celok su 2 DS)
+            // potrebujem, urcilo sa, ze jeden celok je pre 8 AS
+            $numberOfDistributions = ceil(count($AS_Array) / 8);
 
-            $numberOfAccessSwitches = count($AS_Array);
-
-            // maximalny pocet access switchov, ktore moze obsluhovat jeden distribucny switch
-            $max_ASperDS = $max_DS_forwardingRate / $accessSwitches->max('s-forwarding_rate');
-
-            // podla poctu access switchov a maximalneho poctu access switchov,
-            // ktore moze obsluhovat jeden distribucny switch sa vytvoria
-            // dvojice distribucnych switchov
-            for ($i = 1; $i <= 2 * ceil($numberOfAccessSwitches / $max_ASperDS); ++$i) {
+            for ($i = 1; $i <= $numberOfDistributions * 2; ++$i) {
                 $DS_Array[] = [
                     'name' => "DS{$i}",
                     'type' => 'distributionSwitch',
                     'device_id' => $distributionSwitch->device_id,
                 ];
             }
+            $downlink_forwardingRate = 0.001488 * $DS_uplink_speed * count($DS_Array);
+            $downlink_switchingCapacity = 2 * $DS_uplink_speed * count($DS_Array) / 1000;
 
-            // core switche
+            $downlink_bw = count($DS_Array) * $DS_uplink_speed;
+            $oversubscription = 1 / 4;
+            $uplink_bw = $downlink_bw * $oversubscription;
 
-            $numberOfDistributionSwitches = count($DS_Array);
-            return $numberOfDistributionSwitches;
+            // treba osetrit, ked je uplink_bw vacsi ako uplink port speed core
+            // switcha aby vratil error alebo nejako skombinoval viac uplink portov
 
-            return $max_DS_forwardingRate * $numberOfDistributionSwitches;
+            $CS_uplink_speed = $ports->where('type', 'coreSwitch')->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->sortBy('speed')->first();
 
-            $coreSwitches = $devices->where('type', 'coreSwitch')->where('s-forwarding_rate', '>=', $max_DS_forwardingRate * $numberOfDistributionSwitches)->where('s-switching_capacity', '>=', $max_DS_switchingCapacity * $numberOfDistributionSwitches)->sortBy('s-forwarding_rate')->first();
+            $uplink_forwardingRate = 0.001488 * $CS_uplink_speed * 1;
+            $uplink_switchingCapacity = 2 * $CS_uplink_speed * 1 / 1000;
 
-            return $coreSwitches;
+            $forwardingRate = $downlink_forwardingRate + $uplink_forwardingRate;
+            $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
+
+            $downlink_switchByPorts = $ports->where('type', 'coreSwitch')->where('direction', 'downlink')->where('number_of_ports', '>=', count($DS_Array))->where('speed', '>=', $DS_uplink_speed)->pluck('device_id');
+
+            $coreSwitch = $devices->where('type', 'coreSwitch')->whereIn('device_id', $downlink_switchByPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('s-forwarding_rate')->first();
+
+            for ($i = 1; $i <= 2; ++$i) {
+                $CS_Array[] = [
+                    'name' => "CS{$i}",
+                    'type' => 'coreSwitch',
+                    'device_id' => $coreSwitch->device_id,
+                ];
+            }
+
+            return $CS_Array;
         }
 
         // router

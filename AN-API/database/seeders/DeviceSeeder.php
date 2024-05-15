@@ -140,10 +140,10 @@ class DeviceSeeder extends Seeder
         // 13
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C9300X-12Y',
+            'model' => 'C9300-24UX',
             'type' => 'distributionSwitch',
-            's-forwarding_rate' => '744.04',
-            's-switching_capacity' => '1000',
+            's-forwarding_rate' => '476.2',
+            's-switching_capacity' => '640',
             's-vlan' => 'yes',
             's-L3' => 'yes',
             'price' => '10000',
@@ -162,10 +162,21 @@ class DeviceSeeder extends Seeder
         // 15
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C9500X-28C8D',
+            'model' => 'C9500-24Y4C',
             'type' => 'coreSwitch',
-            's-forwarding_rate' => '8000',
-            's-switching_capacity' => '12000',
+            's-forwarding_rate' => '1488',
+            's-switching_capacity' => '2000',
+            's-vlan' => 'yes',
+            's-L3' => 'yes',
+            'price' => '50000',
+        ]);
+        // 16
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C9500-48Y4C',
+            'type' => 'coreSwitch',
+            's-forwarding_rate' => '2380.8',
+            's-switching_capacity' => '3200',
             's-vlan' => 'yes',
             's-L3' => 'yes',
             'price' => '50000',
