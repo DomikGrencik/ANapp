@@ -452,24 +452,34 @@ class DevicesInNetworkController extends Controller
 
         // distribution switches
 
+        $AS_per_DS = 8;
+
+        if (count($AS_Array) <= $AS_per_DS) {
+            $AS_count = count($AS_Array) + 2;
+        } else {
+            $AS_count = $AS_per_DS;
+        }
+
         $deviceIds = collect($AS_Array)->pluck('device_id');
 
         $accessSwitches_uplinkConnector = $accessSwitchPorts->whereIn('device_id', $deviceIds)->where('direction', 'uplink')->pluck('connector');
 
         $distributionSwitchPorts = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->whereIn('connector', $accessSwitches_uplinkConnector)->pluck('device_id');
 
+        return $AS_count;
+
         // pouzijeme 8, pretoze jeden distribucny switch moze obsluhovat 8 access
         // switchov, toto je len urceny parameter, nie je to podmienka
-        $downlink_forwardingRate = 0.001488 * $AS_uplink_speed * 8;
-        $downlink_switchingCapacity = 2 * $AS_uplink_speed * 8 / 1000;
+        $downlink_forwardingRate = 0.001488 * $AS_uplink_speed * $AS_count;
+        $downlink_switchingCapacity = 2 * $AS_uplink_speed * $AS_count / 1000;
 
-        $downlink_bw = 8 * $AS_uplink_speed;
+        $downlink_bw = $AS_count * $AS_uplink_speed;
         $oversubscription = 1 / 4;
         $uplink_bw = $downlink_bw * $oversubscription;
 
         $DS_uplink_speed = $ports->where('type', 'distributionSwitch')->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->sortBy('speed')->first();
 
-        if (count($AS_Array) <= 8) {
+        if (count($AS_Array) <= $AS_per_DS) {
             $uplink_fowardingRate = 0.001488 * $DS_uplink_speed * 1;
             $uplink_switchingCapacity = 2 * $DS_uplink_speed * 1 / 1000;
         } else {
@@ -484,7 +494,7 @@ class DevicesInNetworkController extends Controller
 
         $distributionSwitchConnector = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->where('device_id', $distributionSwitch->device_id)->pluck('connector')->first();
 
-        if (count($AS_Array) <= 8) {
+        if (count($AS_Array) <= $AS_per_DS) {
             for ($i = 1; $i <= 2; ++$i) {
                 $DS_Array[] = [
                     'name' => "DS{$i}",
@@ -492,6 +502,16 @@ class DevicesInNetworkController extends Controller
                     'device_id' => $distributionSwitch->device_id,
                 ];
             }
+
+            // router
+            $routerPorts = $ports->where('AN', '!=', 'LAN')->where('number_of_ports', '>=', 3)->where('connector', $distributionSwitchConnector)->pluck('device_id')->first();
+            $routerDevice = $devices->where('device_id', $routerPorts);
+
+            $R_Array[] = [
+                'name' => 'R1',
+                'type' => $routerDevice->first()->type,
+                'device_id' => $routerDevice->first()->device_id,
+            ];
         } else {
             // potrebujem zistit kolko distribucnych celkov (celok su 2 DS)
             // potrebujem, urcilo sa, ze jeden celok je pre 8 AS
@@ -504,6 +524,9 @@ class DevicesInNetworkController extends Controller
                     'device_id' => $distributionSwitch->device_id,
                 ];
             }
+
+            // core switches
+
             $downlink_forwardingRate = 0.001488 * $DS_uplink_speed * count($DS_Array);
             $downlink_switchingCapacity = 2 * $DS_uplink_speed * count($DS_Array) / 1000;
 
@@ -533,15 +556,9 @@ class DevicesInNetworkController extends Controller
                     'device_id' => $coreSwitch->device_id,
                 ];
             }
-
-            return $CS_Array;
         }
 
-        // router
-        $routerPorts = $ports->where('AN', '!=', 'LAN')->where('connector', $distributionSwitchConnector)->pluck('device_id')->first();
-        $routerDevices = $devices->where('device_id', $routerPorts);
-
-        // prebieha filtracia routerov podla poctu pouzivatelov
+        /* // prebieha filtracia routerov podla poctu pouzivatelov
         switch ($network_users) {
             case $network_users <= 50:
                 $routerDevices = $routerDevices->where('r-branch', 'small');
@@ -577,7 +594,7 @@ class DevicesInNetworkController extends Controller
             'name' => 'R1',
             'type' => $routerDevices->first()->type,
             'device_id' => $routerDevices->first()->device_id,
-        ];
+        ]; */
 
         $devicesArray = array_merge($R_Array, $DS_Array, $AS_Array);
 

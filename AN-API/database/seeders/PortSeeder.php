@@ -159,7 +159,7 @@ class PortSeeder extends Seeder
             'connector' => 'RJ45',
             'AN' => 'LAN_WAN',
             'speed' => '1000',
-            'number_of_ports' => 8,
+            'number_of_ports' => 4,
             'type' => 'router',
             'device_id' => '7',
         ]);
@@ -168,7 +168,7 @@ class PortSeeder extends Seeder
             'connector' => 'SFP+',
             'AN' => 'LAN_WAN',
             'speed' => '10000',
-            'number_of_ports' => 2,
+            'number_of_ports' => 6,
             'type' => 'router',
             'device_id' => '7',
         ]);
