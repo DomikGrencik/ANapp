@@ -88,6 +88,7 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
 
   //console.log(filteredDevices);
 
+  let counterCSW = 0;
   let counterDSW = 0;
   let counterASW = 0;
   let counterED = 0;
@@ -99,21 +100,27 @@ const MyTopology: FC<TopologyProps> = ({ dataDevices, dataConnections }) => {
         case 'router':
           position = { x: 750, y: 0 };
           break;
+        case 'coreSwitch':
+          counterCSW === 0
+            ? (position = { x: 550, y: 200 })
+            : (position = { x: 550 + 400 * counterCSW, y: 200 });
+          counterCSW++;
+          break;
         case 'distributionSwitch':
           counterDSW === 0
-            ? (position = { x: 550, y: 200 })
-            : (position = { x: 550 + 400 * counterDSW, y: 200 });
+            ? (position = { x: 550, y: 400 })
+            : (position = { x: 550 + 400 * counterDSW, y: 400 });
           counterDSW++;
           break;
         case 'accessSwitch':
           counterASW === 0
-            ? (position = { x: 150, y: 400 })
-            : (position = { x: 150 + 400 * counterASW, y: 400 });
+            ? (position = { x: 150, y: 600 })
+            : (position = { x: 150 + 400 * counterASW, y: 600 });
 
           counterASW++;
           break;
         case 'ED':
-          position = { x: 100 * counterED, y: 600 };
+          position = { x: 100 * counterED, y: 800 };
           counterED++;
           break;
 
