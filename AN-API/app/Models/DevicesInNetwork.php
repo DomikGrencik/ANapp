@@ -37,5 +37,3 @@ class DevicesInNetwork extends Model
         return $this->belongsTo(Device::class, 'device_id', 'device_id');
     }
 }
-
-

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InterfaceOfDevice;
 use App\Models\Port;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class InterfaceOfDeviceController extends Controller
 {
@@ -150,7 +151,10 @@ class InterfaceOfDeviceController extends Controller
      */
     public function delete()
     {
-        InterfaceOfDevice::getQuery()->delete();
+        //InterfaceOfDevice::getQuery()->delete();
+        Schema::disableForeignKeyConstraints();
+        InterfaceOfDevice::truncate();
+        Schema::enableForeignKeyConstraints();
 
         return json_encode([]);
     }
