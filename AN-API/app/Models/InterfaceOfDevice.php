@@ -33,7 +33,7 @@ class InterfaceOfDevice extends Model
 
     public function devices_in_networks()
     {
-        return $this->belongsTo(DevicesInNetwork::class, 'id', 'device_id');
+        return $this->belongsTo(DevicesInNetwork::class, 'id', 'id');
     }
 
     public function connections()

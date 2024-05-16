@@ -885,10 +885,7 @@ class DevicesInNetworkController extends Controller
      */
     public function delete()
     {
-        Schema::disableForeignKeyConstraints();
-        DevicesInNetwork::truncate();
-        // Connection::truncate();
-        Schema::enableForeignKeyConstraints();
+        DevicesInNetwork::getQuery()->delete();
 
         return json_encode([]);
     }

@@ -14,7 +14,7 @@ return new class() extends Migration {
             $table->id('id');
             $table->string('name');
             $table->enum('type', ['router', 'accessSwitch', 'distributionSwitch', 'coreSwitch', 'ED']);
-            $table->unsignedBigInteger('device_id')->nullable();
+            $table->unsignedBigInteger('device_id');
             $table->timestamps();
         });
 
@@ -34,3 +34,5 @@ return new class() extends Migration {
         Schema::dropIfExists('devices_in_networks');
     }
 };
+
+

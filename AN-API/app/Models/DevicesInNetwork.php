@@ -29,7 +29,7 @@ class DevicesInNetwork extends Model
 
     public function interface_of_devices()
     {
-        return $this->hasMany(InterfaceOfDevice::class, 'interface_id', 'id');
+        return $this->hasMany(InterfaceOfDevice::class, 'id', 'id');
     }
 
     public function devices()
@@ -37,3 +37,5 @@ class DevicesInNetwork extends Model
         return $this->belongsTo(Device::class, 'device_id', 'device_id');
     }
 }
+
+
