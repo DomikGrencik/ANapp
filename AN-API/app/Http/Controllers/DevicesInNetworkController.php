@@ -570,8 +570,6 @@ class DevicesInNetworkController extends Controller
                 $users -= $number_of_ports;
             }
 
-            /* $switch_ID_by_downlink_ports = $AS_ports->where('number_of_ports', '>=', $number_of_ports)->where('direction', 'downlink')->pluck('device_id'); */
-
             $switch_and_uplink_speed = $this->chooseSwitch(
                 $number_of_ports,
                 2,
@@ -648,8 +646,6 @@ class DevicesInNetworkController extends Controller
                 $AS_count = $AS_per_DS;
             }
 
-            /* $switch_ID_by_downlink_ports = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->whereIn('connector', $AS_uplink_connector)->pluck('device_id');
- */
             $DS_ports = $ports->where('type', 'distributionSwitch');
 
             if (count($AS_Array) <= $AS_per_DS) {
@@ -709,14 +705,10 @@ class DevicesInNetworkController extends Controller
 
                 $DS_uplink_connector = $DS_ports->whereIn('device_id', $DS_IDs)->where('direction', 'uplink')->pluck('connector');
 
-                return $DS_uplink_connector;
-
                 // core switches
                 $DS_count = count($DS_Array);
 
                 $CS_ports = $ports->where('type', 'coreSwitch');
-
-                /* $switch_ID_by_downlink_ports = $ports->where('type', 'coreSwitch')->where('direction', 'downlink')->where('number_of_ports', '>=', $DS_count)->where('speed', '>=', $DS_uplink_speed)->pluck('device_id'); */
 
                 $switch_and_uplink_speed = $this->chooseSwitch(
                     $DS_count,
@@ -732,27 +724,8 @@ class DevicesInNetworkController extends Controller
                 $core_switch = $switch_and_uplink_speed[0];
                 $CS_uplink_speed = $switch_and_uplink_speed[1];
 
-                return $switch_and_uplink_speed;
-
-                /* $downlink_forwarding_rate = 0.001488 * $DS_uplink_speed * count($DS_Array);
-                $downlink_switching_capacity = 2 * $DS_uplink_speed * count($DS_Array) / 1000;
-
-                $downlink_bw = count($DS_Array) * $DS_uplink_speed;
-                $oversubscription = 1 / 4;
-                $uplink_bw = $downlink_bw * $oversubscription; */
-
                 // treba osetrit, ked je uplink_bw vacsi ako uplink port speed core
                 // switcha aby vratil error alebo nejako skombinoval viac uplink portov
-
-                /* $CS_uplink_speed = $ports->where('type', 'coreSwitch')->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->sortBy('speed')->first();
-
-                $uplink_forwarding_rate = 0.001488 * $CS_uplink_speed * 1;
-                $uplink_switching_capacity = 2 * $CS_uplink_speed * 1 / 1000;
-
-                $forwarding_rate = $downlink_forwarding_rate + $uplink_forwarding_rate;
-                $switching_capacity = $downlink_switching_capacity + $uplink_switching_capacity;
-
-                $coreSwitch = $devices->where('type', 'coreSwitch')->whereIn('device_id', $switch_ID_by_downlink_ports)->where('s-forwarding_rate', '>=', $forwarding_rate)->where('s-switching_capacity', '>=', $switching_capacity)->sortBy('s-forwarding_rate')->first(); */
 
                 for ($i = 1; $i <= 2; ++$i) {
                     $CS_Array[] = [
@@ -812,23 +785,11 @@ class DevicesInNetworkController extends Controller
             ]; */
         }
         if (count($AS_Array) <= 3) {
-            $devicesArray = array_merge($R_Array, $AS_Array);
+            $devicesArray = array_merge($R_Array, $AS_Array, $ED_Array);
         } elseif (count($AS_Array) <= $AS_per_DS) {
-            $devicesArray = array_merge($R_Array, $DS_Array, $AS_Array);
+            $devicesArray = array_merge($R_Array, $DS_Array, $AS_Array, $ED_Array);
         } else {
-            $devicesArray = array_merge($R_Array, $CS_Array, $DS_Array, $AS_Array);
-        }
-
-        // pridavanie end devices
-        $EDPorts = $ports->where('type', 'ED');
-        $ED = $EDPorts->where('speed', '>=', $user_connection)->first()->device_id;
-
-        for ($i = 1; $i <= $network_users; ++$i) {
-            $devicesArray[] = [
-                'name' => "ED{$i}",
-                'type' => 'ED',
-                'device_id' => $ED,
-            ];
+            $devicesArray = array_merge($R_Array, $CS_Array, $DS_Array, $AS_Array, $ED_Array);
         }
 
         return $devicesArray;
