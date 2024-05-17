@@ -63,7 +63,7 @@ class DeviceSeeder extends Seeder
         // 6
         DB::table('devices')->insert([
             'manufacturer' => 'Cisco',
-            'model' => 'C8300-1N1S-6T+NIM-ES2-4',
+            'model' => 'C8300-1N1S-6T+C-NIM-4X',
             'type' => 'router',
             'r-throughput' => '1800',
             'r-branch' => 'medium',

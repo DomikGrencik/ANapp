@@ -133,22 +133,31 @@ class PortSeeder extends Seeder
             'device_id' => '5',
         ]);
 
-        // Cisco C8300-1N1S-6T+NIM-ES2-4
+        // Cisco C8300-1N1S-6T+C-NIM-4X
         DB::table('ports')->insert([
             'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN_WAN',
             'speed' => '1000',
-            'number_of_ports' => 8,
+            'number_of_ports' => 4,
             'type' => 'router',
             'device_id' => '6',
         ]);
         DB::table('ports')->insert([
-            'name' => 'SFP',
+            'name' => 'GE',
             'connector' => 'SFP',
             'AN' => 'LAN_WAN',
             'speed' => '1000',
             'number_of_ports' => 2,
+            'type' => 'router',
+            'device_id' => '6',
+        ]);
+        DB::table('ports')->insert([
+            'name' => '10GE',
+            'connector' => 'SFP+',
+            'AN' => 'LAN_WAN',
+            'speed' => '10000',
+            'number_of_ports' => 4,
             'type' => 'router',
             'device_id' => '6',
         ]);
@@ -190,10 +199,21 @@ class PortSeeder extends Seeder
         // Cisco CBS110-24T
         DB::table('ports')->insert([
             'name' => 'GE',
+            'connector' => 'SFP',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 2,
+            'direction' => 'uplink',
+            'type' => 'accessSwitch',
+            'device_id' => '9',
+        ]);
+        DB::table('ports')->insert([
+            'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '1000',
-            'number_of_ports' => 24,
+            'number_of_ports' => 22,
+            'direction' => 'downlink',
             'type' => 'accessSwitch',
             'device_id' => '9',
         ]);
@@ -201,10 +221,21 @@ class PortSeeder extends Seeder
         // Cisco CBS220-16T-2G
         DB::table('ports')->insert([
             'name' => 'GE',
+            'connector' => 'SFP',
+            'AN' => 'LAN',
+            'speed' => '1000',
+            'number_of_ports' => 2,
+            'direction' => 'uplink',
+            'type' => 'accessSwitch',
+            'device_id' => '10',
+        ]);
+        DB::table('ports')->insert([
+            'name' => 'GE',
             'connector' => 'RJ45',
             'AN' => 'LAN',
             'speed' => '1000',
             'number_of_ports' => 16,
+            'direction' => 'downlink',
             'type' => 'accessSwitch',
             'device_id' => '10',
         ]);

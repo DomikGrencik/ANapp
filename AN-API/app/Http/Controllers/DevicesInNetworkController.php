@@ -417,7 +417,7 @@ class DevicesInNetworkController extends Controller
     /**
      * Selects access switches.
      */
-    public function accessSwitch(int $users, int $userConnection, $accessSwitches, $accessSwitchPorts, int $numberOfDistributionSwitches)
+    /* public function accessSwitch(int $users, int $userConnection, $accessSwitches, $accessSwitchPorts, int $numberOfDistributionSwitches)
     {
         $maxPorts = $accessSwitchPorts->max('number_of_ports');
         $s = $numberOfDistributionSwitches;
@@ -460,14 +460,42 @@ class DevicesInNetworkController extends Controller
         } while ($users > 0);
 
         return $devicesArray;
+    } */
+
+    /**
+     * Selects devices based on user input.
+     */
+    public function chooseSwitch(int $numberOfDownlinkPorts, int $numberOfUplinkPorts, int $speed, float $oversubscription, $SwitchPorts, $devices, string $type, $device_id)
+    {
+        $downlink_forwardingRate = 0.001488 * $speed * $numberOfDownlinkPorts;
+        $downlink_switchingCapacity = 2 * $speed * $numberOfDownlinkPorts / 1000;
+
+        $downlink_bw = $numberOfDownlinkPorts * $speed;
+        $uplink_bw = $downlink_bw * $oversubscription;
+
+        $uplink_speed = $SwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->sortBy('speed')->first();
+
+        if ($uplink_speed == null) {
+            return json_encode(['error' => 'No access switch with required uplink speed']);
+        }
+
+        $uplink_forwardingRate = 0.001488 * $uplink_speed * $numberOfUplinkPorts;
+        $uplink_switchingCapacity = 2 * $uplink_speed * $numberOfUplinkPorts / 1000;
+
+        $forwardingRate = $downlink_forwardingRate + $uplink_forwardingRate;
+        $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
+
+        $switch = $devices->where('type', $type)->whereIn('device_id', $device_id)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('s-forwarding_rate')->first();
+
+        return [$switch, $uplink_speed];
     }
 
     /**
      * Selects devices based on user input.
      */
-    public function choose(/* Request $request */ int $users, string $vlans, int $userConnection, string $networkTraffic)
+    public function choose(Request $request /* int $users, string $vlans, int $userConnection, string $networkTraffic */)
     {
-        /* $request->validate([
+        $request->validate([
             'users' => 'required',
             'vlans' => 'required',
             'userConnection' => 'required',
@@ -477,7 +505,7 @@ class DevicesInNetworkController extends Controller
         $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans; // yes, no
         $userConnection = $request->userConnection; // 100, 1000, 10000
-        $networkTraffic = $request->networkTraffic; // small, medium, large */
+        $networkTraffic = $request->networkTraffic; // small, medium, large
 
         $network_users = $users;
 
@@ -492,32 +520,39 @@ class DevicesInNetworkController extends Controller
         $maxPorts = $accessSwitchPorts->where('direction', 'downlink')->max('number_of_ports');
         $s = 0;
 
-        if ($vlans == 'no') {
+        /* if ($vlans == 'no') {
             $connectedPorts = 1;
         } else {
             $connectedPorts = 0;
         }
-        $usersToConnect = $maxPorts - $connectedPorts;
+        $usersToConnect = $maxPorts - $connectedPorts; */
 
         do {
             ++$s;
-            if ($users - $usersToConnect >= 0) {
+            if ($users - $maxPorts >= 0) {
                 $numberOfPorts = $maxPorts;
-                $users -= $usersToConnect;
-            } elseif ($users - $usersToConnect < 0) {
-                if ($users > 24 - $connectedPorts) {
+                $users -= $maxPorts;
+            } elseif ($users - $maxPorts < 0) {
+                if ($users > 24) {
                     $numberOfPorts = $maxPorts;
-                } elseif ($users > 15 - $connectedPorts) {
+                } elseif ($users > 16) {
                     $numberOfPorts = 24;
                 } else {
                     $numberOfPorts = 16;
                 }
-                $users -= $usersToConnect;
+                $users -= $numberOfPorts;
             }
 
             $downlink_switchByPorts = $accessSwitchPorts->where('number_of_ports', '>=', $numberOfPorts)->where('direction', 'downlink')->pluck('device_id');
 
-            $downlink_forwardingRate = 0.001488 * $userConnection * $numberOfPorts;
+            $switch_and_uplinkSpeed = $this->chooseSwitch($numberOfPorts, 2, $userConnection, 1 / 20, $accessSwitchPorts, $devices, 'accessSwitch', $downlink_switchByPorts);
+
+            $switch = $switch_and_uplinkSpeed[0];
+            $AS_uplink_speed = $switch_and_uplinkSpeed[1];
+
+            // este doplnit error, ak nenajde zariadenie
+
+            /* $downlink_forwardingRate = 0.001488 * $userConnection * $numberOfPorts;
             $downlink_switchingCapacity = 2 * $userConnection * $numberOfPorts / 1000;
 
             $downlink_bw = $numberOfPorts * $userConnection;
@@ -525,7 +560,10 @@ class DevicesInNetworkController extends Controller
             $uplink_bw = $downlink_bw * $oversubscription;
 
             $AS_uplink_speed = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_bw)->pluck('speed')->first();
-            /* $uplink_numberOfPorts = $accessSwitchPorts->where('direction', 'uplink')->where('speed', '>=', $uplink_speed)->whereIn('device_id', $downlink_switchByPorts)->pluck('number_of_ports')->first(); */
+
+            if ($AS_uplink_speed == null) {
+                return json_encode(['error' => 'No access switch with required uplink speed']);
+            }
 
             $uplink_fowardingRate = 0.001488 * $AS_uplink_speed * 2;
             $uplink_switchingCapacity = 2 * $AS_uplink_speed * 2 / 1000;
@@ -533,21 +571,46 @@ class DevicesInNetworkController extends Controller
             $forwardingRate = $downlink_forwardingRate + $uplink_fowardingRate;
             $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
 
-            $accessSwitch = $accessSwitches->whereIn('device_id', $downlink_switchByPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('s-forwarding_rate')->first();
+            $accessSwitch = $accessSwitches->whereIn('device_id', $downlink_switchByPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('s-forwarding_rate')->first(); */
 
             $AS_Array[] = [
                 'name' => "AS{$s}",
                 'type' => 'accessSwitch',
-                'device_id' => $accessSwitch->device_id,
+                'device_id' => $switch->device_id,
             ];
         } while ($users > 0);
 
         if (count($AS_Array) <= 3) {
             // router
-            $AS_uplink_port = $ports->where('device_id', $accessSwitch->device_id)->where('direction', 'uplink')->pluck('connector')->first();
-            $routerPorts = $ports->where('AN', '!=', 'WAN')->where('number_of_ports', '>=', count($AS_Array))->where('connector', $AS_uplink_port)->pluck('device_id')->first();
+            $AS_uplink_port = $ports->where('device_id', $switch->device_id)->where('direction', 'uplink')->pluck('connector')->first();
 
-            $routerDevice = $devices->where('device_id', $routerPorts);
+            $routerPorts = $ports->where('type', 'router')->where('AN', '!=', 'WAN')->where('number_of_ports', '>=', count($AS_Array))->filter(function ($port) use ($AS_uplink_port) {
+                return substr($port->connector, 0, 3) === substr($AS_uplink_port, 0, 3);
+            });
+
+
+            $routerDevice = $devices->whereIn('device_id', $routerPorts->pluck('device_id'));
+
+            //taketo nieco by malo byt vratane, pri vsetkych pripadoch ak nenajde zariadenie
+            if ($routerDevice->isEmpty()) {
+                return json_encode(['error' => 'No router with required ports']);
+            }
+
+            switch ($networkTraffic) {
+                case 'small':
+                    $routerDevice = $routerDevice->where('r-throughput', $routerDevice->min('r-throughput'));
+                    break;
+                case 'medium':
+                    $routerDevice = $routerDevice->where('r-throughput', $routerDevice->min('r-throughput'));
+                    break;
+                case 'large':
+                    $routerDevice = $routerDevice->where('r-throughput', $routerDevice->max('r-throughput'));
+                    break;
+
+                default:
+                $routerDevice = $routerDevice->where('r-throughput', $routerDevice->min('r-throughput'));
+                    break;
+            }
 
             $R_Array[] = [
                 'name' => 'R1',
@@ -593,7 +656,7 @@ class DevicesInNetworkController extends Controller
             $forwardingRate = $downlink_forwardingRate + $uplink_fowardingRate;
             $switchingCapacity = $downlink_switchingCapacity + $uplink_switchingCapacity;
 
-            $distributionSwitch = $devices->where('type', 'distributionSwitch')->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->whereIn('device_id', $distributionSwitchPorts)->sortBy('s-forwarding_rate')->first();
+            $distributionSwitch = $devices->where('type', 'distributionSwitch')->whereIn('device_id', $distributionSwitchPorts)->where('s-forwarding_rate', '>=', $forwardingRate)->where('s-switching_capacity', '>=', $switchingCapacity)->sortBy('s-forwarding_rate')->first();
 
             $distributionSwitchConnector = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->where('device_id', $distributionSwitch->device_id)->pluck('connector')->first();
 
@@ -735,7 +798,7 @@ class DevicesInNetworkController extends Controller
     /**
      * Selects devices based on user input. Zakomentovana funkcia povodna.
      */
-    public function chooseDevices(int $users, string $vlans, int $userConnection, string $networkTraffic)
+    /* public function chooseDevices(int $users, string $vlans, int $userConnection, string $networkTraffic)
     {
         $devices = Device::all();
         $ports = Port::all();
@@ -835,7 +898,7 @@ class DevicesInNetworkController extends Controller
         }
 
         return $devicesArray;
-    }
+    } */
 
     /**
      * Display the specified resource.
