@@ -84,31 +84,31 @@ class DevicesInNetworkController extends Controller
         $number_of_AS = $access_switches->count();
 
         $AS_uplink_interfaces = $interfaces
-                    ->where('type', 'accessSwitch')
-                    ->where('direction', 'uplink')
-                    ->groupBy('id')
-                    ->values();
+            ->where('type', 'accessSwitch')
+            ->where('direction', 'uplink')
+            ->groupBy('id')
+            ->values();
+
+        $AS_downlink_interfaces = $interfaces
+            ->where('type', 'accessSwitch')
+            ->where('direction', 'downlink')
+            ->groupBy('id')
+            ->values();
 
         if ($number_of_AS <= 3) {
             foreach ($access_switches as $index => $access_switch) {
-                $AS_first_uplink_interface = $interfaces
-                    ->where('type', 'accessSwitch')
-                    ->where('direction', 'uplink')
-                    ->where('id', $access_switch->id)
-                    ->first();
-
                 $router_interfaces = $interfaces
                     ->where('type', 'router')
                     ->where('AN', '!=', 'WAN')
-                    ->where('connector', $AS_first_uplink_interface->connector);
+                    ->where('connector', $AS_uplink_interfaces[$index - 1][0]->connector);
 
                 $connectionsArray[] = [
                     'interface_id1' => $router_interfaces->pluck('interface_id')[$index - 1],
-                    'interface_id2' => $AS_first_uplink_interface->interface_id,
+                    'interface_id2' => $AS_uplink_interfaces[$index - 1][0]->interface_id,
                     'device_id1' => $router_interfaces->pluck('id')[$index - 1],
                     'device_id2' => $access_switch->id,
                     'name1' => $router_interfaces->pluck('name')[$index - 1],
-                    'name2' => $AS_first_uplink_interface->name,
+                    'name2' => $AS_uplink_interfaces[$index - 1][0]->name,
                 ];
             }
         } else {
@@ -116,19 +116,22 @@ class DevicesInNetworkController extends Controller
 
             $number_of_DS = $distribution_switches->count();
 
-            $DS_uplink_interfaces = $interfaces->where('type', 'distributionSwitch')->where('direction', 'uplink')->groupBy('id')->values();
+            $DS_uplink_interfaces = $interfaces
+                ->where('type', 'distributionSwitch')
+                ->where('direction', 'uplink')
+                ->groupBy('id')
+                ->values();
 
-            $DS_downlink_interfaces = $interfaces->where('type', 'distributionSwitch')->where('direction', 'downlink')->groupBy('id')->values();
-
-            // return $DS_uplink_interfaces;
+            $DS_downlink_interfaces = $interfaces
+                ->where('type', 'distributionSwitch')
+                ->where('direction', 'downlink')
+                ->groupBy('id')
+                ->values();
 
             // vytvorenie spojenia medzi dvomi distribucnymi switchmi
             // musime ziskat prvy uplink port kazdeho distribucneho switcha
             // iterujeme po 2 prvkoch, pretoze vzdy potrebujeme 2 distribucne switche
             for ($i = 0; $i < $number_of_DS; ++$i) {
-                /* $DS_firstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $DS_IDs[$i])->pluck('interface_id')->first();
-                $DS_firstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $DS_IDs[$i + 1])->pluck('interface_id')->first(); */
-
                 $connectionsArray[] = [
                     'interface_id1' => $DS_uplink_interfaces[$i][0]->interface_id,
                     'interface_id2' => $DS_uplink_interfaces[$i + 1][0]->interface_id,
@@ -147,9 +150,17 @@ class DevicesInNetworkController extends Controller
 
                 $number_of_CS = $core_switches->count();
 
-                $CS_uplink_interfaces = $interfaces->where('type', 'coreSwitch')->where('direction', 'uplink')->groupBy('id')->values();
+                $CS_uplink_interfaces = $interfaces
+                    ->where('type', 'coreSwitch')
+                    ->where('direction', 'uplink')
+                    ->groupBy('id')
+                    ->values();
 
-                $CS_downlink_interfaces = $interfaces->where('type', 'coreSwitch')->where('direction', 'downlink')->groupBy('id')->values();
+                $CS_downlink_interfaces = $interfaces
+                    ->where('type', 'coreSwitch')
+                    ->where('direction', 'downlink')
+                    ->groupBy('id')
+                    ->values();
 
                 $connectionsArray[] = [
                     'interface_id1' => $CS_uplink_interfaces[0][0]->interface_id,
@@ -203,6 +214,7 @@ class DevicesInNetworkController extends Controller
                 // musime ziskat prvy uplink port kazdeho access switcha, ale
                 // nemozeme spojit kazdy access switch s kazdym distribucnym,
                 // len urcite skupiny access k urcitym distribucnym
+
                 $di = 0; // distribution switch index
                 $dip = 0; // distribution switch port index
 
@@ -272,106 +284,30 @@ class DevicesInNetworkController extends Controller
         // dalej potrebujeme vytvorit spojenie medzi access switchmi a end
         // devices
 
-        $accessSwitchInterfaces = $interfaces->where('type', 'accessSwitch');
+        $ED_interfaces = $interfaces->where('type', 'ED')->where('connector', $AS_downlink_interfaces[0][0]->connector);
 
-        $AS_DownlinkPorts = $accessSwitchInterfaces->where('direction', 'downlink');
+        $AS_downlink_interfaces = $interfaces->where('type', 'accessSwitch')->where('direction', 'downlink')->values();
 
-        $EDInterfaces = $interfaces->where('type', 'ED')->where('connector', $AS_DownlinkPorts->first()->connector);
-        $ei = $EDInterfaces->keys()->first();
-        $lastED = $EDInterfaces->keys()->last();
+        $ei = $ED_interfaces->keys()->first();
+        $lastED = $ED_interfaces->keys()->last();
 
-        foreach ($AS_DownlinkPorts as $key => $value) {
+        foreach ($AS_downlink_interfaces as $key => $value) {
             if ($ei > $lastED) {
                 break; // code...
             }
 
             $connectionsArray[] = [
                 'interface_id1' => $value->interface_id,
-                'interface_id2' => $EDInterfaces[$ei]->interface_id,
+                'interface_id2' => $ED_interfaces[$ei]->interface_id,
                 'device_id1' => $value->id,
-                'device_id2' => $EDInterfaces[$ei]->id,
+                'device_id2' => $ED_interfaces[$ei]->id,
                 'name1' => $value->name,
-                'name2' => $EDInterfaces[$ei]->name,
+                'name2' => $ED_interfaces[$ei]->name,
             ];
             ++$ei;
         }
 
         DB::table('connections')->insert($connectionsArray);
-
-        /* $distributionSwitches = DevicesInNetwork::all()->where('type', 'distributionSwitch')->pluck('id');
-
-        $numberOfDistributionSwitches = $distributionSwitches->count();
-
-        $accessSwitchInterfaces = $interfaces->where('type', 'accessSwitch');
-
-        foreach ($distributionSwitches as $key => $value) {
-            $dsi[] = $interfaces->where('type', 'distributionSwitch')->where('connector', $accessSwitchInterfaces->first()->connector)->where('id', $value)->keys()->first();
-        }
-
-        $distributionSwitchInterfaces = $interfaces->where('type', 'distributionSwitch')->where('connector', $accessSwitchInterfaces->first()->connector);
-
-        $router_interfaces = $interfaces->where('type', 'router')->where('AN', '!=', 'WAN')->where('connector', $distributionSwitchInterfaces->first()->connector);
-
-        $EDInterfaces = $interfaces->where('type', 'ED')->where('connector', $accessSwitchInterfaces->first()->connector);
-
-        $prev_sw_id = 0;
-
-        // hodnoty $si, $ri, $ei su indexy v poliach $switchInterfaces, $router_interfaces, $EDInterfaces pre ziskanie prveho interface routru, switchu a end device
-        $asi = $accessSwitchInterfaces->keys()->first();
-        print_r("$asi|");
-        $ri = $router_interfaces->keys()->first();
-        print_r("$ri|");
-        $ei = $EDInterfaces->keys()->first();
-        print_r("$ei|");
-
-        for ($i = 0; $i < $numberOfDistributionSwitches; ++$i) {
-            $connectionsArray[] = [
-                'interface_id1' => $router_interfaces[$ri + $i]->interface_id,
-                'interface_id2' => $distributionSwitchInterfaces[$dsi[$i]]->interface_id,
-                'device_id1' => $router_interfaces[$ri + $i]->id,
-                'device_id2' => $distributionSwitchInterfaces[$dsi[$i]]->id,
-                'name1' => $router_interfaces[$ri + $i]->name,
-                'name2' => $distributionSwitchInterfaces[$dsi[$i]]->name,
-            ];
-        }
-
-        for ($i = $asi; $i < (count($EDInterfaces) + $asi + $numberOfaccess_switches * 2); ++$i) {
-            if ($accessSwitchInterfaces[$i]->id != $prev_sw_id) {
-                $connectionsArray[] = [
-                    'interface_id1' => $distributionSwitchInterfaces[$dsi[0] + 1]->interface_id,
-                    'interface_id2' => $accessSwitchInterfaces[$i]->interface_id,
-                    'device_id1' => $distributionSwitchInterfaces[$dsi[0]]->id,
-                    'device_id2' => $accessSwitchInterfaces[$i]->id,
-                    'name1' => $distributionSwitchInterfaces[$dsi[0] + 1]->name,
-                    'name2' => $accessSwitchInterfaces[$i]->name,
-                ];
-                $connectionsArray[] = [
-                    'interface_id1' => $distributionSwitchInterfaces[$dsi[1] + 1]->interface_id,
-                    'interface_id2' => $accessSwitchInterfaces[$i + 1]->interface_id,
-                    'device_id1' => $distributionSwitchInterfaces[$dsi[1]]->id,
-                    'device_id2' => $accessSwitchInterfaces[$i]->id,
-                    'name1' => $distributionSwitchInterfaces[$dsi[1] + 1]->name,
-                    'name2' => $accessSwitchInterfaces[$i + 1]->name,
-                ];
-                ++$i;
-                ++$dsi[0];
-                ++$dsi[1];
-            } else {
-                $connectionsArray[] = [
-                    'interface_id1' => $accessSwitchInterfaces[$i]->interface_id,
-                    'interface_id2' => $EDInterfaces[$ei]->interface_id,
-                    'device_id1' => $accessSwitchInterfaces[$i]->id,
-                    'device_id2' => $EDInterfaces[$ei]->id,
-                    'name1' => $accessSwitchInterfaces[$i]->name,
-                    'name2' => $EDInterfaces[$ei]->name,
-                ];
-                ++$ei;
-            }
-
-            $prev_sw_id = $accessSwitchInterfaces[$i]->id;
-        } */
-
-        // DB::table('connections')->insert($connectionsArray);
 
         return json_encode([]);
     }
