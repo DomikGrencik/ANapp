@@ -78,6 +78,15 @@ class DeviceSeeder extends Seeder
             'r-branch' => 'large',
             'price' => '10000',
         ]);
+        // 8
+        DB::table('devices')->insert([
+            'manufacturer' => 'Cisco',
+            'model' => 'C8500L-8S4X',
+            'type' => 'router',
+            'r-throughput' => '10000',
+            'r-branch' => 'large',
+            'price' => '20000',
+        ]);
 
         // ---------------------------------------\\
         // ---------------------------------SWITCHES

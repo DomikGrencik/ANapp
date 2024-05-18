@@ -599,14 +599,16 @@ class DevicesInNetworkController extends Controller
                 });
 
             $router_device = $devices
-                ->whereIn('device_id', $router_ports->pluck('device_id'));
+                ->whereIn('device_id', $router_ports->pluck('device_id'))
+                ->sortBy('r-throughput')
+                ->first();
 
             // taketo nieco by malo byt vratane, pri vsetkych pripadoch ak nenajde zariadenie
-            if ($router_device->isEmpty()) {
+            /* if ($router_device->isEmpty()) {
                 return json_encode(['error' => 'No router with required ports']);
-            }
+            } */
 
-            switch ($network_traffic) {
+            /* switch ($network_traffic) {
                 case 'small':
                     $router_device = $router_device
                         ->where('r-throughput', $router_device->min('r-throughput'))
@@ -622,7 +624,7 @@ class DevicesInNetworkController extends Controller
                         ->where('r-throughput', $router_device->max('r-throughput'))
                         ->first();
                     break;
-            }
+            } */
 
             $R_Array[] = [
                 'name' => 'R1',
@@ -691,10 +693,11 @@ class DevicesInNetworkController extends Controller
 
                 $router_device = $devices
                     ->whereIn('device_id', $router_ports)
-                    ->sortByDesc('r-throughput')
-                    ->first();
+                    ->sortByDesc('r-throughput');
 
-                // return $router_device;
+                $router_device = $router_device
+                    ->where('r-throughput', $router_device->median('r-throughput'))
+                    ->first();
 
                 $R_Array[] = [
                     'name' => 'R1',
@@ -769,7 +772,10 @@ class DevicesInNetworkController extends Controller
                         return substr($port->connector, 0, 3) === substr($CS_downlink_connector, 0, 3);
                     });
 
-                $router_device = $devices->whereIn('device_id', $router_ports->pluck('device_id'))->sortByDesc('r-throughput')->first();
+                $router_device = $devices
+                    ->whereIn('device_id', $router_ports->pluck('device_id'))
+                    ->sortByDesc('r-throughput')
+                    ->first();
 
                 $R_Array[] = [
                     'name' => 'R1',
