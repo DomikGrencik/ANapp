@@ -77,27 +77,36 @@ class DevicesInNetworkController extends Controller
 
         $interfaces = InterfaceOfDevice::all()->where('interface_id', '>', $maxInterfaceID);
 
-        $access_switches = DevicesInNetwork::all()->where('type', 'accessSwitch')->pluck('id');
+        $access_switches = $devices->where('type', 'accessSwitch');
+
+        $AS_IDs = $access_switches->pluck('id');
 
         $number_of_AS = $access_switches->count();
 
         if ($number_of_AS <= 3) {
-            $switchInterfaces = $interfaces->where('type', 'accessSwitch')->where('direction', 'uplink');
-
-            $routerInterfaces = $interfaces->where('type', 'router')->where('AN', '!=', 'WAN')->where('connector', $switchInterfaces->first()->connector);
-
             for ($i = 0; $i < $number_of_AS; ++$i) {
-                $AS_firtstUplinkPorts[] = $interfaces->where('type', 'accessSwitch')->where('direction', 'uplink')->where('id', $access_switches[$i])->pluck('interface_id')->first();
+                $AS_first_uplink_interfaces[] = $interfaces
+                    ->where('type', 'accessSwitch')
+                    ->where('direction', 'uplink')
+                    ->where('id', $AS_IDs[$i])
+                    ->first();
+
+                $routerInterfaces = $interfaces
+                    ->where('type', 'router')
+                    ->where('AN', '!=', 'WAN')
+                    ->where('connector', $AS_first_uplink_interfaces[$i]->connector);
 
                 $connectionsArray[] = [
                     'interface_id1' => $routerInterfaces->pluck('interface_id')[$i],
-                    'interface_id2' => $AS_firtstUplinkPorts[$i],
+                    'interface_id2' => $AS_first_uplink_interfaces[$i]->interface_id,
                     'device_id1' => $routerInterfaces->pluck('id')[$i],
-                    'device_id2' => $access_switches[$i],
+                    'device_id2' => $AS_IDs[$i],
                     'name1' => $routerInterfaces->pluck('name')[$i],
-                    'name2' => $switchInterfaces->where('interface_id', $AS_firtstUplinkPorts[$i])->pluck('name')->first(),
+                    'name2' => $AS_first_uplink_interfaces[$i]->name,
                 ];
             }
+
+            return $connectionsArray;
         } else {
             $distribution_switches = $devices->where('type', 'distributionSwitch');
             $DS_IDs = $distribution_switches->pluck('id');
@@ -253,7 +262,7 @@ class DevicesInNetworkController extends Controller
                     $DS_DownlinkPorts[] = $interfaces->where('direction', 'downlink')->where('id', $DS_IDs[$i])->pluck('interface_id');
                 }
 
-                // vkladanie routra
+                // vytvaranie prepojeni medzi routrom a distribucnymi switchmi
                 $router = $devices->where('type', 'router');
                 $R_IDs = $router->pluck('id');
 
@@ -273,24 +282,24 @@ class DevicesInNetworkController extends Controller
                 // dalej potrebujeme vytvorit spojenie medzi distribucnymi switchmi a access switchmi
                 // musime ziskat prvy uplink port kazdeho access switcha
                 for ($i = 0; $i < $number_of_AS; ++$i) {
-                    $AS_firtstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id')->first();
-                    $AS_secondUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id')->skip(1)->first();
+                    $AS_first_uplink_interfaces[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id')->first();
+                    $AS_second_uplink_interfaces[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id')->skip(1)->first();
 
                     $connectionsArray[] = [
                         'interface_id1' => $DS_DownlinkPorts[0][$i + 1],
-                        'interface_id2' => $AS_firtstUplinkPorts[$i],
+                        'interface_id2' => $AS_first_uplink_interfaces[$i],
                         'device_id1' => $DS_IDs[0],
                         'device_id2' => $AS_IDs[$i],
                         'name1' => $distributionSwitchInterfaces->where('interface_id', $DS_DownlinkPorts[0][$i + 1])->pluck('name')->first(),
-                        'name2' => $accessSwitchInterfaces->where('interface_id', $AS_firtstUplinkPorts[$i])->pluck('name')->first(),
+                        'name2' => $accessSwitchInterfaces->where('interface_id', $AS_first_uplink_interfaces[$i])->pluck('name')->first(),
                     ];
                     $connectionsArray[] = [
                         'interface_id1' => $DS_DownlinkPorts[1][$i + 1],
-                        'interface_id2' => $AS_secondUplinkPorts[$i],
+                        'interface_id2' => $AS_second_uplink_interfaces[$i],
                         'device_id1' => $DS_IDs[1],
                         'device_id2' => $AS_IDs[$i],
                         'name1' => $distributionSwitchInterfaces->where('interface_id', $DS_DownlinkPorts[1][$i + 1])->pluck('name')->first(),
-                        'name2' => $accessSwitchInterfaces->where('interface_id', $AS_secondUplinkPorts[$i])->pluck('name')->first(),
+                        'name2' => $accessSwitchInterfaces->where('interface_id', $AS_second_uplink_interfaces[$i])->pluck('name')->first(),
                     ];
                 }
             }
@@ -482,9 +491,9 @@ class DevicesInNetworkController extends Controller
     /**
      * Selects devices based on user input.
      */
-    public function choose(Request $request /* int $users, string $vlans, int $user_connection, string $network_traffic */)
+    public function choose(/* Request $request */ int $users, string $vlans, int $user_connection, string $network_traffic)
     {
-        $request->validate([
+        /* $request->validate([
             'users' => 'required',
             'vlans' => 'required',
             'userConnection' => 'required',
@@ -494,7 +503,7 @@ class DevicesInNetworkController extends Controller
         $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans; // yes, no
         $user_connection = $request->userConnection; // 100, 1000, 10000
-        $network_traffic = $request->networkTraffic; // small, medium, large
+        $network_traffic = $request->networkTraffic; // small, medium, large */
 
         $network_users = $users;
 
