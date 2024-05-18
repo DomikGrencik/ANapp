@@ -415,11 +415,12 @@ class DevicesInNetworkController extends Controller
     }
 
     /**
-     * Selects switch
+     * Selects switch.
      *
      * @param int    $number_of_downlink_ports number of downlink ports
      * @param int    $number_of_uplink_ports   number of uplink ports
      * @param int    $speed                    speed of the downlink ports
+     * @param        $downlink_connector       connector of the downlink ports
      * @param float  $oversubscription         oversubscription ratio between
      *                                         uplink bw and downlink bw
      * @param        $switch_ports             Collection of ports of the switch
@@ -430,7 +431,7 @@ class DevicesInNetworkController extends Controller
         int $number_of_downlink_ports,
         int $number_of_uplink_ports,
         int $speed,
-        $uplink_connector,
+        $downlink_connector,
         float $oversubscription,
         $switch_ports,
         $devices,
@@ -463,7 +464,7 @@ class DevicesInNetworkController extends Controller
             ->where('direction', 'downlink')
             ->where('number_of_ports', '>=', $number_of_downlink_ports)
             ->where('speed', '>=', $speed)
-            ->whereIn('connector', $uplink_connector)
+            ->whereIn('connector', $downlink_connector)
             ->pluck('device_id');
 
         $switch = $devices
@@ -513,24 +514,30 @@ class DevicesInNetworkController extends Controller
             ];
         }
 
-        $ED_IDs = collect($ED_Array)->pluck('device_id');
+        $ED_IDs = collect($ED_Array)
+            ->pluck('device_id');
 
-        $ED_connector = $ED_ports->whereIn('device_id', $ED_IDs)->pluck('connector');
+        $ED_connector = $ED_ports
+            ->whereIn('device_id', $ED_IDs)
+            ->pluck('connector');
 
         // access swithes
-        $access_switches = $devices->where('type', 'accessSwitch')->where('s-L3', 'no')->where('s-vlan', $vlans);
+        $access_switches = $devices
+            ->where('type', 'accessSwitch')
+            ->where('s-L3', 'no')
+            ->where('s-vlan', $vlans);
 
-        $AS_ports = $ports->where('type', 'accessSwitch')->where('speed', '>=', $user_connection)->whereIn('device_id', $access_switches->pluck('device_id'));
+        $AS_ports = $ports
+            ->where('type', 'accessSwitch')
+            ->where('speed', '>=', $user_connection)
+            ->whereIn('device_id', $access_switches
+            ->pluck('device_id'));
 
-        $AS_max_downlink_ports = $AS_ports->where('direction', 'downlink')->max('number_of_ports');
+        $AS_max_downlink_ports = $AS_ports
+            ->where('direction', 'downlink')
+            ->max('number_of_ports');
+
         $s = 0;
-
-        /* if ($vlans == 'no') {
-            $connectedPorts = 1;
-        } else {
-            $connectedPorts = 0;
-        }
-        $usersToConnect = $AS_max_downlink_ports - $connectedPorts; */
 
         do {
             ++$s;
@@ -571,19 +578,28 @@ class DevicesInNetworkController extends Controller
             ];
         } while ($users > 0);
 
-        $AS_IDs = collect($AS_Array)->pluck('device_id');
+        $AS_IDs = collect($AS_Array)
+            ->pluck('device_id');
 
-        $AS_uplink_connector = $AS_ports->whereIn('device_id', $AS_IDs)->where('direction', 'uplink')->pluck('connector');
+        $AS_uplink_connector = $AS_ports
+            ->whereIn('device_id', $AS_IDs)
+            ->where('direction', 'uplink')
+            ->pluck('connector');
 
         if (count($AS_Array) <= 3) {
             // router
-            $AS_uplink_port = $ports->where('device_id', $access_switch->device_id)->where('direction', 'uplink')->pluck('connector')->first();
+            $AS_uplink_port = $AS_uplink_connector->first();
 
-            $router_ports = $ports->where('type', 'router')->where('AN', '!=', 'WAN')->where('number_of_ports', '>=', count($AS_Array))->filter(function ($port) use ($AS_uplink_port) {
-                return substr($port->connector, 0, 3) === substr($AS_uplink_port, 0, 3);
-            });
+            $router_ports = $ports
+                ->where('type', 'router')
+                ->where('AN', '!=', 'WAN')
+                ->where('number_of_ports', '>=', count($AS_Array))
+                ->filter(function ($port) use ($AS_uplink_port) {
+                    return substr($port->connector, 0, 3) === substr($AS_uplink_port, 0, 3);
+                });
 
-            $router_device = $devices->whereIn('device_id', $router_ports->pluck('device_id'));
+            $router_device = $devices
+                ->whereIn('device_id', $router_ports->pluck('device_id'));
 
             // taketo nieco by malo byt vratane, pri vsetkych pripadoch ak nenajde zariadenie
             if ($router_device->isEmpty()) {
@@ -592,24 +608,26 @@ class DevicesInNetworkController extends Controller
 
             switch ($network_traffic) {
                 case 'small':
-                    $router_device = $router_device->where('r-throughput', $router_device->min('r-throughput'));
+                    $router_device = $router_device
+                        ->where('r-throughput', $router_device->min('r-throughput'))
+                        ->first();
                     break;
                 case 'medium':
-                    $router_device = $router_device->where('r-throughput', $router_device->min('r-throughput'));
+                    $router_device = $router_device
+                        ->where('r-throughput', $router_device->min('r-throughput'))
+                        ->first();
                     break;
                 case 'large':
-                    $router_device = $router_device->where('r-throughput', $router_device->max('r-throughput'));
-                    break;
-
-                default:
-                    $router_device = $router_device->where('r-throughput', $router_device->min('r-throughput'));
+                    $router_device = $router_device
+                        ->where('r-throughput', $router_device->max('r-throughput'))
+                        ->first();
                     break;
             }
 
             $R_Array[] = [
                 'name' => 'R1',
-                'type' => $router_device->first()->type,
-                'device_id' => $router_device->first()->device_id,
+                'type' => $router_device->type,
+                'device_id' => $router_device->device_id,
             ];
         } else {
             // distribution switches
@@ -624,7 +642,8 @@ class DevicesInNetworkController extends Controller
                 $AS_count = $AS_per_DS;
             }
 
-            $DS_ports = $ports->where('type', 'distributionSwitch');
+            $DS_ports = $ports
+                ->where('type', 'distributionSwitch');
 
             if (count($AS_Array) <= $AS_per_DS) {
                 $number_of_uplink_ports = 1;
@@ -646,7 +665,12 @@ class DevicesInNetworkController extends Controller
             $distribution_switch = $switch_and_uplink_speed[0];
             $DS_uplink_speed = $switch_and_uplink_speed[1];
 
-            $DS_downlink_connector = $ports->where('type', 'distributionSwitch')->where('direction', 'downlink')->where('device_id', $distribution_switch->device_id)->pluck('connector')->first();
+            $DS_downlink_connector = $ports
+                ->where('type', 'distributionSwitch')
+                ->where('direction', 'downlink')
+                ->where('device_id', $distribution_switch->device_id)
+                ->pluck('connector')
+                ->first();
 
             if (count($AS_Array) <= $AS_per_DS) {
                 for ($i = 1; $i <= 2; ++$i) {
@@ -658,13 +682,24 @@ class DevicesInNetworkController extends Controller
                 }
 
                 // router
-                $router_ports = $ports->where('AN', '!=', 'LAN')->where('number_of_ports', '>=', 3)->where('connector', $DS_downlink_connector)->pluck('device_id')->first();
-                $router_device = $devices->where('device_id', $router_ports);
+                $router_ports = $ports
+                    ->where('type', 'router')
+                    ->where('AN', '!=', 'LAN')
+                    ->where('number_of_ports', '>=', 3)
+                    ->where('connector', $DS_downlink_connector)
+                    ->pluck('device_id');
+
+                $router_device = $devices
+                    ->whereIn('device_id', $router_ports)
+                    ->sortByDesc('r-throughput')
+                    ->first();
+
+                // return $router_device;
 
                 $R_Array[] = [
                     'name' => 'R1',
-                    'type' => $router_device->first()->type,
-                    'device_id' => $router_device->first()->device_id,
+                    'type' => $router_device->type,
+                    'device_id' => $router_device->device_id,
                 ];
             } else {
                 // potrebujem zistit kolko distribucnych celkov (celok su 2 DS)
@@ -679,14 +714,19 @@ class DevicesInNetworkController extends Controller
                     ];
                 }
 
-                $DS_IDs = collect($DS_Array)->pluck('device_id');
+                $DS_IDs = collect($DS_Array)
+                    ->pluck('device_id');
 
-                $DS_uplink_connector = $DS_ports->whereIn('device_id', $DS_IDs)->where('direction', 'uplink')->pluck('connector');
+                $DS_uplink_connector = $DS_ports
+                    ->whereIn('device_id', $DS_IDs)
+                    ->where('direction', 'uplink')
+                    ->pluck('connector');
 
                 // core switches
                 $DS_count = count($DS_Array);
 
-                $CS_ports = $ports->where('type', 'coreSwitch');
+                $CS_ports = $ports
+                    ->where('type', 'coreSwitch');
 
                 $switch_and_uplink_speed = $this->chooseSwitch(
                     $DS_count,
@@ -702,6 +742,13 @@ class DevicesInNetworkController extends Controller
                 $core_switch = $switch_and_uplink_speed[0];
                 $CS_uplink_speed = $switch_and_uplink_speed[1];
 
+                $CS_downlink_connector = $ports
+                    ->where('type', 'coreSwitch')
+                    ->where('direction', 'downlink')
+                    ->where('device_id', $core_switch->device_id)
+                    ->pluck('connector')
+                    ->first();
+
                 // treba osetrit, ked je uplink_bw vacsi ako uplink port speed core
                 // switcha aby vratil error alebo nejako skombinoval viac uplink portov
 
@@ -714,13 +761,20 @@ class DevicesInNetworkController extends Controller
                 }
 
                 // router
-                $router_ports = $ports->where('AN', '!=', 'LAN')->where('number_of_ports', '>=', 3)->where('connector', $DS_downlink_connector)->pluck('device_id')->first();
-                $router_device = $devices->where('device_id', $router_ports);
+                $router_ports = $ports
+                    ->where('type', 'router')
+                    ->where('AN', '!=', 'WAN')
+                    ->where('number_of_ports', '>=', 3)
+                    ->filter(function ($port) use ($CS_downlink_connector) {
+                        return substr($port->connector, 0, 3) === substr($CS_downlink_connector, 0, 3);
+                    });
+
+                $router_device = $devices->whereIn('device_id', $router_ports->pluck('device_id'))->sortByDesc('r-throughput')->first();
 
                 $R_Array[] = [
                     'name' => 'R1',
-                    'type' => $router_device->first()->type,
-                    'device_id' => $router_device->first()->device_id,
+                    'type' => $router_device->type,
+                    'device_id' => $router_device->device_id,
                 ];
             }
 
