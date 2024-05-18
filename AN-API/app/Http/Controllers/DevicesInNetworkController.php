@@ -84,25 +84,25 @@ class DevicesInNetworkController extends Controller
         $number_of_AS = $access_switches->count();
 
         if ($number_of_AS <= 3) {
-            for ($i = 0; $i < $number_of_AS; ++$i) {
-                $AS_first_uplink_interfaces[] = $interfaces
+            foreach ($access_switches as $index => $access_switch) {
+                $AS_first_uplink_interface = $interfaces
                     ->where('type', 'accessSwitch')
                     ->where('direction', 'uplink')
-                    ->where('id', $AS_IDs[$i])
+                    ->where('id', $access_switch->id)
                     ->first();
 
                 $routerInterfaces = $interfaces
                     ->where('type', 'router')
                     ->where('AN', '!=', 'WAN')
-                    ->where('connector', $AS_first_uplink_interfaces[$i]->connector);
+                    ->where('connector', $AS_first_uplink_interface->connector);
 
                 $connectionsArray[] = [
-                    'interface_id1' => $routerInterfaces->pluck('interface_id')[$i],
-                    'interface_id2' => $AS_first_uplink_interfaces[$i]->interface_id,
-                    'device_id1' => $routerInterfaces->pluck('id')[$i],
-                    'device_id2' => $AS_IDs[$i],
-                    'name1' => $routerInterfaces->pluck('name')[$i],
-                    'name2' => $AS_first_uplink_interfaces[$i]->name,
+                    'interface_id1' => $routerInterfaces->pluck('interface_id')[$index - 1],
+                    'interface_id2' => $AS_first_uplink_interface->interface_id,
+                    'device_id1' => $routerInterfaces->pluck('id')[$index - 1],
+                    'device_id2' => $access_switch->id,
+                    'name1' => $routerInterfaces->pluck('name')[$index - 1],
+                    'name2' => $AS_first_uplink_interface->name,
                 ];
             }
 
@@ -180,6 +180,38 @@ class DevicesInNetworkController extends Controller
 
                 // dalej potrebujeme vytvorit spojenie medzi core switchmi a distribucnymi switchmi
                 // musime ziskat prvy uplink port kazdeho distribution switcha
+                /* foreach ($distribution_switches as $index => $distribution_switch) {
+                    $DS_first_iplink_port = $interfaces
+                        ->where('direction', 'uplink')
+                        ->where('id', $distribution_switch->id)
+                        ->pluck('interface_id')
+                        ->first();
+
+                    $DS_second_uplink_port = $interfaces
+                        ->where('direction', 'uplink')
+                        ->where('id', $distribution_switch->id)
+                        ->pluck('interface_id')
+                        ->skip(1)
+                        ->first();
+
+                    $connectionsArray[] = [
+                        'interface_id1' => $CS_DownlinkPorts[0][$index],
+                        'interface_id2' => $DS_first_iplink_port,
+                        'device_id1' => $CS_IDs[0],
+                        'device_id2' => $distribution_switch->id,
+                        'name1' => $coreSwitchInterfaces->where('interface_id', $CS_DownlinkPorts[0][$index])->pluck('name')->first(),
+                        'name2' => $distributionSwitchInterfaces->where('interface_id', $DS_first_iplink_port)->pluck('name')->first(),
+                    ];
+                    $connectionsArray[] = [
+                        'interface_id1' => $CS_DownlinkPorts[1][$index],
+                        'interface_id2' => $DS_second_uplink_port,
+                        'device_id1' => $CS_IDs[1],
+                        'device_id2' => $distribution_switch->id,
+                        'name1' => $coreSwitchInterfaces->where('interface_id', $CS_DownlinkPorts[1][$index])->pluck('name')->first(),
+                        'name2' => $distributionSwitchInterfaces->where('interface_id', $DS_second_uplink_port)->pluck('name')->first(),
+                    ];
+                } */
+
                 for ($i = 0; $i < $number_of_DS; ++$i) {
                     $DS_firtstUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $DS_IDs[$i])->pluck('interface_id')->first();
                     $DS_secondUplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $DS_IDs[$i])->pluck('interface_id')->skip(1)->first();
@@ -200,6 +232,8 @@ class DevicesInNetworkController extends Controller
                         'name1' => $coreSwitchInterfaces->where('interface_id', $CS_DownlinkPorts[1][$i + 1])->pluck('name')->first(),
                         'name2' => $distributionSwitchInterfaces->where('interface_id', $DS_secondUplinkPorts[$i])->pluck('name')->first(),
                     ];
+
+                    // $DS_DownlinkPorts[] = $interfaces->where('direction', 'downlink')->where('id', $DS_IDs[$i])->pluck('interface_id');
                 }
 
                 // dalej potrebujeme vytvorit spojenie medzi distribucnymi
@@ -212,22 +246,31 @@ class DevicesInNetworkController extends Controller
                 $AS_IDs = $access_switches->pluck('id');
                 $number_of_AS = $access_switches->count();
 
-                for ($i = 0; $i < $number_of_DS; ++$i) {
-                    $DS_DownlinkPorts[] = $interfaces->where('direction', 'downlink')->where('id', $DS_IDs[$i])->pluck('interface_id');
+                foreach ($distribution_switches as $key => $distribution_switch) {
+                    $DS_DownlinkPorts[] = $interfaces->where('direction', 'downlink')->where('id', $distribution_switch->id);
                 }
 
-                for ($i = 0; $i < $number_of_AS; ++$i) {
-                    $AS_UplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $AS_IDs[$i])->pluck('interface_id');
+                //return $DS_DownlinkPorts;
+
+                foreach ($access_switches as $key => $access_switch) {
+                    $AS_UplinkPorts[] = $interfaces->where('direction', 'uplink')->where('id', $access_switch->id)->pluck('interface_id');
                 }
 
-                $AS_uplink_interfaces = $interfaces->where('type', 'accessSwitch')->where('direction', 'uplink');
-                $DS_downlink_interfaces = $interfaces->where('type', 'distributionSwitch')->where('direction', 'downlink');
+                $AS_uplink_interfaces = $interfaces->where('type', 'accessSwitch')->where('direction', 'uplink')->groupBy('id')->values();
+
+                return $AS_uplink_interfaces;
+
+                $DS_downlink_interfaces = $interfaces->where('type', 'distributionSwitch')->where('direction', 'downlink')->groupBy('id')->values();
+
+                return $DS_downlink_interfaces[0][0];
 
                 $di = 0; // distribution switch index
                 $dip = 0; // distribution switch port index
 
+                $AS_per_DS = ceil($number_of_AS / $number_of_DS * 2); // determines how many access switches are connected to one distribution switch
+
                 for ($i = 0; $i < $number_of_AS; ++$i) {
-                    if ($dip == 8) {
+                    if ($dip == $AS_per_DS) {
                         $dip = 0;
                         $di += 2;
                     }
