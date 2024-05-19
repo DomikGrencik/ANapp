@@ -27,12 +27,3 @@ export type YourFormData = {
   userConnection: string;
   networkTraffic: string;
 };
-
-export type YourFormikInputProps = {
-  name: string;
-  props?: {
-    label?: string;
-    placeholder?: string;
-    options?: string[];
-  };
-};
