@@ -31,15 +31,15 @@ class DevicesInNetworkController extends Controller
             'users' => 'required',
             'vlans' => 'required',
             'userConnection' => 'required',
-            'networkTraffic' => 'required',
+            //'networkTraffic' => 'required',
         ]);
 
         $users = $request->users; // 20, 40, 60, ...
         $vlans = $request->vlans; // yes, no
         $user_connection = $request->userConnection; // 100, 1000, 10000
-        $network_traffic = $request->networkTraffic; // small, medium, large
+        //$network_traffic = $request->networkTraffic; // small, medium, large
 
-        $chosenDevices = $this->choose($users, $vlans, $user_connection, $network_traffic);
+        $chosenDevices = $this->choose($users, $vlans, $user_connection /* $network_traffic */);
 
         // ziska najvacsi id v tabulke devices_in_networks pre pripad, ze by uz boli v tabulke nejake zaznamy
         $maxDeviceID = DevicesInNetwork::max('id');
@@ -392,7 +392,7 @@ class DevicesInNetworkController extends Controller
     /**
      * Selects devices based on user input.
      */
-    public function choose(/* Request $request */ int $users, string $vlans, int $user_connection, string $network_traffic)
+    public function choose(/* Request $request */ int $users, string $vlans, int $user_connection /* string $network_traffic */)
     {
         /* $request->validate([
             'users' => 'required',

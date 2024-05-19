@@ -25,5 +25,5 @@ export type YourFormData = {
   users: string;
   vlans: string;
   userConnection: string;
-  networkTraffic: string;
+  //networkTraffic: string;
 };

@@ -67,7 +67,11 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
                   role="button"
                   tabIndex={0}
                 >
-                  <div>{type}</div>
+                  {type === 'router' && <div>smerovač</div>}
+                  {type === 'coreSwitch' && <div>prepínač</div>}
+                  {type === 'distributionSwitch' && <div>prepínač</div>}
+                  {type === 'accessSwitch' && <div>prepínač</div>}
+                  {type === 'ED' && <div>ED</div>}
                   <div>{name}</div>
                   <div>{manufacturer}</div>
                   <div>{model}</div>

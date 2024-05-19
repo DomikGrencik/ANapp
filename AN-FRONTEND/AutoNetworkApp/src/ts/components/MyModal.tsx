@@ -170,6 +170,12 @@ const Modal: FC<ModalProps> = ({
                   <div>Firewall</div>
                 </>
               ) : null}
+              {filteredDevices?.[0]?.type === 'coreSwitch' ? (
+                <>
+                  <div>OSPF</div>
+                  <div>QoS</div>
+                </>
+              ) : null}
               {filteredDevices?.[0]?.type === 'distributionSwitch' ? (
                 <>
                   <div>OSPF</div>
@@ -197,7 +203,7 @@ const Modal: FC<ModalProps> = ({
               <h2>Rozhrania</h2>
               <div className="my-table">
                 <div className="my-table__layout my-table__layout-modal my-table__layout-header">
-                  <div>Interface</div>
+                  <div>Rozhranie</div>
                   <div />
                   <div>Pripojené zariadenie</div>
                   <div>Rozhranie zariadenia</div>

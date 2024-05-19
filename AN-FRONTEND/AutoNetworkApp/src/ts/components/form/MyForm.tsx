@@ -20,7 +20,7 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
         users: '',
         vlans: '',
         userConnection: '',
-        networkTraffic: '',
+        //networkTraffic: '',
       }}
       onSubmit={async (values, formikHelpers) => {
         try {
@@ -34,12 +34,12 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
         <Form className="my-form">
           <MyFormikInput
             name="users"
-            props={{ label: 'Users', placeholder: 'Enter number of users' }}
+            props={{ label: 'Počet používateľov', placeholder: 'Zadajte počet používateľov' }}
           />
           <MyFormikInput
             name="vlans"
             props={{
-              label: 'Vlans',
+              label: 'VLANs',
               placeholder: 'Enter number of vlans',
               options: ['yes', 'no'],
             }}
@@ -47,20 +47,21 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
           <MyFormikInput
             name="userConnection"
             props={{
-              label: 'Connection',
+              label: 'Rýchlosť pripojenia používateľov',
               placeholder: 'Enter connection speed of users',
+              options: ['100', '1000']
             }}
           />
-          <MyFormikInput
+          {/* <MyFormikInput
             name="networkTraffic"
             props={{
               label: 'Network traffic',
               placeholder: 'Enter network traffic',
               options: ['small', 'medium', 'large'],
             }}
-          />
+          /> */}
           <MyButton type="submit" disabled={isSubmitting}>
-            Submit
+            Odoslať formulár
           </MyButton>
         </Form>
       )}

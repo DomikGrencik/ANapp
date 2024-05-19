@@ -60,12 +60,8 @@ const AutoNetwork: FC = () => {
     values: YourFormData,
     formikHelpers: FormikHelpers<YourFormData>
   ) => {
-    try {
-      await postNetworkData(values);
-      formikHelpers.resetForm();
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
+    await postNetworkData(values);
+    formikHelpers.resetForm();
   };
 
   const handleDelete = () => {
