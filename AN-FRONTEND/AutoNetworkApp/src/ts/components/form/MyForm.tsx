@@ -13,6 +13,39 @@ interface FormProps {
   ) => Promise<void>;
 }
 
+/* const MyFormikInputPropsData: YourFormikInputProps[] = [
+  {
+    name: 'Users',
+    props: {
+      label: 'Users',
+      placeholder: 'Enter number of users',
+    },
+  },
+  {
+    name: 'vlans',
+    props: {
+      label: 'Vlans',
+      placeholder: 'Enter number of vlans',
+      options: ['yes', 'no'],
+    },
+  },
+  {
+    name: 'userConnection',
+    props: {
+      label: 'Connection',
+      placeholder: 'Enter connection speed of users',
+    },
+  },
+  {
+    name: 'networkTraffic',
+    props: {
+      label: 'Network traffic',
+      placeholder: 'Enter network traffic',
+      options: ['small', 'medium', 'large'],
+    },
+  },
+]; */
+
 const MyForm: FC<FormProps> = ({ onSubmit }) => {
   return (
     <Formik
@@ -32,6 +65,9 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
     >
       {({ isSubmitting }) => (
         <Form className="my-form">
+          {/* {MyFormikInputPropsData.map((inputProps) => (
+            <MyFormikInput key={inputProps.name} {...inputProps} />
+          ))} */}
           <MyFormikInput
             name="users"
             props={{ label: 'Users', placeholder: 'Enter number of users' }}
