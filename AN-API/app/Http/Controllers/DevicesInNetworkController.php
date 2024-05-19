@@ -102,7 +102,7 @@ class DevicesInNetworkController extends Controller
                     ->where('AN', '!=', 'WAN')
                     ->where('connector', $AS_uplink_interfaces[$index - 1][0]->connector);
 
-                $connectionsArray[] = [
+                $connections_array[] = [
                     'interface_id1' => $router_interfaces->pluck('interface_id')[$index - 1],
                     'interface_id2' => $AS_uplink_interfaces[$index - 1][0]->interface_id,
                     'device_id1' => $router_interfaces->pluck('id')[$index - 1],
@@ -132,7 +132,7 @@ class DevicesInNetworkController extends Controller
             // musime ziskat prvy uplink port kazdeho distribucneho switcha
             // iterujeme po 2 prvkoch, pretoze vzdy potrebujeme 2 distribucne switche
             for ($i = 0; $i < $number_of_DS; ++$i) {
-                $connectionsArray[] = [
+                $connections_array[] = [
                     'interface_id1' => $DS_uplink_interfaces[$i][0]->interface_id,
                     'interface_id2' => $DS_uplink_interfaces[$i + 1][0]->interface_id,
                     'device_id1' => $DS_uplink_interfaces[$i][0]->id,
@@ -162,7 +162,7 @@ class DevicesInNetworkController extends Controller
                     ->groupBy('id')
                     ->values();
 
-                $connectionsArray[] = [
+                $connections_array[] = [
                     'interface_id1' => $CS_uplink_interfaces[0][0]->interface_id,
                     'interface_id2' => $CS_uplink_interfaces[1][0]->interface_id,
                     'device_id1' => $CS_uplink_interfaces[0][0]->id,
@@ -177,7 +177,7 @@ class DevicesInNetworkController extends Controller
                 $router_interfaces = $interfaces->where('type', 'router')->where('connector', 'SFP+');
 
                 for ($i = 0; $i < $number_of_CS; ++$i) {
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $router_interfaces->pluck('interface_id')[$i],
                         'interface_id2' => $CS_downlink_interfaces[$i][0]->interface_id,
                         'device_id1' => $router_interfaces->pluck('id')[$i],
@@ -191,7 +191,7 @@ class DevicesInNetworkController extends Controller
                 // musime ziskat prvy uplink port kazdeho distribution switcha
 
                 for ($i = 0; $i < $number_of_DS; ++$i) {
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $CS_downlink_interfaces[0][$i + 1]->interface_id,
                         'interface_id2' => $DS_uplink_interfaces[$i][0]->interface_id,
                         'device_id1' => $CS_downlink_interfaces[0][$i + 1]->id,
@@ -199,7 +199,7 @@ class DevicesInNetworkController extends Controller
                         'name1' => $CS_downlink_interfaces[0][$i + 1]->name,
                         'name2' => $DS_uplink_interfaces[$i][0]->name,
                     ];
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $CS_downlink_interfaces[1][$i + 1]->interface_id,
                         'interface_id2' => $DS_uplink_interfaces[$i][1]->interface_id,
                         'device_id1' => $CS_downlink_interfaces[1][$i + 1]->id,
@@ -226,7 +226,7 @@ class DevicesInNetworkController extends Controller
                         $di += 2;
                     }
 
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $DS_downlink_interfaces[$di][$dip]->interface_id,
                         'interface_id2' => $AS_uplink_interfaces[$i][0]->interface_id,
                         'device_id1' => $DS_downlink_interfaces[$di][$dip]->id,
@@ -234,7 +234,7 @@ class DevicesInNetworkController extends Controller
                         'name1' => $DS_downlink_interfaces[$di][$dip]->name,
                         'name2' => $AS_uplink_interfaces[$i][0]->name,
                     ];
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $DS_downlink_interfaces[$di + 1][$dip]->interface_id,
                         'interface_id2' => $AS_uplink_interfaces[$i][1]->interface_id,
                         'device_id1' => $DS_downlink_interfaces[$di + 1][$dip]->id,
@@ -249,7 +249,7 @@ class DevicesInNetworkController extends Controller
                 $router_interfaces = $interfaces->where('type', 'router')->where('connector', $DS_downlink_interfaces[0][0]->connector);
 
                 for ($i = 0; $i < $number_of_DS; ++$i) {
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $router_interfaces->pluck('interface_id')[$i],
                         'interface_id2' => $DS_downlink_interfaces[$i][0]->interface_id,
                         'device_id1' => $router_interfaces->pluck('id')[$i],
@@ -262,7 +262,7 @@ class DevicesInNetworkController extends Controller
                 // dalej potrebujeme vytvorit spojenie medzi distribucnymi switchmi a access switchmi
                 // musime ziskat prvy uplink port kazdeho access switcha
                 for ($i = 0; $i < $number_of_AS; ++$i) {
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $DS_downlink_interfaces[0][$i + 1]->interface_id,
                         'interface_id2' => $AS_uplink_interfaces[$i][0]->interface_id,
                         'device_id1' => $DS_downlink_interfaces[0][$i + 1]->id,
@@ -270,7 +270,7 @@ class DevicesInNetworkController extends Controller
                         'name1' => $DS_downlink_interfaces[0][$i + 1]->name,
                         'name2' => $AS_uplink_interfaces[$i][0]->name,
                     ];
-                    $connectionsArray[] = [
+                    $connections_array[] = [
                         'interface_id1' => $DS_downlink_interfaces[1][$i + 1]->interface_id,
                         'interface_id2' => $AS_uplink_interfaces[$i][1]->interface_id,
                         'device_id1' => $DS_downlink_interfaces[1][$i + 1]->id,
@@ -296,7 +296,7 @@ class DevicesInNetworkController extends Controller
                 break; // code...
             }
 
-            $connectionsArray[] = [
+            $connections_array[] = [
                 'interface_id1' => $value->interface_id,
                 'interface_id2' => $ED_interfaces[$ei]->interface_id,
                 'device_id1' => $value->id,
@@ -307,7 +307,7 @@ class DevicesInNetworkController extends Controller
             ++$ei;
         }
 
-        DB::table('connections')->insert($connectionsArray);
+        DB::table('connections')->insert($connections_array);
 
         return json_encode([]);
     }
