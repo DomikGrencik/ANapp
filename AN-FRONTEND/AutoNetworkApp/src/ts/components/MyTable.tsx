@@ -36,6 +36,7 @@ const MyTable: FC<TableProps> = ({ data, isLoading }) => {
 
   return (
     <>
+      {/* {isLoading ? <div className="loading">loading</div> : null} */}
       <div className="my-table">
         <div className="my-table__layout my-table__layout-header">
           <div>Typ</div>

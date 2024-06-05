@@ -3,6 +3,7 @@ import { FormikHelpers } from 'formik';
 
 import MyForm from '../components/form/MyForm';
 import MyButton from '../components/MyButton';
+import MyLoader from '../components/MyLoader';
 import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
 import MyTopology from '../components/topology/MyTopology';
@@ -19,9 +20,11 @@ const AutoNetwork: FC = () => {
   const [open, setOpen] = useState(false);
 
   const postNetworkData = usePostNetwork();
-  const deleteDevices = useDeleteDevices();
-  const deleteInterfaces = useDeleteInterfaces();
-  const deleteConnections = useDeleteConnections();
+  const { deleteDevices, isPending: isPendingDevices } = useDeleteDevices();
+  const { deleteInterfaces, isPending: isPendingInterfaces } =
+    useDeleteInterfaces();
+  const { deleteConnections, isPending: isPendingConnections } =
+    useDeleteConnections();
 
   const {
     data: dataDeviceDatabase,
@@ -55,6 +58,10 @@ const AutoNetwork: FC = () => {
     console.error(errorConnections.message);
     return null;
   }
+
+  /* if (isPendingDevices || isPendingInterfaces || isPendingConnections) {
+    console.log('isPending');
+  } */
 
   const handleSubmit = async (
     values: YourFormData,
@@ -108,6 +115,10 @@ const AutoNetwork: FC = () => {
           />
         </div>
       </div>
+
+      {isPendingDevices || isPendingInterfaces || isPendingConnections ? (
+        <MyLoader text="Mazanie dát" />
+      ) : null}
 
       {open ? (
         <MyModal isOpen={open} onClose={() => setOpen(false)}>

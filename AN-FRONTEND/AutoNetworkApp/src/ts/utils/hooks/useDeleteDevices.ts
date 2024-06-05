@@ -5,7 +5,7 @@ import { API_ROUTE_BASE } from '../variables';
 const useDeleteDevices = () => {
   const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteDevices } = useMutation({
+  const { mutateAsync: deleteDevices, isPending } = useMutation({
     mutationFn: async () => {
       const response = await fetch(
         `${API_ROUTE_BASE}devices_in_networks/delete`,
@@ -29,7 +29,7 @@ const useDeleteDevices = () => {
     },
   });
 
-  return deleteDevices;
+  return {deleteDevices, isPending};
 };
 
 export default useDeleteDevices;

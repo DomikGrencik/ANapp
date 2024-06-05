@@ -5,7 +5,7 @@ import { API_ROUTE_BASE } from '../variables';
 const useDeleteInterfaces = () => {
   const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteInterfaces } = useMutation({
+  const { mutateAsync: deleteInterfaces, isPending } = useMutation({
     mutationFn: async () => {
       const response = await fetch(
         `${API_ROUTE_BASE}interface_of_devices/delete`,
@@ -29,7 +29,7 @@ const useDeleteInterfaces = () => {
     },
   });
 
-  return deleteInterfaces;
+  return {deleteInterfaces, isPending};
 };
 
 export default useDeleteInterfaces;

@@ -3,6 +3,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 
 import { YourFormData } from '../../types/core-types';
 import MyButton from '../MyButton';
+import MyLoader from '../MyLoader';
 
 import MyFormikInput from './MyFormikInput';
 
@@ -34,7 +35,10 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
         <Form className="my-form">
           <MyFormikInput
             name="users"
-            props={{ label: 'Počet používateľov', placeholder: 'Zadajte počet používateľov' }}
+            props={{
+              label: 'Počet používateľov',
+              placeholder: 'Zadajte počet používateľov',
+            }}
           />
           <MyFormikInput
             name="vlans"
@@ -49,7 +53,7 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
             props={{
               label: 'Rýchlosť pripojenia používateľov',
               placeholder: 'Enter connection speed of users',
-              options: ['100', '1000']
+              options: ['100', '1000'],
             }}
           />
           {/* <MyFormikInput
@@ -63,6 +67,7 @@ const MyForm: FC<FormProps> = ({ onSubmit }) => {
           <MyButton type="submit" disabled={isSubmitting}>
             Odoslať formulár
           </MyButton>
+          {isSubmitting ? <MyLoader text="Odosielanie formulára" /> : null}
         </Form>
       )}
     </Formik>
