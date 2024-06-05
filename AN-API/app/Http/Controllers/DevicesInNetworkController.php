@@ -778,10 +778,10 @@ class DevicesInNetworkController extends Controller
      */
     public function delete()
     {
-        // DevicesInNetwork::getQuery()->delete();
-        Schema::disableForeignKeyConstraints();
+        DevicesInNetwork::getQuery()->delete();
+        /* Schema::disableForeignKeyConstraints();
         DevicesInNetwork::truncate();
-        Schema::enableForeignKeyConstraints();
+        Schema::enableForeignKeyConstraints(); */
 
         return json_encode([]);
     }

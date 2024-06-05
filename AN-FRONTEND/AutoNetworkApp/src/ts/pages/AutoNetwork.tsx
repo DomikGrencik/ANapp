@@ -8,9 +8,7 @@ import MyModal from '../components/MyModal';
 import MyTable from '../components/MyTable';
 import MyTopology from '../components/topology/MyTopology';
 import { YourFormData } from '../types/core-types';
-import useDeleteConnections from '../utils/hooks/useDeleteConnections';
 import useDeleteDevices from '../utils/hooks/useDeleteDevices';
-import useDeleteInterfaces from '../utils/hooks/useDeleteInterfaces';
 import useFetchConnections from '../utils/hooks/useFetchConnentions';
 import useFetchDeviceDatabase from '../utils/hooks/useFetchDeviceDatabase';
 import useFetchDevices from '../utils/hooks/useFetchDevices';
@@ -20,11 +18,13 @@ const AutoNetwork: FC = () => {
   const [open, setOpen] = useState(false);
 
   const postNetworkData = usePostNetwork();
+
   const { deleteDevices, isPending: isPendingDevices } = useDeleteDevices();
-  const { deleteInterfaces, isPending: isPendingInterfaces } =
+
+  /* const { deleteInterfaces, isPending: isPendingInterfaces } =
     useDeleteInterfaces();
   const { deleteConnections, isPending: isPendingConnections } =
-    useDeleteConnections();
+    useDeleteConnections(); */
 
   const {
     data: dataDeviceDatabase,
@@ -74,8 +74,8 @@ const AutoNetwork: FC = () => {
   const handleDelete = () => {
     console.log('delete');
     deleteDevices();
-    deleteInterfaces();
-    deleteConnections();
+    /* deleteInterfaces();
+    deleteConnections(); */
   };
 
   return (
@@ -116,7 +116,7 @@ const AutoNetwork: FC = () => {
         </div>
       </div>
 
-      {isPendingDevices || isPendingInterfaces || isPendingConnections ? (
+      {isPendingDevices /* || isPendingInterfaces || isPendingConnections */ ? (
         <MyLoader text="Mazanie dát" />
       ) : null}
 
